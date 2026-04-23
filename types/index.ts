@@ -7,6 +7,11 @@ export type DealStage =
   | "Won";
 export type QuoteStatus = "Draft" | "Sent" | "Accepted" | "Expired";
 export type EmailStatus = "queued" | "sent" | "failed";
+export type EmailTemplateId =
+  | "intro"
+  | "proposal_followup"
+  | "quote_delivery"
+  | "quote_with_accept";
 export type ServiceKey =
   | "ai_automation"
   | "ai_web_app"
@@ -68,7 +73,7 @@ export interface SentEmail {
   to_email: string;
   to_name: string | null;
   subject: string;
-  template: string | null;
+  template: EmailTemplateId | null;
   status: EmailStatus;
   sent_at: string;
 }
@@ -90,7 +95,7 @@ export interface ServiceCatalogItem {
 }
 
 export interface EmailTemplate {
-  id: string;
+  id: EmailTemplateId;
   name: string;
   subject: string;
   body: string;

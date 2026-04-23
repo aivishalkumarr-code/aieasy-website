@@ -14,6 +14,7 @@ import {
   formatCurrency,
   type ActionResult,
   type Contact,
+  type EmailTemplateId,
   type Quote,
   type QuoteServiceItem,
   type SentEmail,
@@ -177,6 +178,15 @@ const generateQuotePDF = (
   return Buffer.from(doc.output("arraybuffer"));
 };
 
+const buildAcceptQuoteUrl = (quote: Quote) => {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "";
+
+  return `${baseUrl.replace(/\/$/, "")}/api/quotes/accept?quoteId=${encodeURIComponent(quote.id)}&token=${encodeURIComponent(`quote-${quote.id}`)}`;
+};
+
 const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServiceItem[]) => {
   const servicesList = services
     .map(
@@ -257,6 +267,104 @@ const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServ
   `;
 };
 
+const buildQuoteWithAcceptEmailHtml = (
+  contact: Contact,
+  quote: Quote,
+  services: QuoteServiceItem[]
+) => {
+  const acceptUrl = buildAcceptQuoteUrl(quote);
+  const servicesRows = services
+    .map(
+      (service) => `
+        <tr>
+          <td style="padding: 14px 16px; border-bottom: 1px solid #E5E7EB; vertical-align: top;">
+            <div style="font-weight: 600; color: #111827;">${service.label}</div>
+            <div style="margin-top: 4px; font-size: 13px; color: #6B7280;">${service.description}</div>
+            ${service.notes ? `<div style="margin-top: 6px; font-size: 12px; color: #0D9488;">Note: ${service.notes}</div>` : ""}
+          </td>
+          <td style="padding: 14px 16px; border-bottom: 1px solid #E5E7EB; text-align: right; white-space: nowrap; vertical-align: top; font-weight: 600; color: #111827;">
+            ${formatCurrency(service.customPrice)}
+          </td>
+        </tr>`
+    )
+    .join("");
+
+  return `
+    <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #1F2937; background: #F3F7F6; padding: 24px 12px;">
+      <div style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #DDE7E3;">
+        <div style="background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%); padding: 40px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 30px; font-weight: 700;">AIeasy</h1>
+          <p style="color: rgba(255,255,255,0.92); margin: 10px 0 0; font-size: 14px;">Premium AI Solutions</p>
+        </div>
+
+        <div style="padding: 30px; background: #ffffff;">
+          <h2 style="margin: 0 0 16px; color: #111827; font-size: 24px;">Your Quote is Ready</h2>
+          <p style="margin: 0 0 16px; color: #4B5563;">Hi ${contact.name},</p>
+          <p style="margin: 0 0 24px; color: #4B5563;">
+            Thank you for considering AIeasy. Your quote <strong>#${quote.quote_number}</strong> is attached as a PDF and summarized below for quick review.
+          </p>
+
+          <div style="margin: 0 0 24px; border: 1px solid #E5E7EB; border-radius: 14px; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="background: #F8FAF9;">
+                  <th style="padding: 14px 16px; text-align: left; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: #0F766E;">Service</th>
+                  <th style="padding: 14px 16px; text-align: right; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: #0F766E;">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${servicesRows}
+              </tbody>
+            </table>
+          </div>
+
+          <div style="background: #F8FAF9; padding: 20px; border-radius: 12px; margin: 0 0 24px;">
+            <div style="display: flex; justify-content: space-between; gap: 12px; margin: 0 0 10px; color: #4B5563;">
+              <span>Subtotal</span>
+              <span>${formatCurrency(quote.subtotal)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 12px; margin: 0 0 10px; color: #4B5563;">
+              <span>Tax (${quote.tax_rate}%)</span>
+              <span>${formatCurrency(quote.tax_amount)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 2px solid #0D9488; font-weight: 700; font-size: 18px; color: #0D9488;">
+              <span>Total</span>
+              <span>${formatCurrency(quote.total)}</span>
+            </div>
+          </div>
+
+          ${quote.global_notes ? `<div style="margin: 0 0 24px; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; padding: 16px; color: #0F766E; font-size: 14px;"><strong>Additional Notes</strong><div style="margin-top: 6px;">${quote.global_notes}</div></div>` : ""}
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${acceptUrl}" style="background: #0D9488; color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; display: inline-block; letter-spacing: 0.02em;">
+              ACCEPT QUOTE
+            </a>
+          </div>
+
+          <p style="text-align: center; color: #6B7280; font-size: 14px; word-break: break-all; margin: 0 0 24px;">
+            Or copy this link: ${acceptUrl}
+          </p>
+
+          <p style="margin: 0 0 8px; color: #111827;"><strong>Valid until:</strong> ${quote.valid_until}</p>
+          <p style="margin: 0 0 24px; color: #6B7280; font-size: 14px;">
+            This quote will expire on the date above. If you would like any adjustments before accepting, simply reply to this email.
+          </p>
+
+          <p style="margin: 0; color: #4B5563;">
+            Best regards,<br />
+            <strong style="color: #0D9488;">AIeasy Team</strong>
+          </p>
+        </div>
+
+        <div style="background: #F4F6F2; padding: 20px 30px; text-align: center; font-size: 12px; color: #6B7280;">
+          AIeasy Solutions Pvt Ltd • Delhi, India<br />
+          contact@aieasy.io • www.aieasy.io
+        </div>
+      </div>
+    </div>
+  `;
+};
+
 const insertSentEmail = async (email: Omit<SentEmail, "id">) => {
   if (!isSupabaseConfigured()) {
     return null;
@@ -270,6 +378,118 @@ const insertSentEmail = async (email: Omit<SentEmail, "id">) => {
 
   const { data } = await supabase.from("sent_emails").insert(email).select("*").single();
   return data as SentEmail | null;
+};
+
+const sendQuoteEmailByTemplate = async (
+  quoteId: string,
+  options: {
+    htmlBuilder: (contact: Contact, quote: Quote, services: QuoteServiceItem[]) => string;
+    template: EmailTemplateId;
+    successMessage: string;
+    queuedMessage: string;
+    failureMessage: string;
+  }
+): Promise<ActionResult<{ quote: Quote; email: SentEmail | null }>> => {
+  const mockContacts = getMockContacts();
+  const mockQuotes = getMockQuotes();
+
+  const quoteSource = isSupabaseConfigured() ? await getQuotes() : mockQuotes;
+  const contactsSource = isSupabaseConfigured() ? await getContacts() : mockContacts;
+
+  const quote = quoteSource.find((entry) => entry.id === quoteId);
+  const contact = contactsSource.find((entry) => entry.id === quote?.contact_id);
+
+  if (!quote || !contact) {
+    return { success: false, message: "Quote or contact not found." };
+  }
+
+  const pdfBuffer = generateQuotePDF(quote, contact, quote.services);
+
+  let status: SentEmail["status"] = isResendConfigured() ? "sent" : "queued";
+  let message = isResendConfigured()
+    ? options.successMessage
+    : options.queuedMessage;
+
+  if (isResendConfigured()) {
+    try {
+      const resend = getResendClient();
+      const response = await resend?.emails.send({
+        from: DEFAULT_FROM_EMAIL,
+        to: [contact.email],
+        subject: `Your AIeasy Quote ${quote.quote_number}`,
+        html: options.htmlBuilder(contact, quote, quote.services),
+        attachments: [
+          {
+            filename: `AIeasy-Quote-${quote.quote_number}.pdf`,
+            content: pdfBuffer.toString("base64"),
+          },
+        ],
+      });
+
+      if (response?.error) {
+        status = "failed";
+        message = response.error.message;
+      }
+    } catch (error) {
+      status = "failed";
+      message = error instanceof Error ? error.message : options.failureMessage;
+    }
+  }
+
+  let updatedQuote = quote;
+
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+
+    if (supabase) {
+      const { data } = await supabase
+        .from("quotes")
+        .update({ status: status === "failed" ? quote.status : "Sent" })
+        .eq("id", quoteId)
+        .select("*")
+        .single();
+
+      if (data) {
+        updatedQuote = data as Quote;
+      }
+    }
+  } else if (status !== "failed") {
+    updatedQuote = { ...quote, status: "Sent" };
+  }
+
+  const subject = `Your AIeasy Quote ${updatedQuote.quote_number}`;
+  const sentAt = new Date().toISOString();
+
+  const emailRecord = await insertSentEmail({
+    to_email: contact.email,
+    to_name: contact.name,
+    subject,
+    template: options.template,
+    status,
+    sent_at: sentAt,
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/quotes");
+  revalidatePath("/dashboard/emails");
+
+  return {
+    success: status !== "failed",
+    data: {
+      quote: updatedQuote,
+      email:
+        emailRecord ?? {
+          id: crypto.randomUUID(),
+          to_email: contact.email,
+          to_name: contact.name,
+          subject,
+          template: options.template,
+          status,
+          sent_at: sentAt,
+        },
+    },
+    message,
+  };
 };
 
 export const getQuotes = async (): Promise<Quote[]> => {
@@ -345,102 +565,22 @@ export const createQuote = async (payload: {
 export const sendQuoteEmail = async (
   quoteId: string
 ): Promise<ActionResult<{ quote: Quote; email: SentEmail | null }>> => {
-  const mockContacts = getMockContacts();
-  const mockQuotes = getMockQuotes();
-
-  const quoteSource = isSupabaseConfigured() ? await getQuotes() : mockQuotes;
-  const contactsSource = isSupabaseConfigured() ? await getContacts() : mockContacts;
-
-  const quote = quoteSource.find((entry) => entry.id === quoteId);
-  const contact = contactsSource.find((entry) => entry.id === quote?.contact_id);
-
-  if (!quote || !contact) {
-    return { success: false, message: "Quote or contact not found." };
-  }
-
-  // Generate PDF attachment
-  const pdfBuffer = generateQuotePDF(quote, contact, quote.services);
-
-  let status: SentEmail["status"] = isResendConfigured() ? "sent" : "queued";
-  let message = isResendConfigured()
-    ? "Quote email sent."
-    : "Resend not configured, quote email queued locally.";
-
-  if (isResendConfigured()) {
-    try {
-      const resend = getResendClient();
-      const response = await resend?.emails.send({
-        from: DEFAULT_FROM_EMAIL,
-        to: [contact.email],
-        subject: `Your AIeasy Quote ${quote.quote_number}`,
-        html: buildQuoteEmailHtml(contact, quote, quote.services),
-        attachments: [
-          {
-            filename: `AIeasy-Quote-${quote.quote_number}.pdf`,
-            content: pdfBuffer.toString("base64"),
-          },
-        ],
-      });
-
-      if (response?.error) {
-        status = "failed";
-        message = response.error.message;
-      }
-    } catch (error) {
-      status = "failed";
-      message = error instanceof Error ? error.message : "Failed to send quote email.";
-    }
-  }
-
-  let updatedQuote = quote;
-
-  if (isSupabaseConfigured()) {
-    const supabase = await createClient();
-
-    if (supabase) {
-      const { data } = await supabase
-        .from("quotes")
-        .update({ status: status === "failed" ? quote.status : "Sent" })
-        .eq("id", quoteId)
-        .select("*")
-        .single();
-
-      if (data) {
-        updatedQuote = data as Quote;
-      }
-    }
-  } else if (status !== "failed") {
-    updatedQuote = { ...quote, status: "Sent" };
-  }
-
-  const emailRecord = await insertSentEmail({
-    to_email: contact.email,
-    to_name: contact.name,
-    subject: `Your AIeasy Quote ${updatedQuote.quote_number}`,
+  return sendQuoteEmailByTemplate(quoteId, {
+    htmlBuilder: buildQuoteEmailHtml,
     template: "quote_delivery",
-    status,
-    sent_at: new Date().toISOString(),
+    successMessage: "Quote email sent.",
+    queuedMessage: "Resend not configured, quote email queued locally.",
+    failureMessage: "Failed to send quote email.",
   });
-
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/quotes");
-  revalidatePath("/dashboard/emails");
-
-  return {
-    success: status !== "failed",
-    data: {
-      quote: updatedQuote,
-      email:
-        emailRecord ?? {
-          id: crypto.randomUUID(),
-          to_email: contact.email,
-          to_name: contact.name,
-          subject: `Your AIeasy Quote ${updatedQuote.quote_number}`,
-          template: "quote_delivery",
-          status,
-          sent_at: new Date().toISOString(),
-        },
-    },
-    message,
-  };
 };
+
+export const sendQuoteWithAcceptButton = async (
+  quoteId: string
+): Promise<ActionResult<{ quote: Quote; email: SentEmail | null }>> =>
+  sendQuoteEmailByTemplate(quoteId, {
+    htmlBuilder: buildQuoteWithAcceptEmailHtml,
+    template: "quote_with_accept",
+    successMessage: "Quote email with accept button sent.",
+    queuedMessage: "Resend not configured, quote email with accept button queued locally.",
+    failureMessage: "Failed to send quote email with accept button.",
+  });

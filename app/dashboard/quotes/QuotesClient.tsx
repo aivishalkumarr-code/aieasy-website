@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { jsPDF } from "jspdf";
-import { Check, Download, Edit2, FileText, LoaderCircle, Mail, Save, Send, Trash2, X } from "lucide-react";
+import { Check, Download, Edit2, FileText, LoaderCircle, Mail, Save, Send, Trash2 } from "lucide-react";
 
-import { createQuote, sendQuoteEmail } from "@/app/dashboard/actions/quotes";
+import { createQuote, sendQuoteEmail, sendQuoteWithAcceptButton } from "@/app/dashboard/actions/quotes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SERVICE_CATALOG, formatCurrency, type Contact, type Quote, type QuoteServiceItem, type ServiceKey } from "@/types";
@@ -23,6 +23,8 @@ interface ServiceFormItem {
   notes: string;
   selected: boolean;
 }
+
+type QuoteSendMode = "simple" | "accept";
 
 const getNextValidDate = () => {
   const date = new Date();
@@ -322,11 +324,14 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
     setActiveTab("history");
   };
 
-  const handleSendQuote = async (quoteId: string) => {
+  const handleSendQuote = async (quoteId: string, mode: QuoteSendMode = "simple") => {
     setIsSending(quoteId);
     setFeedback(null);
 
-    const result = await sendQuoteEmail(quoteId);
+    const result =
+      mode === "accept"
+        ? await sendQuoteWithAcceptButton(quoteId)
+        : await sendQuoteEmail(quoteId);
 
     setIsSending(null);
 
@@ -343,7 +348,11 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
       setCreatedQuoteId(null);
     }
     
-    setFeedback("Quote email sent successfully!");
+    setFeedback(
+      mode === "accept"
+        ? "Quote email with accept button sent successfully!"
+        : "Quote email sent successfully!"
+    );
   };
 
   const downloadPDF = () => {
@@ -639,7 +648,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
             </span>
           </div>
 
-          {createdQuoteId && (
+	          {createdQuoteId && (
             <div className="mt-4 rounded-xl border border-[#0D9488]/30 bg-[#ECFDF5] p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -651,18 +660,33 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                     <p className="text-sm text-[#6B7280]">Ready to send to {contact?.name}</p>
                   </div>
                 </div>
-                <Button
-                  onClick={() => handleSendQuote(createdQuoteId)}
-                  disabled={isSending === createdQuoteId}
-                  className="h-11 rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
-                >
-                  {isSending === createdQuoteId ? (
-                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="mr-2 h-4 w-4" />
-                  )}
-                  Send Quote Email
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleSendQuote(createdQuoteId, "simple")}
+                    disabled={isSending === createdQuoteId}
+                    className="h-11 rounded-xl border-[#0D9488]/20 bg-white text-[#0F766E] hover:bg-[#F0FDFA]"
+                  >
+                    {isSending === createdQuoteId ? (
+                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Mail className="mr-2 h-4 w-4" />
+                    )}
+                    Send Simple Email
+                  </Button>
+                  <Button
+                    onClick={() => handleSendQuote(createdQuoteId, "accept")}
+                    disabled={isSending === createdQuoteId}
+                    className="h-11 rounded-xl bg-[#16A34A] text-white hover:bg-[#15803D]"
+                  >
+                    {isSending === createdQuoteId ? (
+                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="mr-2 h-4 w-4" />
+                    )}
+                    Send with Accept Button
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -716,18 +740,35 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                       <td className="py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           {quote.status === "Draft" && (
-                            <Button
-                              size="sm"
-                              disabled={isSending === quote.id}
-                              onClick={() => handleSendQuote(quote.id)}
-                              className="h-9 rounded-lg bg-[#0D9488] text-white hover:bg-[#0F766E]"
-                            >
-                              {isSending === quote.id ? (
-                                <LoaderCircle className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <Mail className="h-4 w-4" />
-                              )}
-                            </Button>
+                            <>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled={isSending === quote.id}
+                                onClick={() => handleSendQuote(quote.id, "simple")}
+                                className="h-9 rounded-lg border-[#DDE7E3] bg-white text-[#0F766E] hover:bg-[#F0FDFA]"
+                              >
+                                {isSending === quote.id ? (
+                                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Mail className="mr-2 h-4 w-4" />
+                                )}
+                                Send Simple Email
+                              </Button>
+                              <Button
+                                size="sm"
+                                disabled={isSending === quote.id}
+                                onClick={() => handleSendQuote(quote.id, "accept")}
+                                className="h-9 rounded-lg bg-[#16A34A] text-white hover:bg-[#15803D]"
+                              >
+                                {isSending === quote.id ? (
+                                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Send className="mr-2 h-4 w-4" />
+                                )}
+                                Send with Accept Button
+                              </Button>
+                            </>
                           )}
                         </div>
                       </td>
