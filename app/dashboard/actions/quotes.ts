@@ -441,6 +441,31 @@ export const createQuote = async (payload: {
 
   const { data, error } = await supabase.from("quotes").insert(quote).select("*").single();
 
+  // If the global_notes column is missing, retry without it
+  if (error && /global_notes|schema cache|column/i.test(error.message)) {
+    const quoteWithoutGlobalNotes = { ...quote };
+    delete (quoteWithoutGlobalNotes as { global_notes?: string | null }).global_notes;
+    
+    const { data: retryData, error: retryError } = await supabase
+      .from("quotes")
+      .insert(quoteWithoutGlobalNotes)
+      .select("*")
+      .single();
+    
+    if (retryError) {
+      return { success: false, message: retryError.message };
+    }
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/quotes");
+
+    return { 
+      success: true, 
+      data: retryData as Quote, 
+      message: "Quote created successfully. (Global notes not saved - column missing)" 
+    };
+  }
+
   if (error) {
     return { success: false, message: error.message };
   }
