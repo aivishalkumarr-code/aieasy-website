@@ -20,6 +20,14 @@ import {
 } from "@/types";
 
 const buildQuoteNumber = () => `AE-${Date.now().toString().slice(-6)}`;
+const buildAcceptQuoteUrl = (quote: Quote) => {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const path = `/api/quotes/accept?quoteId=${encodeURIComponent(quote.id)}&token=${encodeURIComponent(`quote-${quote.id}`)}`;
+
+  return appUrl ? `${appUrl}${path}` : path;
+};
+const isMissingGlobalNotesColumnError = (message: string) =>
+  /global_notes/i.test(message) && /(schema cache|column)/i.test(message);
 
 const generateQuotePDF = (
   quote: Quote,
@@ -177,8 +185,8 @@ const generateQuotePDF = (
   return Buffer.from(doc.output("arraybuffer"));
 };
 
-const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServiceItem[]) => {
-  const servicesList = services
+const buildQuoteEmailRows = (services: QuoteServiceItem[]) =>
+  services
     .map(
       (service) =>
         `<tr>
@@ -192,6 +200,9 @@ const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServ
         </tr>`
     )
     .join("");
+
+const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServiceItem[]) => {
+  const servicesList = buildQuoteEmailRows(services);
 
   return `
     <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto;">
@@ -250,6 +261,105 @@ const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServ
       </div>
       
       <div style="background: #F4F6F2; padding: 20px 30px; text-align: center; font-size: 12px; color: #6B7280;">
+        AIeasy Solutions Pvt Ltd • Delhi, India<br/>
+        contact@aieasy.io • www.aieasy.io
+      </div>
+    </div>
+  `;
+};
+
+const buildQuoteWithAcceptEmailHtml = (contact: Contact, quote: Quote, services: QuoteServiceItem[]) => {
+  const servicesList = buildQuoteEmailRows(services);
+  const acceptUrl = buildAcceptQuoteUrl(quote);
+
+  return `
+    <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #1A1A1A; max-width: 640px; margin: 0 auto; background: #F8FAF9;">
+      <div style="background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%); padding: 36px 32px; text-align: center;">
+        <h1 style="color: #FFFFFF; margin: 0; font-size: 30px; letter-spacing: 0.2px;">AIeasy</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0; font-size: 14px;">Premium AI Solutions</p>
+      </div>
+
+      <div style="background: #FFFFFF; padding: 32px;">
+        <h2 style="margin: 0 0 16px; font-size: 24px; color: #111827;">Your Quote is Ready for Approval</h2>
+        <p style="margin: 0 0 18px; color: #4B5563;">Hi ${contact.name},</p>
+        <p style="margin: 0 0 24px; color: #4B5563;">
+          Thank you for considering AIeasy. Your quote <strong>#${quote.quote_number}</strong> is attached as a PDF and summarized below for quick review.
+        </p>
+
+        <table style="width: 100%; border-collapse: separate; border-spacing: 0; margin: 0 0 24px; border: 1px solid #E5E7EB; border-radius: 14px; overflow: hidden;">
+          <tbody>
+            <tr>
+              <td style="padding: 14px 16px; background: #F8FAF9; border-bottom: 1px solid #E5E7EB; width: 42%; font-size: 13px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.08em;">Quote Number</td>
+              <td style="padding: 14px 16px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #111827;">${quote.quote_number}</td>
+            </tr>
+            <tr>
+              <td style="padding: 14px 16px; background: #F8FAF9; border-bottom: 1px solid #E5E7EB; font-size: 13px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.08em;">Prepared For</td>
+              <td style="padding: 14px 16px; border-bottom: 1px solid #E5E7EB; color: #111827;">
+                <strong>${contact.name}</strong><br/>
+                <span style="color: #6B7280;">${contact.email}${contact.company ? ` • ${contact.company}` : ""}</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 14px 16px; background: #F8FAF9; border-bottom: 1px solid #E5E7EB; font-size: 13px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.08em;">Issued On</td>
+              <td style="padding: 14px 16px; border-bottom: 1px solid #E5E7EB; color: #111827;">${new Date(quote.created_at || Date.now()).toLocaleDateString()}</td>
+            </tr>
+            <tr>
+              <td style="padding: 14px 16px; background: #F8FAF9; font-size: 13px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.08em;">Valid Until</td>
+              <td style="padding: 14px 16px; color: #111827; font-weight: 600;">${quote.valid_until}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 14px; overflow: hidden;">
+          <thead>
+            <tr style="background: #ECFDF5;">
+              <th style="padding: 14px 16px; text-align: left; color: #0F766E; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;">Quote Details</th>
+              <th style="padding: 14px 16px; text-align: right; color: #0F766E; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${servicesList}
+          </tbody>
+        </table>
+
+        <div style="background: #F8FAF9; padding: 22px; border: 1px solid #E5E7EB; border-radius: 14px; margin: 0 0 24px;">
+          <div style="display: flex; justify-content: space-between; gap: 16px; margin: 0 0 10px; color: #4B5563;">
+            <span>Subtotal</span>
+            <span>${formatCurrency(quote.subtotal)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 16px; margin: 0 0 10px; color: #4B5563;">
+            <span>Tax (${quote.tax_rate}%)</span>
+            <span>${formatCurrency(quote.tax_amount)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 16px; padding-top: 14px; border-top: 2px solid #0D9488; font-weight: 700; font-size: 18px; color: #0D9488;">
+            <span>Total</span>
+            <span>${formatCurrency(quote.total)}</span>
+          </div>
+        </div>
+
+        ${quote.global_notes ? `<div style="margin: 0 0 24px; padding: 16px 18px; border-radius: 12px; background: #ECFDF5; color: #0F766E;"><strong>Additional Notes</strong><br/>${quote.global_notes}</div>` : ""}
+
+        <div style="text-align: center; margin: 30px 0 22px;">
+          <a href="${acceptUrl}" style="display: inline-block; background: #16A34A; color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 16px; padding: 15px 32px; border-radius: 999px; box-shadow: 0 10px 24px rgba(22, 163, 74, 0.25);">
+            Accept Quote
+          </a>
+        </div>
+
+        <p style="margin: 0 0 12px; color: #4B5563; text-align: center;">
+          If the button does not work, copy and paste this link into your browser:<br/>
+          <a href="${acceptUrl}" style="color: #0D9488; word-break: break-all;">${acceptUrl}</a>
+        </p>
+
+        <div style="margin: 24px 0 0; padding: 16px 18px; border-radius: 12px; background: #FFF7ED; border: 1px solid #FED7AA; color: #9A3412;">
+          <strong>Expiry notice:</strong> This quote is valid until ${quote.valid_until}. Pricing and availability may change after the expiry date.
+        </div>
+
+        <p style="margin: 24px 0 0; color: #4B5563;">
+          Questions or requested revisions? Reply to this email and our team will help right away.
+        </p>
+      </div>
+
+      <div style="background: #F4F6F2; padding: 22px 32px; text-align: center; font-size: 12px; color: #6B7280;">
         AIeasy Solutions Pvt Ltd • Delhi, India<br/>
         contact@aieasy.io • www.aieasy.io
       </div>
@@ -330,7 +440,38 @@ export const createQuote = async (payload: {
     return { success: false, message: "Supabase client unavailable." };
   }
 
-  const { data, error } = await supabase.from("quotes").insert(quote).select("*").single();
+  const quoteInsert = {
+    id: quote.id,
+    quote_number: quote.quote_number,
+    contact_id: quote.contact_id,
+    services: quote.services,
+    subtotal: quote.subtotal,
+    tax_rate: quote.tax_rate,
+    tax_amount: quote.tax_amount,
+    total: quote.total,
+    status: quote.status,
+    valid_until: quote.valid_until,
+    created_at: quote.created_at,
+  };
+
+  let { data, error } = await supabase
+    .from("quotes")
+    .insert(
+      quote.global_notes
+        ? {
+            ...quoteInsert,
+            global_notes: quote.global_notes,
+          }
+        : quoteInsert
+    )
+    .select("*")
+    .single();
+
+  if (error && isMissingGlobalNotesColumnError(error.message)) {
+    const fallbackResult = await supabase.from("quotes").insert(quoteInsert).select("*").single();
+    data = fallbackResult.data;
+    error = fallbackResult.error;
+  }
 
   if (error) {
     return { success: false, message: error.message };
@@ -339,12 +480,27 @@ export const createQuote = async (payload: {
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/quotes");
 
-  return { success: true, data: data as Quote, message: "Quote created successfully." };
+  return {
+    success: true,
+    data: {
+      ...(data as Quote),
+      global_notes: quote.global_notes,
+    },
+    message: "Quote created successfully.",
+  };
 };
 
-export const sendQuoteEmail = async (
-  quoteId: string
-): Promise<ActionResult<{ quote: Quote; email: SentEmail | null }>> => {
+const sendQuoteEmailInternal = async ({
+  quoteId,
+  template,
+  buildSubject,
+  buildHtml,
+}: {
+  quoteId: string;
+  template: SentEmail["template"];
+  buildSubject: (quote: Quote) => string;
+  buildHtml: (contact: Contact, quote: Quote, services: QuoteServiceItem[]) => string;
+}): Promise<ActionResult<{ quote: Quote; email: SentEmail | null }>> => {
   const mockContacts = getMockContacts();
   const mockQuotes = getMockQuotes();
 
@@ -358,8 +514,8 @@ export const sendQuoteEmail = async (
     return { success: false, message: "Quote or contact not found." };
   }
 
-  // Generate PDF attachment
   const pdfBuffer = generateQuotePDF(quote, contact, quote.services);
+  const subject = buildSubject(quote);
 
   let status: SentEmail["status"] = isResendConfigured() ? "sent" : "queued";
   let message = isResendConfigured()
@@ -372,8 +528,8 @@ export const sendQuoteEmail = async (
       const response = await resend?.emails.send({
         from: DEFAULT_FROM_EMAIL,
         to: [contact.email],
-        subject: `Your AIeasy Quote ${quote.quote_number}`,
-        html: buildQuoteEmailHtml(contact, quote, quote.services),
+        subject,
+        html: buildHtml(contact, quote, quote.services),
         attachments: [
           {
             filename: `AIeasy-Quote-${quote.quote_number}.pdf`,
@@ -416,8 +572,8 @@ export const sendQuoteEmail = async (
   const emailRecord = await insertSentEmail({
     to_email: contact.email,
     to_name: contact.name,
-    subject: `Your AIeasy Quote ${updatedQuote.quote_number}`,
-    template: "quote_delivery",
+    subject,
+    template,
     status,
     sent_at: new Date().toISOString(),
   });
@@ -435,8 +591,8 @@ export const sendQuoteEmail = async (
           id: crypto.randomUUID(),
           to_email: contact.email,
           to_name: contact.name,
-          subject: `Your AIeasy Quote ${updatedQuote.quote_number}`,
-          template: "quote_delivery",
+          subject,
+          template,
           status,
           sent_at: new Date().toISOString(),
         },
@@ -444,3 +600,23 @@ export const sendQuoteEmail = async (
     message,
   };
 };
+
+export const sendQuoteEmail = async (
+  quoteId: string
+): Promise<ActionResult<{ quote: Quote; email: SentEmail | null }>> =>
+  sendQuoteEmailInternal({
+    quoteId,
+    template: "quote_delivery",
+    buildSubject: (quote) => `Your AIeasy Quote ${quote.quote_number}`,
+    buildHtml: buildQuoteEmailHtml,
+  });
+
+export const sendQuoteWithAcceptButton = async (
+  quoteId: string
+): Promise<ActionResult<{ quote: Quote; email: SentEmail | null }>> =>
+  sendQuoteEmailInternal({
+    quoteId,
+    template: "quote_with_accept",
+    buildSubject: (quote) => `Review and accept your AIeasy quote ${quote.quote_number}`,
+    buildHtml: buildQuoteWithAcceptEmailHtml,
+  });
