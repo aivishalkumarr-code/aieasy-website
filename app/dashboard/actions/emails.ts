@@ -67,7 +67,7 @@ export const sendEmail = async (payload: {
     to_email: payload.toEmail.trim().toLowerCase(),
     to_name: payload.toName?.trim() || null,
     subject: payload.subject.trim(),
-    template: payload.template?.trim() || null,
+    template: payload.template || null,
     status,
     sent_at: new Date().toISOString(),
   };

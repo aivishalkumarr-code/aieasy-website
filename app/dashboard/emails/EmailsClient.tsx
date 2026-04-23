@@ -64,7 +64,7 @@ export function EmailsClient({ initialSentEmails }: EmailsClientProps) {
         toEmail,
         toName,
         subject,
-        template: selectedTemplate?.id,
+        template: selectedTemplate?.id as EmailTemplateId,
         body: personalizedBody,
       });
 
