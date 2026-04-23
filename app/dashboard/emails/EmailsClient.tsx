@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { EMAIL_TEMPLATES, type SentEmail } from "@/types";
+import { EMAIL_TEMPLATES, type EmailTemplateId, type SentEmail } from "@/types";
 
 interface EmailsClientProps {
   initialSentEmails: SentEmail[];
