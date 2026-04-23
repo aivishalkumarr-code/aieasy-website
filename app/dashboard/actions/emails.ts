@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getMockSentEmails } from "@/lib/mock-data";
 import { DEFAULT_FROM_EMAIL, getResendClient, isResendConfigured } from "@/lib/resend";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import type { ActionResult, SentEmail } from "@/types";
+import type { ActionResult, EmailTemplateId, SentEmail } from "@/types";
 
 export const getSentEmails = async (): Promise<SentEmail[]> => {
   if (!isSupabaseConfigured()) {
@@ -34,7 +34,7 @@ export const sendEmail = async (payload: {
   toEmail: string;
   toName?: string;
   subject: string;
-  template?: string;
+  template?: EmailTemplateId;
   body: string;
 }): Promise<ActionResult<SentEmail>> => {
   let status: SentEmail["status"] = isResendConfigured() ? "sent" : "queued";
@@ -67,7 +67,7 @@ export const sendEmail = async (payload: {
     to_email: payload.toEmail.trim().toLowerCase(),
     to_name: payload.toName?.trim() || null,
     subject: payload.subject.trim(),
-    template: payload.template?.trim() || null,
+    template: payload.template || null,
     status,
     sent_at: new Date().toISOString(),
   };

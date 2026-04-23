@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { jsPDF } from "jspdf";
 import { Check, Download, Edit2, FileText, LoaderCircle, Mail, Save, Send, Trash2, X } from "lucide-react";
 
-import { createQuote, sendQuoteEmail } from "@/app/dashboard/actions/quotes";
+import { createQuote, sendQuoteEmail, sendQuoteWithAcceptButton } from "@/app/dashboard/actions/quotes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SERVICE_CATALOG, formatCurrency, type Contact, type Quote, type QuoteServiceItem, type ServiceKey } from "@/types";
@@ -322,11 +322,13 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
     setActiveTab("history");
   };
 
-  const handleSendQuote = async (quoteId: string) => {
+  const handleSendQuote = async (quoteId: string, mode: "simple" | "accept" = "simple") => {
     setIsSending(quoteId);
     setFeedback(null);
 
-    const result = await sendQuoteEmail(quoteId);
+    const result = mode === "accept" 
+      ? await sendQuoteWithAcceptButton(quoteId)
+      : await sendQuoteEmail(quoteId);
 
     setIsSending(null);
 
@@ -343,7 +345,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
       setCreatedQuoteId(null);
     }
     
-    setFeedback("Quote email sent successfully!");
+    setFeedback(mode === "accept" ? "Quote with Accept button sent successfully!" : "Quote email sent successfully!");
   };
 
   const downloadPDF = () => {
@@ -651,18 +653,33 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                     <p className="text-sm text-[#6B7280]">Ready to send to {contact?.name}</p>
                   </div>
                 </div>
-                <Button
-                  onClick={() => handleSendQuote(createdQuoteId)}
-                  disabled={isSending === createdQuoteId}
-                  className="h-11 rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
-                >
-                  {isSending === createdQuoteId ? (
-                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="mr-2 h-4 w-4" />
-                  )}
-                  Send Quote Email
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleSendQuote(createdQuoteId, "simple")}
+                    disabled={isSending === createdQuoteId}
+                    className="h-11 rounded-xl border-[#0D9488]/50 bg-white text-[#0D9488] hover:bg-[#0D9488]/10"
+                  >
+                    {isSending === createdQuoteId ? (
+                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="mr-2 h-4 w-4" />
+                    )}
+                    Simple Send
+                  </Button>
+                  <Button
+                    onClick={() => handleSendQuote(createdQuoteId, "accept")}
+                    disabled={isSending === createdQuoteId}
+                    className="h-11 rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+                  >
+                    {isSending === createdQuoteId ? (
+                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="mr-2 h-4 w-4" />
+                    )}
+                    Send with Accept Button
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -716,18 +733,35 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                       <td className="py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           {quote.status === "Draft" && (
-                            <Button
-                              size="sm"
-                              disabled={isSending === quote.id}
-                              onClick={() => handleSendQuote(quote.id)}
-                              className="h-9 rounded-lg bg-[#0D9488] text-white hover:bg-[#0F766E]"
-                            >
-                              {isSending === quote.id ? (
-                                <LoaderCircle className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <Mail className="h-4 w-4" />
-                              )}
-                            </Button>
+                            <div className="flex items-center gap-1">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={isSending === quote.id}
+                                onClick={() => handleSendQuote(quote.id, "simple")}
+                                className="h-9 rounded-lg border-[#DDE7E3] bg-white"
+                                title="Send simple email"
+                              >
+                                {isSending === quote.id ? (
+                                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Mail className="h-4 w-4" />
+                                )}
+                              </Button>
+                              <Button
+                                size="sm"
+                                disabled={isSending === quote.id}
+                                onClick={() => handleSendQuote(quote.id, "accept")}
+                                className="h-9 rounded-lg bg-[#0D9488] text-white hover:bg-[#0F766E]"
+                                title="Send with Accept button"
+                              >
+                                {isSending === quote.id ? (
+                                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Send className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
                           )}
                         </div>
                       </td>
