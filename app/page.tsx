@@ -159,7 +159,7 @@ export default function HomePage() {
           <div className="grid gap-16 lg:grid-cols-[minmax(0,1fr)_520px] lg:items-center">
             <AnimatedSection className="space-y-8">
               <Badge className="rounded-full bg-[#0D9488]/10 px-4 py-2 text-sm font-medium text-[#0D9488] hover:bg-[#0D9488]/10">
-                Premium AI solutions company in Delhi
+                Premium AI solutions company in India
               </Badge>
               <div className="space-y-6">
                 <h1 className="max-w-3xl text-balance text-5xl font-semibold tracking-tight text-[#1A1A1A] sm:text-6xl">
