@@ -31,7 +31,7 @@ const formatDate = (value: string) =>
 
 export function EmailsClient({ initialSentEmails }: EmailsClientProps) {
   const [emails, setEmails] = useState(initialSentEmails);
-  const [templateId, setTemplateId] = useState(EMAIL_TEMPLATES[0]?.id ?? "");
+  const [templateId, setTemplateId] = useState<string>(EMAIL_TEMPLATES[0]?.id ?? "");
   const defaultTemplate = EMAIL_TEMPLATES[0];
   const [toName, setToName] = useState("");
   const [toEmail, setToEmail] = useState("");

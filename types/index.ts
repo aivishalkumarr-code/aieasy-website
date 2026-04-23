@@ -7,6 +7,11 @@ export type DealStage =
   | "Won";
 export type QuoteStatus = "Draft" | "Sent" | "Accepted" | "Expired";
 export type EmailStatus = "queued" | "sent" | "failed";
+export type EmailTemplateId =
+  | "intro"
+  | "proposal_followup"
+  | "quote_delivery"
+  | "quote_with_accept";
 export type ServiceKey =
   | "ai_automation"
   | "ai_web_app"
@@ -68,7 +73,7 @@ export interface SentEmail {
   to_email: string;
   to_name: string | null;
   subject: string;
-  template: string | null;
+  template: EmailTemplateId | null;
   status: EmailStatus;
   sent_at: string;
 }
@@ -90,7 +95,7 @@ export interface ServiceCatalogItem {
 }
 
 export interface EmailTemplate {
-  id: string;
+  id: EmailTemplateId;
   name: string;
   subject: string;
   body: string;
@@ -191,6 +196,13 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
     subject: "Your AIeasy quote is ready",
     body:
       "Hi {{name}},\n\nYour quote is ready. I have attached the pricing summary and key deliverables for review. Let me know if you want alternate service combinations or phased implementation options.\n\nBest,\nAIeasy",
+  },
+  {
+    id: "quote_with_accept",
+    name: "Quote with accept option",
+    subject: "Review and accept your AIeasy quote",
+    body:
+      "Hi {{name}},\n\nYour quote is ready. I have attached the pricing summary and included an accept link so you can approve the quote directly when you're ready.\n\nBest,\nAIeasy",
   },
 ];
 
