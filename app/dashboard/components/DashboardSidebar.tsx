@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   FileText,
+  Globe,
   LayoutDashboard,
   LogOut,
   Mail,
@@ -23,6 +24,7 @@ const navigation = [
   { href: "/dashboard/quotes", label: "Quotes", icon: FileText },
   { href: "/dashboard/emails", label: "Emails", icon: Mail },
   { href: "/dashboard/seo", label: "SEO Tools", icon: Search },
+  { href: "/dashboard/partners", label: "Partners", icon: Globe },
 ];
 
 interface DashboardSidebarProps {
@@ -34,7 +36,6 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
 
   const handleSignOut = async () => {
     await signOut();
-    // Hard navigation to login for instant feel
     window.location.href = "/login";
   };
 
@@ -42,7 +43,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
     <aside
       className={cn(
         "flex h-full flex-col rounded-[2rem] border border-[#DDE7E3] bg-white p-5 shadow-card",
-        className
+        className,
       )}
     >
       <div>
@@ -50,14 +51,14 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
           href="/dashboard"
           className="flex items-center gap-3 transition-opacity hover:opacity-80"
         >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#0D9488] text-white font-semibold">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#0D9488] font-semibold text-white">
             AE
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0D9488]">
               AIeasy
             </p>
-            <p className="text-sm text-[#6B7280] truncate">Operations</p>
+            <p className="truncate text-sm text-[#6B7280]">Operations</p>
           </div>
         </Link>
 
@@ -75,7 +76,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
                   "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-150",
                   active
                     ? "bg-[#0D9488] text-white shadow-sm"
-                    : "text-[#4B5563] hover:bg-[#F4F6F2] hover:text-[#1A1A1A]"
+                    : "text-[#4B5563] hover:bg-[#F4F6F2] hover:text-[#1A1A1A]",
                 )}
               >
                 <Icon className="h-4 w-4 shrink-0" />

@@ -33,6 +33,8 @@ const services = [
   "AI Content",
   "Software Development",
   "IVR Setup",
+  "AI Agents",
+  "Generative AI Solutions",
 ] as const;
 
 const budgetRanges = [
@@ -326,7 +328,7 @@ export function LeadForm() {
                     <FormControl>
                       <Textarea
                         placeholder="Describe the workflow, customer experience, or AI use case you want to improve."
-                        className="min-h-32 rounded-[1.25rem] border-[#E5E7EB] bg-[#FAFAF8] resize-none"
+                        className="min-h-32 resize-none rounded-[1.25rem] border-[#E5E7EB] bg-[#FAFAF8]"
                         {...field}
                       />
                     </FormControl>

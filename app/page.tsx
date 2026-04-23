@@ -1,102 +1,88 @@
-import {
-  ArrowRight,
-  Code,
-  Cpu,
-  FileText,
-  Globe,
-  Phone,
-  Palette,
-  Sparkles,
-  TrendingUp,
-} from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight, Sparkles } from "lucide-react";
 
-import { AIDemoChat } from "@/app/components/AIDemoChat";
 import { AnimatedSection } from "@/app/components/AnimatedSection";
 import { BlogCard } from "@/app/components/BlogCard";
-import { CaseStudyCard } from "@/app/components/CaseStudyCard";
+import { DeployOnSection } from "@/app/components/DeployOnSection";
+import { Footer } from "@/app/components/Footer";
 import { LeadForm } from "@/app/components/LeadForm";
 import { Navigation } from "@/app/components/Navigation";
 import { ServiceCard } from "@/app/components/ServiceCard";
+import { TestimonialCard } from "@/app/components/TestimonialCard";
+import { serviceIconMap } from "@/app/services/icon-map";
+import { SERVICE_PAGE_LIST } from "@/app/services/service-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-const services = [
-  {
-    icon: Cpu,
-    title: "AI Automation",
-    description:
-      "Replace repetitive manual operations with AI workflows that move data, triage requests, and trigger actions automatically.",
-    href: "#contact",
-  },
-  {
-    icon: Globe,
-    title: "AI Web Apps",
-    description:
-      "Launch productized AI experiences with custom dashboards, model orchestration, secure auth, and analytics-ready interfaces.",
-    href: "#demo",
-  },
-  {
-    icon: Palette,
-    title: "Website Design",
-    description:
-      "Design premium conversion-focused websites with clear messaging, lightweight interactions, and polished responsive systems.",
-    href: "#blog",
-  },
-  {
-    icon: TrendingUp,
-    title: "AI Marketing",
-    description:
-      "Connect campaign strategy, performance tracking, and AI-assisted execution to drive more qualified pipeline.",
-    href: "#contact",
-  },
-  {
-    icon: FileText,
-    title: "AI Content",
-    description:
-      "Build repeatable content engines for thought leadership, SEO pages, sales collateral, and multi-channel repurposing.",
-    href: "#blog",
-  },
-  {
-    icon: Code,
-    title: "Software Dev",
-    description:
-      "Ship full-stack systems that blend product design, application engineering, AI integrations, and maintainable architecture.",
-    href: "#case-studies",
-  },
-  {
-    icon: Phone,
-    title: "IVR Setup",
-    description:
-      "Deploy AI-assisted voice systems for qualification, routing, support triage, and appointment capture across channels.",
-    href: "#contact",
-  },
-] as const;
+export const metadata: Metadata = {
+  title: "AIeasy | Premium AI solutions company in Delhi",
+  description:
+    "AIeasy designs, automates, and ships AI experiences for service businesses across automation, software, web, and generative AI.",
+};
 
-const caseStudies = [
+const services = SERVICE_PAGE_LIST.map((service) => ({
+  icon: serviceIconMap[service.iconName],
+  title: service.name,
+  description: service.description,
+  href: `/services/${service.slug}`,
+}));
+
+const testimonials = [
   {
-    title: "Lead Qualification Copilot for a Consulting Firm",
-    category: "AI Automation",
-    description:
-      "Built a lead intake workflow that scored inbound requests, enriched company data, and delivered instant follow-up recommendations.",
-    results: ["62% faster response", "3.1x more qualified leads", "12 hrs saved/week"],
-    slug: "lead-qualification-copilot",
+    name: "Aarav Mehta",
+    role: "CTO",
+    company: "Northstar Labs",
+    rating: 5,
+    quote:
+      "AIeasy transformed our lead qualification workflow. Response times dropped 62% and we're closing 3x more qualified deals.",
+    initials: "AM",
   },
   {
-    title: "Growth Website for an AI SaaS Product",
-    category: "Website Design",
-    description:
-      "Redesigned the marketing site with clearer positioning, modular CMS sections, and a stronger conversion path for enterprise demos.",
-    results: ["41% more demo requests", "34% lower bounce", "Core Web Vitals pass"],
-    slug: "growth-website-ai-saas",
+    name: "Sophia Carter",
+    role: "Head of Growth",
+    company: "BrightFrame",
+    rating: 5,
+    quote:
+      "The website redesign + AI content engine they built delivered 41% more demo requests in the first 90 days.",
+    initials: "SC",
   },
   {
-    title: "Operations Dashboard for Multi-Location Support",
-    category: "AI Web Apps",
-    description:
-      "Created a central dashboard for teams to review support trends, automate escalations, and summarize outcomes with AI.",
-    results: ["2.4x faster triage", "Unified reporting", "Lower manual workload"],
-    slug: "operations-dashboard-support",
+    name: "Ishaan Kapoor",
+    role: "Founder",
+    company: "PulseOps",
+    rating: 5,
+    quote:
+      "Their team understood our operations complexity immediately. The dashboard they built is 2.4x faster for our support triage.",
+    initials: "IK",
+  },
+  {
+    name: "Maya Chen",
+    role: "VP Marketing",
+    company: "Atlas Growth",
+    rating: 5,
+    quote:
+      "The AI content engine produces SEO-ready briefs at scale. Our organic traffic is up 78% in 6 months.",
+    initials: "MC",
+  },
+  {
+    name: "Rohan Gupta",
+    role: "CEO",
+    company: "CallPilot",
+    rating: 5,
+    quote:
+      "IVR setup was seamless. Call qualification accuracy went from 60% to 91% and appointment booking doubled.",
+    initials: "RG",
+  },
+  {
+    name: "Priya Sharma",
+    role: "Operations Director",
+    company: "TechBridge",
+    rating: 5,
+    quote:
+      "AIeasy built custom AI agents that now handle our entire onboarding flow. 15 hours saved per week per team member.",
+    initials: "PS",
   },
 ] as const;
 
@@ -159,7 +145,7 @@ export default function HomePage() {
           <div className="grid gap-16 lg:grid-cols-[minmax(0,1fr)_520px] lg:items-center">
             <AnimatedSection className="space-y-8">
               <Badge className="rounded-full bg-[#0D9488]/10 px-4 py-2 text-sm font-medium text-[#0D9488] hover:bg-[#0D9488]/10">
-                Premium AI solutions company in India
+                Premium AI solutions company in Delhi
               </Badge>
               <div className="space-y-6">
                 <h1 className="max-w-3xl text-balance text-5xl font-semibold tracking-tight text-[#1A1A1A] sm:text-6xl">
@@ -175,17 +161,10 @@ export default function HomePage() {
                   asChild
                   className="h-12 rounded-full bg-[#0D9488] px-6 text-sm font-medium hover:bg-[#14B8A6]"
                 >
-                  <a href="#contact">
+                  <Link href="/contact">
                     Start a project
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="h-12 rounded-full border-[#E5E7EB] bg-white px-6 text-sm font-medium text-[#1A1A1A]"
-                >
-                  <a href="#demo">Explore the AI demo</a>
+                  </Link>
                 </Button>
               </div>
               <div className="grid gap-4 sm:grid-cols-3">
@@ -244,9 +223,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        <Separator className="container my-20 bg-[#E5E7EB]" />
+        <DeployOnSection />
 
-        <section id="services" className="container scroll-mt-28">
+        <Separator className="container my-4 bg-[#E5E7EB]" />
+
+        <section id="services" className="container scroll-mt-28 py-20">
           <AnimatedSection className="mb-10 max-w-2xl space-y-4">
             <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
               Services
@@ -268,67 +249,22 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="demo" className="container scroll-mt-28 py-24">
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center">
-            <AnimatedSection className="space-y-6">
-              <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
-                Demo
-              </p>
-              <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
-                Let prospects experience your AI value before the first call.
-              </h2>
-              <p className="text-lg leading-8 text-[#6B7280]">
-                Use simulated assistants, embedded qualification, and curated
-                prompts to turn a static website into an interactive buying
-                experience.
-              </p>
-              <div className="grid gap-4">
-                {[
-                  "Keyword-based response simulation for fast demos",
-                  "Reusable chat shell for product showcases",
-                  "Connected forms and CTAs for lead capture",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-[1.25rem] border border-[#E5E7EB] bg-white px-5 py-4 text-sm text-[#1A1A1A]"
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </AnimatedSection>
-            <AnimatedSection delay={0.1} direction="left">
-              <AIDemoChat />
-            </AnimatedSection>
-          </div>
-        </section>
-
-        <section id="case-studies" className="container scroll-mt-28">
-          <AnimatedSection className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl space-y-4">
-              <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
-                Case Studies
-              </p>
-              <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
-                Selected work across product, automation, and growth.
-              </h2>
-            </div>
-            <p className="max-w-xl text-lg leading-8 text-[#6B7280]">
-              Reusable case study cards highlight context, impact, and the
-              services behind each engagement.
+        <section id="testimonials" className="container scroll-mt-28 py-24">
+          <AnimatedSection className="mb-10 max-w-2xl space-y-4">
+            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+              Testimonials
+            </p>
+            <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
+              Results that earn long-term trust.
+            </h2>
+            <p className="text-lg leading-8 text-[#6B7280]">
+              A snapshot of what clients say after shipping automation, websites, dashboards, and AI systems with AIeasy.
             </p>
           </AnimatedSection>
-          <div className="grid gap-6 lg:grid-cols-3">
-            {caseStudies.map((caseStudy, index) => (
-              <AnimatedSection
-                key={caseStudy.slug}
-                delay={index * 0.05}
-                direction="up"
-              >
-                <CaseStudyCard
-                  {...caseStudy}
-                  imageUrl={createPlaceholder(caseStudy.title, "#0D9488")}
-                />
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {testimonials.map((testimonial, index) => (
+              <AnimatedSection key={`${testimonial.name}-${testimonial.company}`} delay={index * 0.05}>
+                <TestimonialCard {...testimonial} />
               </AnimatedSection>
             ))}
           </div>
@@ -398,6 +334,7 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+      <Footer />
     </>
   );
 }

@@ -6,6 +6,7 @@ import {
   type Contact,
   type Deal,
   type EmailTemplateId,
+  type PartnerLogo,
   type Quote,
   type QuoteServiceItem,
   type SEOSetting,
@@ -125,19 +126,21 @@ const deals: Deal[] = [
 ];
 
 const buildQuoteServiceItems = (keys: ServiceKey[]): QuoteServiceItem[] => {
-  const catalogMap = new Map(SERVICE_CATALOG.map(s => [s.key, s]));
-  return keys.map(key => {
-    const service = catalogMap.get(key);
-    if (!service) return null;
-    return {
-      key: service.key,
-      label: service.label,
-      description: service.description,
-      basePrice: service.price,
-      customPrice: service.price,
-      notes: "",
-    };
-  }).filter((item): item is QuoteServiceItem => item !== null);
+  const catalogMap = new Map(SERVICE_CATALOG.map((service) => [service.key, service]));
+  return keys
+    .map((key) => {
+      const service = catalogMap.get(key);
+      if (!service) return null;
+      return {
+        key: service.key,
+        label: service.label,
+        description: service.description,
+        basePrice: service.price,
+        customPrice: service.price,
+        notes: "",
+      };
+    })
+    .filter((item): item is QuoteServiceItem => item !== null);
 };
 
 const quotes: Quote[] = [
@@ -179,7 +182,7 @@ const sentEmails: SentEmail[] = [
     to_email: "sophia@brightframe.co",
     to_name: "Sophia Carter",
     subject: EMAIL_TEMPLATES[1].subject,
-    template: "proposal_followup" as const,
+    template: "proposal_followup" as EmailTemplateId,
     status: "sent",
     sent_at: "2026-04-19T08:30:00.000Z",
   },
@@ -188,7 +191,7 @@ const sentEmails: SentEmail[] = [
     to_email: "ishaan@pulseops.io",
     to_name: "Ishaan Kapoor",
     subject: EMAIL_TEMPLATES[2].subject,
-    template: "quote_delivery" as const,
+    template: "quote_delivery" as EmailTemplateId,
     status: "sent",
     sent_at: "2026-04-17T17:10:00.000Z",
   },
@@ -209,11 +212,49 @@ const seoSettings: SEOSetting[] = SEO_PAGE_OPTIONS.map((pagePath, index) => ({
   og_image: "/og-default.png",
 }));
 
+export const DEFAULT_PARTNERS: PartnerLogo[] = [
+  {
+    id: "partner-1",
+    name: "Azure",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Microsoft_Azure.svg",
+    url: "https://azure.microsoft.com",
+    display_order: 1,
+  },
+  {
+    id: "partner-2",
+    name: "AWS",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+    url: "https://aws.amazon.com",
+    display_order: 2,
+  },
+  {
+    id: "partner-3",
+    name: "IBM Cloud",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
+    url: "https://cloud.ibm.com",
+    display_order: 3,
+  },
+  {
+    id: "partner-4",
+    name: "Google Cloud",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg",
+    url: "https://cloud.google.com",
+    display_order: 4,
+  },
+  {
+    id: "partner-5",
+    name: "STACKIT",
+    image_url: "https://www.stackit.de/stackit-logo.svg",
+    url: "https://www.stackit.de",
+    display_order: 5,
+  },
+];
+
 export const getMockContacts = () => contacts.map((contact) => ({ ...contact }));
 export const getMockDeals = () => deals.map((deal) => ({ ...deal }));
 export const getMockQuotes = () => quotes.map((quote) => ({ ...quote, services: [...quote.services] }));
 export const getMockSentEmails = () => sentEmails.map((email) => ({ ...email }));
 export const getMockSEOSettings = () => seoSettings.map((setting) => ({ ...setting }));
+export const getMockPartners = () => DEFAULT_PARTNERS.map((partner) => ({ ...partner }));
 
-export const getMockQuoteServices = (serviceItems: QuoteServiceItem[]) =>
-  serviceItems;
+export const getMockQuoteServices = (serviceItems: QuoteServiceItem[]) => serviceItems;

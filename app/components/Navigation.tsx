@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,26 +15,32 @@ import {
 } from "@/components/ui/sheet";
 
 const links = [
-  { label: "Services", href: "#services" },
-  { label: "Demo", href: "#demo" },
-  { label: "Case Studies", href: "#case-studies" },
-  { label: "Blog", href: "#blog" },
-  { label: "Contact", href: "#contact" },
+  { label: "Services", href: "/#services" },
+  { label: "Testimonials", href: "/#testimonials" },
+  { label: "Blog", href: "/#blog" },
+  { label: "Contact", href: "/contact" },
 ] as const;
 
 export function Navigation() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
-  const handleNavigate = (href: string) => {
-    const target = document.querySelector(href);
-
-    if (!target) {
+  const handleAnchorClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (pathname !== "/" || !href.startsWith("/#")) {
+      setOpen(false);
       return;
     }
 
-    const top = target.getBoundingClientRect().top + window.scrollY - 96;
+    const target = document.querySelector(href.slice(1));
 
-    window.scrollTo({ top, behavior: "smooth" });
+    if (!target) {
+      setOpen(false);
+      return;
+    }
+
+    event.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.history.replaceState(null, "", href);
     setOpen(false);
   };
 
@@ -46,24 +53,20 @@ export function Navigation() {
 
         <nav className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
-            <button
+            <Link
               key={link.href}
-              type="button"
-              onClick={() => handleNavigate(link.href)}
+              href={link.href}
+              onClick={(event) => handleAnchorClick(event, link.href)}
               className="text-sm font-medium text-[#6B7280] transition-colors hover:text-[#1A1A1A]"
             >
               {link.label}
-            </button>
+            </Link>
           ))}
         </nav>
 
         <div className="hidden md:block">
-          <Button
-            type="button"
-            onClick={() => handleNavigate("#contact")}
-            className="rounded-full bg-[#0D9488] px-5 hover:bg-[#14B8A6]"
-          >
-            Start a project
+          <Button asChild className="rounded-full bg-[#0D9488] px-5 hover:bg-[#14B8A6]">
+            <Link href="/contact">Start a project</Link>
           </Button>
         </div>
 
@@ -86,21 +89,19 @@ export function Navigation() {
             </SheetHeader>
             <div className="mt-10 flex flex-col gap-3">
               {links.map((link) => (
-                <button
+                <Link
                   key={link.href}
-                  type="button"
-                  onClick={() => handleNavigate(link.href)}
+                  href={link.href}
+                  onClick={(event) => handleAnchorClick(event, link.href)}
                   className="rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 text-left text-sm font-medium text-[#1A1A1A] transition-colors hover:border-[#0D9488] hover:text-[#0D9488]"
                 >
                   {link.label}
-                </button>
+                </Link>
               ))}
-              <Button
-                type="button"
-                onClick={() => handleNavigate("#contact")}
-                className="mt-2 rounded-full bg-[#0D9488] hover:bg-[#14B8A6]"
-              >
-                Start a project
+              <Button asChild className="mt-2 rounded-full bg-[#0D9488] hover:bg-[#14B8A6]">
+                <Link href="/contact" onClick={() => setOpen(false)}>
+                  Start a project
+                </Link>
               </Button>
             </div>
           </SheetContent>

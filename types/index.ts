@@ -19,7 +19,9 @@ export type ServiceKey =
   | "ai_marketing"
   | "ai_content"
   | "software_development"
-  | "ivr_setup";
+  | "ivr_setup"
+  | "ai_agents"
+  | "generative_ai";
 
 export interface Contact {
   id: string;
@@ -87,6 +89,22 @@ export interface SEOSetting {
   og_image: string | null;
 }
 
+export interface PartnerLogo {
+  id: string;
+  name: string;
+  image_url: string;
+  url: string | null;
+  display_order: number;
+  created_at?: string;
+}
+
+export interface PartnerInput {
+  name: string;
+  image_url: string;
+  url?: string | null;
+  display_order: number;
+}
+
 export interface ServiceCatalogItem {
   key: ServiceKey;
   label: string;
@@ -139,8 +157,8 @@ export const SERVICE_CATALOG: ServiceCatalogItem[] = [
   },
   {
     key: "ai_web_app",
-    label: "AI Web App",
-    description: "Custom AI-powered internal or customer-facing web application.",
+    label: "AI Web Apps",
+    description: "Custom AI-powered internal or customer-facing web applications.",
     price: 150000,
   },
   {
@@ -172,6 +190,20 @@ export const SERVICE_CATALOG: ServiceCatalogItem[] = [
     label: "IVR Setup",
     description: "Voice assistant setup, call routing, and appointment capture.",
     price: 60000,
+  },
+  {
+    key: "ai_agents",
+    label: "AI Agents",
+    description:
+      "Fully autonomous AI agents that handle complex workflows, decision making, and multi-step tasks.",
+    price: 125000,
+  },
+  {
+    key: "generative_ai",
+    label: "Generative AI Solutions",
+    description:
+      "Custom GenAI tools, content engines, image/video generation, and intelligent document processing.",
+    price: 110000,
   },
 ];
 
@@ -219,6 +251,7 @@ export const SEO_PAGE_OPTIONS = [
   "/dashboard/quotes",
   "/dashboard/emails",
   "/dashboard/seo",
+  "/dashboard/partners",
 ] as const;
 
 export const formatCurrency = (value: number) =>

@@ -38,6 +38,10 @@ const pageMeta: Record<string, { title: string; description: string }> = {
     title: "SEO tools",
     description: "Edit metadata and OG settings across primary pages.",
   },
+  "/dashboard/partners": {
+    title: "Partners",
+    description: "Manage deployment platform logos shown on the homepage.",
+  },
 };
 
 interface DashboardHeaderProps {

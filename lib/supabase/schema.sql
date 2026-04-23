@@ -142,3 +142,22 @@ on public.seo_settings
 for all
 using (auth.role() = 'authenticated')
 with check (auth.role() = 'authenticated');
+
+create table if not exists public.partner_logos (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  image_url text not null,
+  url text,
+  display_order integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists partner_logos_display_order_idx on public.partner_logos(display_order);
+
+alter table public.partner_logos enable row level security;
+
+create policy "authenticated can manage partner logos"
+on public.partner_logos
+for all
+using (auth.role() = 'authenticated')
+with check (auth.role() = 'authenticated');
