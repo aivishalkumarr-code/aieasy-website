@@ -39,11 +39,20 @@ export interface Deal {
   created_at?: string;
 }
 
+export interface QuoteServiceItem {
+  key: ServiceKey;
+  label: string;
+  description: string;
+  basePrice: number;
+  customPrice: number;
+  notes: string;
+}
+
 export interface Quote {
   id: string;
   quote_number: string;
   contact_id: string;
-  services: ServiceKey[];
+  services: QuoteServiceItem[];
   subtotal: number;
   tax_rate: number;
   tax_amount: number;
@@ -51,6 +60,7 @@ export interface Quote {
   status: QuoteStatus;
   valid_until: string;
   created_at?: string;
+  global_notes?: string | null;
 }
 
 export interface SentEmail {
@@ -120,43 +130,43 @@ export const SERVICE_CATALOG: ServiceCatalogItem[] = [
     key: "ai_automation",
     label: "AI Automation",
     description: "Workflow automation, qualification logic, and system orchestration.",
-    price: 2200,
+    price: 75000,
   },
   {
     key: "ai_web_app",
     label: "AI Web App",
     description: "Custom AI-powered internal or customer-facing web application.",
-    price: 4800,
+    price: 150000,
   },
   {
     key: "website_design",
     label: "Website Design",
     description: "High-converting responsive website design and implementation.",
-    price: 1800,
+    price: 50000,
   },
   {
     key: "ai_marketing",
     label: "AI Marketing",
     description: "Campaign systems, reporting automation, and lead nurturing flows.",
-    price: 1600,
+    price: 40000,
   },
   {
     key: "ai_content",
     label: "AI Content",
     description: "SEO content engine, editorial workflows, and content repurposing.",
-    price: 1300,
+    price: 25000,
   },
   {
     key: "software_development",
     label: "Software Development",
     description: "Full-stack feature delivery, integrations, and platform engineering.",
-    price: 5200,
+    price: 200000,
   },
   {
     key: "ivr_setup",
     label: "IVR Setup",
     description: "Voice assistant setup, call routing, and appointment capture.",
-    price: 2100,
+    price: 60000,
   },
 ];
 
@@ -200,9 +210,9 @@ export const SEO_PAGE_OPTIONS = [
 ] as const;
 
 export const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("en-US", {
+  new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     maximumFractionDigits: 0,
   }).format(value);
 

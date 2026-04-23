@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import { DashboardHeader } from "@/app/dashboard/components/DashboardHeader";
 import { DashboardSidebar } from "@/app/dashboard/components/DashboardSidebar";
@@ -31,7 +32,9 @@ export default async function DashboardLayout({
 
         <div className="flex min-w-0 flex-1 flex-col gap-4">
           <DashboardHeader userEmail={userEmail} />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            <Suspense fallback={null}>{children}</Suspense>
+          </main>
         </div>
       </div>
     </div>

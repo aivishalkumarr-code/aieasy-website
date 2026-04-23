@@ -6,8 +6,10 @@ import {
   type Contact,
   type Deal,
   type Quote,
+  type QuoteServiceItem,
   type SEOSetting,
   type SentEmail,
+  type ServiceKey,
 } from "@/types";
 
 const contacts: Contact[] = [
@@ -121,12 +123,28 @@ const deals: Deal[] = [
   },
 ];
 
+const buildQuoteServiceItems = (keys: ServiceKey[]): QuoteServiceItem[] => {
+  const catalogMap = new Map(SERVICE_CATALOG.map(s => [s.key, s]));
+  return keys.map(key => {
+    const service = catalogMap.get(key);
+    if (!service) return null;
+    return {
+      key: service.key,
+      label: service.label,
+      description: service.description,
+      basePrice: service.price,
+      customPrice: service.price,
+      notes: "",
+    };
+  }).filter((item): item is QuoteServiceItem => item !== null);
+};
+
 const quotes: Quote[] = [
   {
     id: "quote-1",
     quote_number: "AE-240401",
     contact_id: "contact-2",
-    services: ["website_design", "ai_marketing"],
+    services: buildQuoteServiceItems(["website_design", "ai_marketing"]),
     subtotal: getServiceSubtotal(["website_design", "ai_marketing"]),
     tax_rate: 18,
     tax_amount: Math.round(getServiceSubtotal(["website_design", "ai_marketing"]) * 0.18),
@@ -141,7 +159,7 @@ const quotes: Quote[] = [
     id: "quote-2",
     quote_number: "AE-240402",
     contact_id: "contact-3",
-    services: ["ai_web_app", "software_development"],
+    services: buildQuoteServiceItems(["ai_web_app", "software_development"]),
     subtotal: getServiceSubtotal(["ai_web_app", "software_development"]),
     tax_rate: 18,
     tax_amount: Math.round(getServiceSubtotal(["ai_web_app", "software_development"]) * 0.18),
@@ -196,5 +214,5 @@ export const getMockQuotes = () => quotes.map((quote) => ({ ...quote, services: 
 export const getMockSentEmails = () => sentEmails.map((email) => ({ ...email }));
 export const getMockSEOSettings = () => seoSettings.map((setting) => ({ ...setting }));
 
-export const getMockQuoteServices = (serviceKeys: Quote["services"]) =>
-  SERVICE_CATALOG.filter((service) => serviceKeys.includes(service.key));
+export const getMockQuoteServices = (serviceItems: QuoteServiceItem[]) =>
+  serviceItems;

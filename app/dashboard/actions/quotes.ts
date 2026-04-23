@@ -1,44 +1,258 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { jsPDF } from "jspdf";
 
 import { getContacts } from "@/app/dashboard/actions/crm";
 import {
   getMockContacts,
   getMockQuotes,
-  getMockQuoteServices,
 } from "@/lib/mock-data";
 import { DEFAULT_FROM_EMAIL, getResendClient, isResendConfigured } from "@/lib/resend";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import {
   formatCurrency,
-  getServiceSubtotal,
   type ActionResult,
   type Contact,
   type Quote,
+  type QuoteServiceItem,
   type SentEmail,
-  type ServiceKey,
 } from "@/types";
 
 const buildQuoteNumber = () => `AE-${Date.now().toString().slice(-6)}`;
 
-const buildQuoteEmailHtml = (contact: Contact, quote: Quote) => {
-  const services = getMockQuoteServices(quote.services)
-    .map((service) => `<li>${service.label} — ${formatCurrency(service.price)}</li>`)
+const generateQuotePDF = (
+  quote: Quote,
+  contact: Contact,
+  services: QuoteServiceItem[]
+): Buffer => {
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+  // Header with brand color
+  doc.setFillColor(13, 148, 136);
+  doc.rect(0, 0, 595, 80, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(24);
+  doc.text("AIeasy", 40, 45);
+  doc.setFontSize(12);
+  doc.text("Premium AI Solutions", 40, 65);
+
+  // Quote title
+  doc.setTextColor(26, 26, 26);
+  doc.setFontSize(18);
+  doc.text("QUOTE", 450, 45);
+
+  // Client info
+  doc.setTextColor(26, 26, 26);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text("Prepared for:", 40, 110);
+  doc.setFont("helvetica", "normal");
+  doc.text(contact.name, 120, 110);
+  doc.text(contact.email, 120, 128);
+  if (contact.company) {
+    doc.text(contact.company, 120, 146);
+  }
+
+  // Quote details
+  doc.setFont("helvetica", "bold");
+  doc.text("Quote #:", 380, 110);
+  doc.setFont("helvetica", "normal");
+  doc.text(quote.quote_number, 450, 110);
+  doc.setFont("helvetica", "bold");
+  doc.text("Valid until:", 380, 128);
+  doc.setFont("helvetica", "normal");
+  doc.text(quote.valid_until, 450, 128);
+  doc.setFont("helvetica", "bold");
+  doc.text("Date:", 380, 146);
+  doc.setFont("helvetica", "normal");
+  doc.text(new Date(quote.created_at || Date.now()).toLocaleDateString(), 450, 146);
+
+  // Divider
+  doc.setDrawColor(221, 231, 227);
+  doc.line(40, 170, 555, 170);
+
+  // Services table header
+  let cursorY = 195;
+  doc.setFillColor(248, 250, 249);
+  doc.rect(40, cursorY - 12, 515, 25, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.setTextColor(75, 85, 99);
+  doc.text("Service", 50, cursorY);
+  doc.text("Description", 250, cursorY);
+  doc.text("Price", 520, cursorY, { align: "right" });
+
+  cursorY += 25;
+  doc.setTextColor(26, 26, 26);
+  doc.setFont("helvetica", "normal");
+
+  services.forEach((service) => {
+    // Service name
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.text(service.label, 50, cursorY);
+
+    // Price
+    doc.text(formatCurrency(service.customPrice), 520, cursorY, { align: "right" });
+
+    cursorY += 16;
+
+    // Description
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(107, 114, 128);
+    const splitDescription = doc.splitTextToSize(service.description, 180);
+    doc.text(splitDescription, 50, cursorY);
+
+    // Notes if present
+    if (service.notes) {
+      cursorY += splitDescription.length * 12;
+      doc.setTextColor(13, 148, 136);
+      doc.setFontSize(8);
+      doc.text(`Note: ${service.notes}`, 50, cursorY);
+      doc.setTextColor(107, 114, 128);
+      cursorY += 12;
+    } else {
+      cursorY += splitDescription.length * 12;
+    }
+
+    cursorY += 15;
+    doc.setTextColor(26, 26, 26);
+  });
+
+  // Global notes
+  if (quote.global_notes) {
+    cursorY += 10;
+    doc.setFillColor(236, 253, 245);
+    doc.rect(40, cursorY - 5, 515, 40, "F");
+    doc.setTextColor(13, 148, 136);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text("Additional Notes:", 50, cursorY + 8);
+    doc.setFont("helvetica", "normal");
+    const splitNotes = doc.splitTextToSize(quote.global_notes, 480);
+    doc.text(splitNotes, 50, cursorY + 22);
+    cursorY += 50;
+  }
+
+  // Totals section
+  cursorY += 20;
+  doc.setDrawColor(221, 231, 227);
+  doc.line(320, cursorY - 10, 555, cursorY - 10);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.setTextColor(75, 85, 99);
+  doc.text("Subtotal:", 380, cursorY);
+  doc.text(formatCurrency(quote.subtotal), 545, cursorY, { align: "right" });
+
+  cursorY += 20;
+  doc.text(`Tax (${quote.tax_rate}%):`, 380, cursorY);
+  doc.text(formatCurrency(quote.tax_amount), 545, cursorY, { align: "right" });
+
+  cursorY += 8;
+  doc.setDrawColor(13, 148, 136);
+  doc.setLineWidth(1);
+  doc.line(380, cursorY, 555, cursorY);
+
+  cursorY += 18;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(13, 148, 136);
+  doc.text("Total:", 380, cursorY);
+  doc.text(formatCurrency(quote.total), 545, cursorY, { align: "right" });
+
+  // Footer
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(107, 114, 128);
+  doc.text("AIeasy Solutions Pvt Ltd • Delhi, India", 40, 780);
+  doc.text("contact@aieasy.io • www.aieasy.io", 40, 795);
+
+  // Terms
+  doc.text("Terms: 50% advance, 50% on delivery. Quote valid for 14 days.", 380, 780, { align: "right" });
+
+  return Buffer.from(doc.output("arraybuffer"));
+};
+
+const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServiceItem[]) => {
+  const servicesList = services
+    .map(
+      (service) =>
+        `<tr>
+          <td style="padding: 12px; border-bottom: 1px solid #E5E7EB;">
+            <strong>${service.label}</strong>
+            ${service.notes ? `<br/><span style="font-size: 12px; color: #0D9488;">Note: ${service.notes}</span>` : ""}
+          </td>
+          <td style="padding: 12px; border-bottom: 1px solid #E5E7EB; text-align: right;">
+            ${formatCurrency(service.customPrice)}
+          </td>
+        </tr>`
+    )
     .join("");
 
   return `
-    <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #1a1a1a;">
-      <h2 style="margin-bottom: 8px;">AIeasy quote ${quote.quote_number}</h2>
-      <p>Hi ${contact.name},</p>
-      <p>Thanks for the opportunity. Your quote is attached below as a summary for review.</p>
-      <ul>${services}</ul>
-      <p><strong>Subtotal:</strong> ${formatCurrency(quote.subtotal)}</p>
-      <p><strong>Tax:</strong> ${formatCurrency(quote.tax_amount)}</p>
-      <p><strong>Total:</strong> ${formatCurrency(quote.total)}</p>
-      <p><strong>Valid until:</strong> ${quote.valid_until}</p>
-      <p>Reply to this email if you want alternate scope or phased pricing options.</p>
-      <p>Best,<br/>AIeasy</p>
+    <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto;">
+      <div style="background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%); padding: 40px 30px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 28px;">AIeasy</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0; font-size: 14px;">Premium AI Solutions</p>
+      </div>
+      
+      <div style="padding: 30px; background: #ffffff;">
+        <h2 style="color: #1A1A1A; margin: 0 0 20px; font-size: 20px;">Your Quote is Ready</h2>
+        
+        <p style="color: #4B5563; margin: 0 0 20px;">Hi ${contact.name},</p>
+        
+        <p style="color: #4B5563; margin: 0 0 25px;">
+          Thank you for considering AIeasy. Your personalized quote <strong>#${quote.quote_number}</strong> is attached below for your review.
+        </p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background: #F8FAF9; border-radius: 12px; overflow: hidden;">
+          <thead>
+            <tr style="background: #ECFDF5;">
+              <th style="padding: 12px; text-align: left; color: #0F766E; font-size: 12px; text-transform: uppercase;">Service</th>
+              <th style="padding: 12px; text-align: right; color: #0F766E; font-size: 12px; text-transform: uppercase;">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${servicesList}
+          </tbody>
+        </table>
+        
+        <div style="background: #F8FAF9; padding: 20px; border-radius: 12px; margin: 20px 0;">
+          <div style="display: flex; justify-content: space-between; margin: 0 0 8px; color: #4B5563;">
+            <span>Subtotal:</span>
+            <span>${formatCurrency(quote.subtotal)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin: 0 0 8px; color: #4B5563;">
+            <span>Tax (${quote.tax_rate}%):</span>
+            <span>${formatCurrency(quote.tax_amount)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 2px solid #0D9488; font-weight: bold; font-size: 18px; color: #0D9488;">
+            <span>Total:</span>
+            <span>${formatCurrency(quote.total)}</span>
+          </div>
+        </div>
+        
+        ${quote.global_notes ? `<div style="background: #ECFDF5; padding: 15px; border-radius: 8px; margin: 20px 0; color: #0F766E; font-size: 14px;"><strong>Additional Notes:</strong><br/>${quote.global_notes}</div>` : ""}
+        
+        <p style="color: #4B5563; margin: 25px 0 0;">
+          <strong>Valid until:</strong> ${quote.valid_until}<br/>
+          Please reply to this email if you have any questions or would like to discuss alternate options.
+        </p>
+        
+        <p style="color: #4B5563; margin: 25px 0 0;">
+          Best regards,<br/>
+          <strong style="color: #0D9488;">AIeasy Team</strong>
+        </p>
+      </div>
+      
+      <div style="background: #F4F6F2; padding: 20px 30px; text-align: center; font-size: 12px; color: #6B7280;">
+        AIeasy Solutions Pvt Ltd • Delhi, India<br/>
+        contact@aieasy.io • www.aieasy.io
+      </div>
     </div>
   `;
 };
@@ -83,12 +297,14 @@ export const getQuotes = async (): Promise<Quote[]> => {
 
 export const createQuote = async (payload: {
   contactId: string;
-  services: ServiceKey[];
+  services: QuoteServiceItem[];
   taxRate: number;
   validUntil: string;
+  globalNotes?: string;
 }): Promise<ActionResult<Quote>> => {
-  const subtotal = getServiceSubtotal(payload.services);
+  const subtotal = payload.services.reduce((total, service) => total + service.customPrice, 0);
   const taxAmount = Math.round(subtotal * (payload.taxRate / 100));
+
   const quote: Quote = {
     id: crypto.randomUUID(),
     quote_number: buildQuoteNumber(),
@@ -101,6 +317,7 @@ export const createQuote = async (payload: {
     status: "Draft",
     valid_until: payload.validUntil,
     created_at: new Date().toISOString(),
+    global_notes: payload.globalNotes || null,
   };
 
   if (!isSupabaseConfigured()) {
@@ -122,11 +339,11 @@ export const createQuote = async (payload: {
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/quotes");
 
-  return { success: true, data: data as Quote, message: "Quote created." };
+  return { success: true, data: data as Quote, message: "Quote created successfully." };
 };
 
 export const sendQuoteEmail = async (
-  quoteId: string,
+  quoteId: string
 ): Promise<ActionResult<{ quote: Quote; email: SentEmail | null }>> => {
   const mockContacts = getMockContacts();
   const mockQuotes = getMockQuotes();
@@ -141,6 +358,9 @@ export const sendQuoteEmail = async (
     return { success: false, message: "Quote or contact not found." };
   }
 
+  // Generate PDF attachment
+  const pdfBuffer = generateQuotePDF(quote, contact, quote.services);
+
   let status: SentEmail["status"] = isResendConfigured() ? "sent" : "queued";
   let message = isResendConfigured()
     ? "Quote email sent."
@@ -152,8 +372,14 @@ export const sendQuoteEmail = async (
       const response = await resend?.emails.send({
         from: DEFAULT_FROM_EMAIL,
         to: [contact.email],
-        subject: `Your AIeasy quote ${quote.quote_number}`,
-        html: buildQuoteEmailHtml(contact, quote),
+        subject: `Your AIeasy Quote ${quote.quote_number}`,
+        html: buildQuoteEmailHtml(contact, quote, quote.services),
+        attachments: [
+          {
+            filename: `AIeasy-Quote-${quote.quote_number}.pdf`,
+            content: pdfBuffer.toString("base64"),
+          },
+        ],
       });
 
       if (response?.error) {
@@ -190,7 +416,7 @@ export const sendQuoteEmail = async (
   const emailRecord = await insertSentEmail({
     to_email: contact.email,
     to_name: contact.name,
-    subject: `Your AIeasy quote ${updatedQuote.quote_number}`,
+    subject: `Your AIeasy Quote ${updatedQuote.quote_number}`,
     template: "quote_delivery",
     status,
     sent_at: new Date().toISOString(),
@@ -209,7 +435,7 @@ export const sendQuoteEmail = async (
           id: crypto.randomUUID(),
           to_email: contact.email,
           to_name: contact.name,
-          subject: `Your AIeasy quote ${updatedQuote.quote_number}`,
+          subject: `Your AIeasy Quote ${updatedQuote.quote_number}`,
           template: "quote_delivery",
           status,
           sent_at: new Date().toISOString(),
