@@ -26,45 +26,64 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     return { success: false, message: "Please enter a valid email address." };
   }
 
-  // Prepare lead data
-  const leadData = {
-    name,
+  // Check Supabase is configured
+  if (!isSupabaseConfigured()) {
+    return {
+      success: false,
+      message: "Form submission is currently unavailable. Please try again later.",
+    };
+  }
+
+  const supabase = await createClient();
+
+  if (!supabase) {
+    return {
+      success: false,
+      message: "Unable to connect to database. Please try again later.",
+    };
+  }
+
+  // Format notes from message
+  const notes = `Service Interest: Website Design\nMessage:\n${message.trim()}`;
+
+  // Insert into Supabase (NOT upsert - always create new)
+  // Try insert with all fields including source
+  let insertData: any = {
+    name: name.trim(),
     email: email.toLowerCase().trim(),
     phone: phone.trim(),
     company: businessName?.trim() || null,
-    message: message.trim(),
     status: "New",
-    service_interest: "Website Design",
+    notes: notes,
     source: "Landing Page - Website Design",
+    created_at: new Date().toISOString(),
   };
 
-  // Save to Supabase if configured
-  let savedLead = null;
-  if (isSupabaseConfigured()) {
-    const supabase = await createClient();
-    if (supabase) {
-      try {
-        const { data, error } = await supabase
-          .from("contacts")
-          .upsert(
-            [{
-              ...leadData,
-              created_at: new Date().toISOString(),
-            }],
-            { onConflict: "email" }
-          )
-          .select()
-          .single();
+  let { data, error } = await supabase
+    .from("contacts")
+    .insert(insertData)
+    .select()
+    .single();
 
-        if (error) {
-          console.error("Supabase error:", error);
-        } else {
-          savedLead = data;
-        }
-      } catch (err) {
-        console.error("Supabase save error:", err);
-      }
-    }
+  // If source column doesn't exist, try without it
+  if (error && error.message && error.message.includes("source")) {
+    console.log("Source column missing, trying insert without source field...");
+    delete insertData.source;
+    const result = await supabase
+      .from("contacts")
+      .insert(insertData)
+      .select()
+      .single();
+    data = result.data;
+    error = result.error;
+  }
+
+  if (error) {
+    console.error("Supabase insert error:", JSON.stringify(error, null, 2));
+    return {
+      success: false,
+      message: `Failed to save lead: ${error.message}`,
+    };
   }
 
   // Send email via Resend if configured
@@ -95,6 +114,8 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
   }
 
   revalidatePath("/lp/website-design");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/leads");
 
   return {
     success: true,
