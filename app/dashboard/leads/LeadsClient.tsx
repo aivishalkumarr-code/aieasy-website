@@ -149,6 +149,7 @@ export function LeadsClient({ initialLeads }: LeadsClientProps) {
               <tr className="border-b border-[#E5E7EB] text-[#6B7280]">
                 <th className="pb-3 font-medium">Lead</th>
                 <th className="pb-3 font-medium">Company</th>
+                <th className="pb-3 font-medium">Source</th>
                 <th className="pb-3 font-medium">Status</th>
                 <th className="pb-3 font-medium">Created</th>
               </tr>
@@ -167,6 +168,11 @@ export function LeadsClient({ initialLeads }: LeadsClientProps) {
                     </div>
                   </td>
                   <td className="py-4 pr-4 text-[#4B5563]">{lead.company ?? "—"}</td>
+                  <td className="py-4 pr-4 text-[#4B5563]">
+                    <span className="inline-flex items-center rounded-full bg-[#F4F6F2] px-2.5 py-1 text-xs font-medium text-[#4B5563]">
+                      {lead.source ?? "Unknown"}
+                    </span>
+                  </td>
                   <td className="py-4 pr-4">
                     <div className="w-40" onClick={(event) => event.stopPropagation()}>
                       <Select

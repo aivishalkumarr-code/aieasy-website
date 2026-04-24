@@ -37,8 +37,12 @@ create table if not exists public.contacts (
   company text,
   status public.contact_status not null default 'New',
   notes text,
+  source text,
   created_at timestamptz not null default now()
 );
+
+-- Add source column if table already exists
+alter table public.contacts add column if not exists source text;
 
 create table if not exists public.deals (
   id uuid primary key default gen_random_uuid(),
@@ -114,6 +118,12 @@ alter table public.sent_emails enable row level security;
 alter table public.seo_settings enable row level security;
 
 create policy "public can insert contacts"
+on public.contacts
+for insert
+with check (true);
+
+-- Grant public insert permission on source column too
+create policy "public can insert with source"
 on public.contacts
 for insert
 with check (true);

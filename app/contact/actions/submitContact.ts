@@ -70,6 +70,7 @@ ${values.message}`;
       phone: null,
       status: "New",
       notes: notes,
+      source: "Contact Page",
       created_at: new Date().toISOString(),
     })
     .select("*")
