@@ -31,6 +31,7 @@ export interface Contact {
   company: string | null;
   status: LeadStatus;
   notes: string | null;
+  source?: string | null;
   created_at: string;
 }
 
