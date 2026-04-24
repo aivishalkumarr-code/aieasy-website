@@ -26,45 +26,48 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     return { success: false, message: "Please enter a valid email address." };
   }
 
-  // Prepare lead data
-  const leadData = {
-    name,
-    email: email.toLowerCase().trim(),
-    phone: phone.trim(),
-    company: businessName?.trim() || null,
-    message: message.trim(),
-    status: "New",
-    service_interest: "Website Design",
-    source: "Landing Page - Website Design",
-  };
+  // Check Supabase is configured
+  if (!isSupabaseConfigured()) {
+    return {
+      success: false,
+      message: "Form submission is currently unavailable. Please try again later.",
+    };
+  }
 
-  // Save to Supabase if configured
-  let savedLead = null;
-  if (isSupabaseConfigured()) {
-    const supabase = await createClient();
-    if (supabase) {
-      try {
-        const { data, error } = await supabase
-          .from("contacts")
-          .upsert(
-            [{
-              ...leadData,
-              created_at: new Date().toISOString(),
-            }],
-            { onConflict: "email" }
-          )
-          .select()
-          .single();
+  const supabase = await createClient();
 
-        if (error) {
-          console.error("Supabase error:", error);
-        } else {
-          savedLead = data;
-        }
-      } catch (err) {
-        console.error("Supabase save error:", err);
-      }
-    }
+  if (!supabase) {
+    return {
+      success: false,
+      message: "Unable to connect to database. Please try again later.",
+    };
+  }
+
+  // Format notes from message
+  const notes = `Service Interest: Website Design\nMessage:\n${message.trim()}`;
+
+  // Insert into Supabase (NOT upsert - always create new)
+  const { data, error } = await supabase
+    .from("contacts")
+    .insert({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      phone: phone.trim(),
+      company: businessName?.trim() || null,
+      status: "New",
+      notes: notes,
+      source: "Landing Page - Website Design",
+      created_at: new Date().toISOString(),
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Supabase insert error:", error);
+    return {
+      success: false,
+      message: `Failed to save lead: ${error.message}`,
+    };
   }
 
   // Send email via Resend if configured
@@ -95,6 +98,8 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
   }
 
   revalidatePath("/lp/website-design");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/leads");
 
   return {
     success: true,
