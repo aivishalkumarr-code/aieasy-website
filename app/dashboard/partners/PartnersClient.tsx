@@ -193,7 +193,22 @@ export function PartnersClient({ initialPartners }: PartnersClientProps) {
           </div>
         ) : null}
 
-        {feedback ? <p className="mt-4 text-sm text-[#0F766E]">{feedback}</p> : null}
+        {feedback ? (
+        <div className={`mt-4 rounded-xl p-4 text-sm ${feedback.includes('error') || feedback.includes('unavailable') || feedback.includes('table') ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-green-50 text-[#0F766E] border border-[#0D9488]/20'}`}>
+          <p className="font-medium">{feedback.includes('error') || feedback.includes('unavailable') || feedback.includes('table') ? '⚠️ Error' : '✓ Success'}</p>
+          <p className="mt-1">{feedback}</p>
+          {(feedback.includes('table unavailable') || feedback.includes('Partner table')) && (
+            <div className="mt-3 rounded-lg bg-white/50 p-3 text-xs">
+              <p className="font-semibold">To fix this:</p>
+              <ol className="mt-1 list-decimal pl-4 space-y-1">
+                <li>Go to your Supabase Dashboard</li>
+                <li>Open the SQL Editor</li>
+                <li>Run the SQL from <code className="bg-gray-100 px-1 rounded">lib/supabase/migrations/001_partner_logos.sql</code></li>
+              </ol>
+            </div>
+          )}
+        </div>
+      ) : null}
       </section>
 
       <section className="rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">
