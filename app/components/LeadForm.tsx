@@ -2,10 +2,17 @@
 
 import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
+import { submitContact } from "@/app/contact/actions/submitContact";
+import {
+  contactBudgetRanges,
+  contactLeadFormSchema,
+  contactServices,
+  contactTimelines,
+  type ContactLeadFormValues,
+} from "@/app/contact/contactFormSchema";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -25,47 +32,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-const services = [
-  "AI Automation",
-  "AI Web Apps",
-  "Website Design",
-  "AI Marketing",
-  "AI Content",
-  "Software Development",
-  "IVR Setup",
-  "AI Agents",
-  "Generative AI Solutions",
-] as const;
+const calendlyUrl = "https://calendly.com/aieasy/30min";
 
-const budgetRanges = [
-  "Under $5k",
-  "$5k - $10k",
-  "$10k - $25k",
-  "$25k - $50k",
-  "$50k+",
-] as const;
-
-const timelines = ["ASAP", "2-4 weeks", "1-2 months", "3+ months"] as const;
-
-const leadFormSchema = z.object({
-  name: z.string().min(2, "Enter your name."),
-  email: z.string().email("Enter a valid email."),
-  company: z.string().min(2, "Enter your company name."),
-  serviceInterest: z.enum(services, {
-    errorMap: () => ({ message: "Select a service." }),
-  }),
-  budgetRange: z.enum(budgetRanges, {
-    errorMap: () => ({ message: "Select a budget range." }),
-  }),
-  timeline: z.enum(timelines, {
-    errorMap: () => ({ message: "Select a timeline." }),
-  }),
-  message: z.string().min(20, "Share a bit more about the project."),
-});
-
-type LeadFormValues = z.infer<typeof leadFormSchema>;
-
-const stepFields: Record<1 | 2 | 3, (keyof LeadFormValues)[]> = {
+const stepFields: Record<1 | 2 | 3, (keyof ContactLeadFormValues)[]> = {
   1: ["name", "email", "company"],
   2: ["serviceInterest"],
   3: ["budgetRange", "timeline", "message"],
@@ -74,9 +43,12 @@ const stepFields: Record<1 | 2 | 3, (keyof LeadFormValues)[]> = {
 export function LeadForm() {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submittedName, setSubmittedName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const form = useForm<LeadFormValues>({
-    resolver: zodResolver(leadFormSchema),
+  const form = useForm<ContactLeadFormValues>({
+    resolver: zodResolver(contactLeadFormSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -108,8 +80,24 @@ export function LeadForm() {
     setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3);
   };
 
-  const onSubmit = form.handleSubmit(() => {
-    setIsSubmitted(true);
+  const onSubmit = form.handleSubmit(async (values) => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const result = await submitContact(values);
+
+      if (result.success) {
+        setSubmittedName(result.name || "");
+        setIsSubmitted(true);
+      } else {
+        setSubmitError(result.message || "Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      setSubmitError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   });
 
   if (isSubmitted) {
@@ -120,19 +108,41 @@ export function LeadForm() {
         </div>
         <div className="mt-6 space-y-3">
           <h3 className="text-2xl font-semibold text-[#1A1A1A]">
-            Thanks, we&apos;re on it
+            Thanks{submittedName ? `, ${submittedName}` : ""}! We&apos;re on it
           </h3>
           <p className="max-w-md text-sm leading-6 text-[#6B7280]">
             Your project brief has been captured. We&apos;ll review the scope and
             reach out with next steps.
           </p>
         </div>
+
+        {/* Calendly CTA */}
+        <div className="mt-6 w-full max-w-sm rounded-xl border border-[#0D9488]/20 bg-[#0D9488]/5 p-5">
+          <div className="flex items-center justify-center gap-2 text-[#0D9488]">
+            <Calendar className="h-5 w-5" />
+            <span className="font-semibold">Book Your Free Consultation</span>
+          </div>
+          <p className="mt-2 text-sm text-[#6B7280]">
+            Skip the wait! Schedule a 30-minute call with our team right now.
+          </p>
+          <a
+            href={calendlyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex h-11 items-center justify-center rounded-full bg-[#1A1A1A] px-6 text-sm font-semibold text-white transition-all hover:bg-[#333]"
+          >
+            Book on Calendly
+          </a>
+        </div>
+
         <Button
           type="button"
           onClick={() => {
             form.reset();
             setCurrentStep(1);
             setIsSubmitted(false);
+            setSubmittedName("");
+            setSubmitError(null);
           }}
           className="mt-6 rounded-full bg-[#0D9488] px-6 hover:bg-[#14B8A6]"
         >
@@ -163,6 +173,13 @@ export function LeadForm() {
           />
         </div>
       </div>
+
+      {submitError && (
+        <div className="mt-4 rounded-lg bg-red-50 p-4 text-sm text-red-600 border border-red-200">
+          <p className="font-medium">Error</p>
+          <p className="mt-1">{submitError}</p>
+        </div>
+      )}
 
       <Form {...form}>
         <form onSubmit={onSubmit} className="mt-8 space-y-6">
@@ -243,7 +260,7 @@ export function LeadForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="rounded-2xl border-[#E5E7EB] bg-white">
-                      {services.map((service) => (
+                      {contactServices.map((service) => (
                         <SelectItem key={service} value={service}>
                           {service}
                         </SelectItem>
@@ -278,7 +295,7 @@ export function LeadForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="rounded-2xl border-[#E5E7EB] bg-white">
-                          {budgetRanges.map((budgetRange) => (
+                          {contactBudgetRanges.map((budgetRange) => (
                             <SelectItem key={budgetRange} value={budgetRange}>
                               {budgetRange}
                             </SelectItem>
@@ -306,7 +323,7 @@ export function LeadForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="rounded-2xl border-[#E5E7EB] bg-white">
-                          {timelines.map((timeline) => (
+                          {contactTimelines.map((timeline) => (
                             <SelectItem key={timeline} value={timeline}>
                               {timeline}
                             </SelectItem>
@@ -344,7 +361,7 @@ export function LeadForm() {
               type="button"
               variant="outline"
               onClick={goBack}
-              disabled={currentStep === 1}
+              disabled={currentStep === 1 || isSubmitting}
               className="rounded-full border-[#E5E7EB] bg-white px-5 disabled:opacity-50"
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
@@ -363,9 +380,17 @@ export function LeadForm() {
             ) : (
               <Button
                 type="submit"
-                className="rounded-full bg-[#0D9488] px-5 hover:bg-[#14B8A6]"
+                disabled={isSubmitting}
+                className="rounded-full bg-[#0D9488] px-5 hover:bg-[#14B8A6] disabled:opacity-70"
               >
-                Submit inquiry
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit inquiry"
+                )}
               </Button>
             )}
           </div>
