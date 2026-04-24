@@ -47,23 +47,39 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
   const notes = `Service Interest: Website Design\nMessage:\n${message.trim()}`;
 
   // Insert into Supabase (NOT upsert - always create new)
-  const { data, error } = await supabase
+  // Try insert with all fields including source
+  let insertData: any = {
+    name: name.trim(),
+    email: email.toLowerCase().trim(),
+    phone: phone.trim(),
+    company: businessName?.trim() || null,
+    status: "New",
+    notes: notes,
+    source: "Landing Page - Website Design",
+    created_at: new Date().toISOString(),
+  };
+
+  let { data, error } = await supabase
     .from("contacts")
-    .insert({
-      name: name.trim(),
-      email: email.toLowerCase().trim(),
-      phone: phone.trim(),
-      company: businessName?.trim() || null,
-      status: "New",
-      notes: notes,
-      source: "Landing Page - Website Design",
-      created_at: new Date().toISOString(),
-    })
+    .insert(insertData)
     .select()
     .single();
 
+  // If source column doesn't exist, try without it
+  if (error && error.message && error.message.includes("source")) {
+    console.log("Source column missing, trying insert without source field...");
+    delete insertData.source;
+    const result = await supabase
+      .from("contacts")
+      .insert(insertData)
+      .select()
+      .single();
+    data = result.data;
+    error = result.error;
+  }
+
   if (error) {
-    console.error("Supabase insert error:", error);
+    console.error("Supabase insert error:", JSON.stringify(error, null, 2));
     return {
       success: false,
       message: `Failed to save lead: ${error.message}`,
