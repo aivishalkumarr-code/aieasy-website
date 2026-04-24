@@ -113,6 +113,11 @@ alter table public.quotes enable row level security;
 alter table public.sent_emails enable row level security;
 alter table public.seo_settings enable row level security;
 
+create policy "public can insert contacts"
+on public.contacts
+for insert
+with check (true);
+
 create policy "authenticated can manage contacts"
 on public.contacts
 for all
