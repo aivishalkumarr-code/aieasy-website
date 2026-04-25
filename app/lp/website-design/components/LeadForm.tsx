@@ -1,7 +1,17 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Building2, CheckCircle2, Loader2, Mail, MessageSquare, Phone, Send, User } from "lucide-react";
+import {
+  Building2,
+  CheckCircle2,
+  Globe2,
+  Loader2,
+  Mail,
+  MessageSquare,
+  Phone,
+  Send,
+  User,
+} from "lucide-react";
 
 import { submitLead } from "../actions/submitLead";
 import { SuccessMessage } from "./SuccessMessage";
@@ -11,8 +21,8 @@ type FormValues = {
   phone: string;
   businessName: string;
   websiteType: string;
-  message: string;
   email: string;
+  message: string;
 };
 
 type FieldErrors = Partial<Record<keyof FormValues, string>>;
@@ -22,24 +32,20 @@ const initialValues: FormValues = {
   phone: "",
   businessName: "",
   websiteType: "",
-  message: "",
   email: "",
+  message: "",
 };
 
 const websiteTypes = [
   { value: "", label: "Select website type" },
-  { value: "business", label: "Business Website" },
-  { value: "ecommerce", label: "Ecommerce Website" },
-  { value: "landing", label: "Landing Page" },
-  { value: "redesign", label: "Website Redesign" },
-  { value: "not-sure", label: "Not Sure Yet" },
+  { value: "Business Website", label: "Business Website" },
+  { value: "Ecommerce Website", label: "Ecommerce Website" },
+  { value: "Landing Page", label: "Landing Page" },
+  { value: "Website Redesign", label: "Website Redesign" },
+  { value: "Not Sure Yet", label: "Not Sure Yet" },
 ] as const;
 
-const trustChips = [
-  "No Upfront Cost",
-  "Free Consultation",
-  "Fast Quote",
-] as const;
+const trustChips = ["No Upfront Cost", "Free Consultation", "Fast Quote"] as const;
 
 function validate(values: FormValues): FieldErrors {
   const errors: FieldErrors = {};
@@ -67,6 +73,9 @@ function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return <p className="mt-1.5 text-xs font-medium text-red-600">{message}</p>;
 }
+
+const inputClass =
+  "h-12 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3 text-base text-[#0F172A] outline-none transition placeholder:text-slate-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/20";
 
 export function LeadForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
@@ -99,8 +108,8 @@ export function LeadForm() {
       formData.set("phone", values.phone.trim());
       formData.set("businessName", values.businessName.trim());
       formData.set("websiteType", values.websiteType);
-      formData.set("message", values.message.trim());
       formData.set("email", values.email.trim());
+      formData.set("message", values.message.trim());
 
       const result = await submitLead(formData);
 
@@ -122,34 +131,30 @@ export function LeadForm() {
 
   if (isSuccess) {
     return (
-      <div id="contact" className="scroll-mt-28 lg:sticky lg:top-24">
+      <div id="contact" className="scroll-mt-28">
         <SuccessMessage name={submittedName} />
       </div>
     );
   }
 
   return (
-    <div id="contact" className="scroll-mt-28 lg:sticky lg:top-24">
-      {/* Clean Premium Form Card */}
-      <div className="overflow-hidden rounded-[1.5rem] border border-[#E5E7EB] bg-white shadow-lg">
-        {/* Soft Teal Header */}
-        <div className="bg-gradient-to-b from-[#ECFDF5] to-white px-6 pb-4 pt-5 sm:px-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0D9488]">
-            Free Website Consultation
+    <div id="contact" className="scroll-mt-28">
+      <div className="w-full max-w-[560px] overflow-hidden rounded-[28px] border border-teal-100 bg-white shadow-[0_24px_70px_rgba(15,148,136,0.14)]">
+        <div className="bg-gradient-to-br from-teal-50 via-white to-white px-5 pb-5 pt-6 sm:px-7">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D9488]">
+            FREE WEBSITE CONSULTATION
           </p>
-          <h2 className="mt-2 text-xl font-bold tracking-tight text-[#111827] sm:text-[1.35rem]">
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-[#0F172A]">
             Get Your Website Proposal in 60 Seconds
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[#64748B]">
             Tell us what you need and we&apos;ll suggest the right website plan, pricing direction and launch timeline.
           </p>
-
-          {/* Clean Trust Chips - Horizontal Row */}
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2 max-[380px]:hidden">
             {trustChips.map((chip) => (
               <div
                 key={chip}
-                className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-[#374151] shadow-sm border border-[#E5E7EB]"
+                className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-white px-3 py-1.5 text-sm text-slate-700"
               >
                 <CheckCircle2 className="h-3.5 w-3.5 text-[#0D9488]" />
                 {chip}
@@ -158,143 +163,144 @@ export function LeadForm() {
           </div>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 px-6 py-5 sm:px-7">
+        <form onSubmit={handleSubmit} className="space-y-4 px-5 pb-7 sm:px-7">
           {error ? (
             <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-medium text-red-700">
               {error}
             </div>
           ) : null}
 
-          {/* Name */}
           <div>
-            <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-[#111827]">
+            <label htmlFor="name" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
               Name <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+              <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 id="name"
                 name="name"
                 type="text"
                 autoComplete="name"
                 value={values.name}
-                onChange={(e) => updateField("name", e.target.value)}
+                onChange={(event) => updateField("name", event.target.value)}
                 placeholder="Your full name"
-                className="h-12 w-full rounded-xl border border-[#E5E7EB] bg-white py-2.5 pl-10 pr-3 text-sm text-[#111827] outline-none transition focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
+                className={inputClass}
               />
             </div>
             <FieldError message={errors.name} />
           </div>
 
-          {/* Phone - Priority Field for India Market */}
           <div>
-            <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-[#111827]">
+            <label htmlFor="phone" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
               Phone Number <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+              <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 id="phone"
                 name="phone"
                 type="tel"
                 autoComplete="tel"
                 value={values.phone}
-                onChange={(e) => updateField("phone", e.target.value)}
+                onChange={(event) => updateField("phone", event.target.value)}
                 placeholder="+91 98XXX XXXXX"
-                className="h-12 w-full rounded-xl border border-[#E5E7EB] bg-white py-2.5 pl-10 pr-3 text-sm text-[#111827] outline-none transition focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
+                className={inputClass}
               />
             </div>
             <FieldError message={errors.phone} />
           </div>
 
-          {/* Business Name */}
           <div>
-            <label htmlFor="businessName" className="mb-1.5 block text-sm font-medium text-[#111827]">
+            <label htmlFor="businessName" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
               Business Name <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <Building2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+              <Building2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 id="businessName"
                 name="businessName"
                 type="text"
                 autoComplete="organization"
                 value={values.businessName}
-                onChange={(e) => updateField("businessName", e.target.value)}
+                onChange={(event) => updateField("businessName", event.target.value)}
                 placeholder="Your business name"
-                className="h-12 w-full rounded-xl border border-[#E5E7EB] bg-white py-2.5 pl-10 pr-3 text-sm text-[#111827] outline-none transition focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
+                className={inputClass}
               />
             </div>
             <FieldError message={errors.businessName} />
           </div>
 
-          {/* Website Type Dropdown */}
           <div>
-            <label htmlFor="websiteType" className="mb-1.5 block text-sm font-medium text-[#111827]">
+            <label htmlFor="websiteType" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
               Website Type <span className="text-red-500">*</span>
             </label>
-            <select
-              id="websiteType"
-              name="websiteType"
-              value={values.websiteType}
-              onChange={(e) => updateField("websiteType", e.target.value)}
-              className="h-12 w-full cursor-pointer rounded-xl border border-[#E5E7EB] bg-white px-3 py-2.5 text-sm text-[#111827] outline-none transition focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10 appearance-none"
-              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1rem' }}
-            >
-              {websiteTypes.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <Globe2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <select
+                id="websiteType"
+                name="websiteType"
+                value={values.websiteType}
+                onChange={(event) => updateField("websiteType", event.target.value)}
+                className="h-12 w-full appearance-none rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-base text-[#0F172A] outline-none transition focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/20"
+                style={{
+                  backgroundImage:
+                    'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%2364748B\' stroke-width=\'2\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M19 9l-7 7-7-7\'/%3E%3C/svg%3E")',
+                  backgroundPosition: "right 0.75rem center",
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "1rem",
+                }}
+              >
+                {websiteTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
+            </div>
             <FieldError message={errors.websiteType} />
           </div>
 
-          {/* Email - Optional */}
           <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-[#64748B]">
-              Email <span className="text-[#9CA3AF]">(optional)</span>
+            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
+              Email <span className="font-medium text-[#64748B]">(optional)</span>
             </label>
             <div className="relative">
-              <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+              <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
                 value={values.email}
-                onChange={(e) => updateField("email", e.target.value)}
+                onChange={(event) => updateField("email", event.target.value)}
                 placeholder="you@business.com"
-                className="h-12 w-full rounded-xl border border-[#E5E7EB] bg-white py-2.5 pl-10 pr-3 text-sm text-[#111827] outline-none transition focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
+                className={inputClass}
               />
             </div>
           </div>
 
-          {/* Message */}
           <div>
-            <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-[#111827]">
+            <label htmlFor="message" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
               Tell us about your business
             </label>
             <div className="relative">
-              <MessageSquare className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-[#9CA3AF]" />
+              <MessageSquare className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
               <textarea
                 id="message"
                 name="message"
-                rows={3}
+                rows={4}
                 value={values.message}
-                onChange={(e) => updateField("message", e.target.value)}
+                onChange={(event) => updateField("message", event.target.value)}
                 placeholder="Tell us what you sell, who you serve, and what kind of website you need."
-                className="w-full resize-none rounded-xl border border-[#E5E7EB] bg-white py-2.5 pl-10 pr-3 text-sm text-[#111827] outline-none transition focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
+                className="min-h-24 w-full resize-none rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-base text-[#0F172A] outline-none transition placeholder:text-slate-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/20"
               />
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#0D9488] px-5 text-sm font-semibold text-white shadow-md transition hover:bg-[#0F766E] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#0D9488] px-5 text-base font-semibold text-white shadow-lg shadow-teal-600/20 transition-all hover:-translate-y-0.5 hover:bg-[#0F766E] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting ? (
               <>
@@ -309,8 +315,7 @@ export function LeadForm() {
             )}
           </button>
 
-          {/* Microcopy */}
-          <p className="text-center text-xs leading-relaxed text-[#6B7280]">
+          <p className="text-center text-xs leading-relaxed text-[#64748B]">
             No spam. No pressure. We&apos;ll contact you with a clear plan.
           </p>
         </form>
