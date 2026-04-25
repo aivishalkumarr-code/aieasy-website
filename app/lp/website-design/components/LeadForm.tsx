@@ -7,7 +7,6 @@ import {
   Globe2,
   Loader2,
   Mail,
-  MessageSquare,
   Phone,
   Send,
   User,
@@ -22,7 +21,6 @@ type FormValues = {
   businessName: string;
   websiteType: string;
   email: string;
-  message: string;
 };
 
 type FieldErrors = Partial<Record<keyof FormValues, string>>;
@@ -33,7 +31,6 @@ const initialValues: FormValues = {
   businessName: "",
   websiteType: "",
   email: "",
-  message: "",
 };
 
 const websiteTypes = [
@@ -109,7 +106,6 @@ export function LeadForm() {
       formData.set("businessName", values.businessName.trim());
       formData.set("websiteType", values.websiteType);
       formData.set("email", values.email.trim());
-      formData.set("message", values.message.trim());
 
       const result = await submitLead(formData);
 
@@ -275,24 +271,6 @@ export function LeadForm() {
                 onChange={(event) => updateField("email", event.target.value)}
                 placeholder="you@business.com"
                 className={inputClass}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="message" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
-              Tell us about your business
-            </label>
-            <div className="relative">
-              <MessageSquare className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
-              <textarea
-                id="message"
-                name="message"
-                rows={4}
-                value={values.message}
-                onChange={(event) => updateField("message", event.target.value)}
-                placeholder="Tell us what you sell, who you serve, and what kind of website you need."
-                className="min-h-24 w-full resize-none rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-base text-[#0F172A] outline-none transition placeholder:text-slate-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/20"
               />
             </div>
           </div>

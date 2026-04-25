@@ -365,7 +365,7 @@ export default function WebsiteDesignLandingPage() {
       <main className="overflow-x-clip pb-20 lg:pb-0">
         <section className="relative overflow-hidden bg-white pb-14 pt-10 lg:pb-20 lg:pt-16">
           <div className={containerClass}>
-            <div className="grid items-start gap-y-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(420px,0.98fr)] lg:gap-x-16">
+            <div className="grid items-center gap-y-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(420px,0.98fr)] lg:gap-x-16">
               <div className="max-w-[560px]">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D9488]">
                   WEBSITE DESIGN COMPANY IN DELHI
@@ -380,7 +380,7 @@ export default function WebsiteDesignLandingPage() {
                   Built for Google Ads, SEO, mobile users and fast loading speed.
                 </p>
 
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
                   <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#0D9488] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.22)] transition-all hover:-translate-y-0.5 hover:bg-[#0F766E] sm:w-auto">
                     Get Free Website Consultation
                   </ScrollToLeadCta>
