@@ -18,7 +18,7 @@ export function LpHeader() {
             A
           </div>
           <div className="min-w-0">
-            <p className="text-lg font-bold tracking-tight text-[#0F172A]">Aleasy / AIeasy</p>
+            <p className="text-lg font-bold tracking-tight text-[#0F172A]">AIeasy</p>
             <p className="truncate text-xs font-medium text-[#64748B]">Website Design Company in Delhi</p>
           </div>
         </Link>
