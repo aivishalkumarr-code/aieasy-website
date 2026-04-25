@@ -1,83 +1,45 @@
-"use client";
-
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
 
 import { ScrollToLeadCta } from "./ScrollToLeadCta";
 
 const links = [
   { label: "Benefits", href: "#benefits" },
-  { label: "Portfolio", href: "#portfolio" },
+  { label: "Work", href: "#portfolio" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Testimonials", href: "#testimonials" },
+  { label: "FAQ", href: "#faq" },
 ] as const;
 
 export function LpHeader() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
-    <header className="sticky top-0 z-50 border-b border-[#E5E7EB]/80 bg-[#fafaf8]/92 backdrop-blur-xl">
-      <div className="container flex h-16 items-center justify-between gap-4 lg:h-20">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#0D9488] text-base font-bold text-white shadow-sm">
+    <header className="sticky top-0 z-50 border-b border-[#E2E8F0]/80 bg-white shadow-[0_1px_0_rgba(226,232,240,0.55)]">
+      <div className="mx-auto flex h-16 max-w-[1180px] items-center justify-between gap-4 px-4 sm:px-6 lg:h-[76px] lg:px-8">
+        <Link href="/" className="flex min-w-0 items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#0D9488] text-base font-bold text-white shadow-sm">
             A
           </div>
-          <div>
-            <p className="text-lg font-semibold tracking-tight text-[#1A1A1A]">AIeasy</p>
-            <p className="hidden text-xs text-[#6B7280] sm:block">Websites built to grow revenue</p>
+          <div className="min-w-0">
+            <p className="text-lg font-bold tracking-tight text-[#0F172A]">Aleasy / AIeasy</p>
+            <p className="truncate text-xs font-medium text-[#64748B]">Website Design Company in Delhi</p>
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex">
+        <nav className="hidden items-center gap-8 lg:flex">
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-[#6B7280] transition-colors hover:text-[#0D9488]"
+              className="text-sm font-semibold text-[#475569] transition-colors hover:text-[#0D9488]"
             >
               {link.label}
             </a>
           ))}
-          <ScrollToLeadCta
-            className="inline-flex h-11 items-center justify-center rounded-full bg-[#0D9488] px-6 text-sm font-semibold text-white transition hover:bg-[#0f766e]"
-          >
-            Get Free Consultation
-          </ScrollToLeadCta>
         </nav>
 
-        <button
-          type="button"
-          aria-label="Toggle menu"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1A1A1A] lg:hidden"
-          onClick={() => setMobileMenuOpen((prev) => !prev)}
-        >
-          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <ScrollToLeadCta className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-[#0D9488] px-4 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#0F766E] sm:px-6">
+          <span className="hidden sm:inline">Get Free Consultation</span>
+          <span className="sm:hidden">Free Consultation</span>
+        </ScrollToLeadCta>
       </div>
-
-      {mobileMenuOpen ? (
-        <div className="border-t border-[#E5E7EB] bg-white lg:hidden">
-          <div className="container flex flex-col gap-4 py-4">
-            {links.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-[#6B7280]"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {link.label}
-              </a>
-            ))}
-            <ScrollToLeadCta
-              className="inline-flex h-12 items-center justify-center rounded-full bg-[#0D9488] px-6 text-sm font-semibold text-white"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Get Free Consultation
-            </ScrollToLeadCta>
-          </div>
-        </div>
-      ) : null}
     </header>
   );
 }
