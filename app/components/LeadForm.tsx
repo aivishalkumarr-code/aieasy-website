@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AnimatePresence, motion } from "framer-motion";
 import { Calendar, CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 
@@ -44,7 +45,6 @@ export function LeadForm() {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<ContactLeadFormValues>({
@@ -60,9 +60,14 @@ export function LeadForm() {
     },
   });
 
-  const progress = useMemo(() => `${(currentStep / 3) * 100}%`, [currentStep]);
+  const isSubmitting = form.formState.isSubmitting;
+  const progress = `${(currentStep / 3) * 100}%`;
 
   const goNext = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
     const isValid = await form.trigger(stepFields[currentStep]);
 
     if (!isValid || currentStep === 3) {
@@ -73,7 +78,7 @@ export function LeadForm() {
   };
 
   const goBack = () => {
-    if (currentStep === 1) {
+    if (currentStep === 1 || isSubmitting) {
       return;
     }
 
@@ -81,7 +86,6 @@ export function LeadForm() {
   };
 
   const onSubmit = form.handleSubmit(async (values) => {
-    setIsSubmitting(true);
     setSubmitError(null);
 
     try {
@@ -90,19 +94,22 @@ export function LeadForm() {
       if (result.success) {
         setSubmittedName(result.name || "");
         setIsSubmitted(true);
-      } else {
-        setSubmitError(result.message || "Something went wrong. Please try again.");
+        return;
       }
-    } catch (error) {
+
+      setSubmitError(result.message || "Something went wrong. Please try again.");
+    } catch {
       setSubmitError("An unexpected error occurred. Please try again.");
-    } finally {
-      setIsSubmitting(false);
     }
   });
 
   if (isSubmitted) {
     return (
-      <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[1.75rem] border border-[#E5E7EB] bg-white p-8 text-center shadow-sm">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex min-h-[420px] flex-col items-center justify-center rounded-[1.75rem] border border-[#E5E7EB] bg-white p-8 text-center shadow-sm"
+      >
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0D9488]/10 text-[#0D9488]">
           <CheckCircle2 className="h-7 w-7" />
         </div>
@@ -116,7 +123,6 @@ export function LeadForm() {
           </p>
         </div>
 
-        {/* Calendly CTA */}
         <div className="mt-6 w-full max-w-sm rounded-xl border border-[#0D9488]/20 bg-[#0D9488]/5 p-5">
           <div className="flex items-center justify-center gap-2 text-[#0D9488]">
             <Calendar className="h-5 w-5" />
@@ -148,12 +154,17 @@ export function LeadForm() {
         >
           Start another inquiry
         </Button>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="rounded-[1.75rem] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-8">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      className="rounded-[1.75rem] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-8"
+    >
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -174,115 +185,91 @@ export function LeadForm() {
         </div>
       </div>
 
-      {submitError && (
-        <div className="mt-4 rounded-lg bg-red-50 p-4 text-sm text-red-600 border border-red-200">
+      {submitError ? (
+        <div
+          aria-live="polite"
+          className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600"
+        >
           <p className="font-medium">Error</p>
           <p className="mt-1">{submitError}</p>
         </div>
-      )}
+      ) : null}
 
       <Form {...form}>
         <form onSubmit={onSubmit} className="mt-8 space-y-6">
-          {currentStep === 1 ? (
-            <div className="grid gap-5 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="md:col-span-1">
-                    <FormLabel className="text-[#1A1A1A]">Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Jane Smith"
-                        className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem className="md:col-span-1">
-                    <FormLabel className="text-[#1A1A1A]">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="jane@company.com"
-                        className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="company"
-                render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel className="text-[#1A1A1A]">Company</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="AIeasy"
-                        className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          ) : null}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {currentStep === 1 ? (
+                <div className="grid gap-5 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-1">
+                        <FormLabel className="text-[#1A1A1A]">Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Jane Smith"
+                            className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-1">
+                        <FormLabel className="text-[#1A1A1A]">Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            placeholder="jane@company.com"
+                            className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="company"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-2">
+                        <FormLabel className="text-[#1A1A1A]">Company</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="AIeasy"
+                            className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ) : null}
 
-          {currentStep === 2 ? (
-            <FormField
-              control={form.control}
-              name="serviceInterest"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[#1A1A1A]">
-                    Service interest
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]">
-                        <SelectValue placeholder="Select the primary service" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="rounded-2xl border-[#E5E7EB] bg-white">
-                      {contactServices.map((service) => (
-                        <SelectItem key={service} value={service}>
-                          {service}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ) : null}
-
-          {currentStep === 3 ? (
-            <div className="space-y-5">
-              <div className="grid gap-5 md:grid-cols-2">
+              {currentStep === 2 ? (
                 <FormField
                   control={form.control}
-                  name="budgetRange"
+                  name="serviceInterest"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-[#1A1A1A]">
-                        Budget range
+                        Service interest
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
@@ -291,13 +278,13 @@ export function LeadForm() {
                       >
                         <FormControl>
                           <SelectTrigger className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]">
-                            <SelectValue placeholder="Select budget range" />
+                            <SelectValue placeholder="Select the primary service" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="rounded-2xl border-[#E5E7EB] bg-white">
-                          {contactBudgetRanges.map((budgetRange) => (
-                            <SelectItem key={budgetRange} value={budgetRange}>
-                              {budgetRange}
+                          {contactServices.map((service) => (
+                            <SelectItem key={service} value={service}>
+                              {service}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -306,55 +293,92 @@ export function LeadForm() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="timeline"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-[#1A1A1A]">Timeline</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]">
-                            <SelectValue placeholder="Select target timeline" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="rounded-2xl border-[#E5E7EB] bg-white">
-                          {contactTimelines.map((timeline) => (
-                            <SelectItem key={timeline} value={timeline}>
-                              {timeline}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              ) : null}
 
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#1A1A1A]">Message</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Describe the workflow, customer experience, or AI use case you want to improve."
-                        className="min-h-32 resize-none rounded-[1.25rem] border-[#E5E7EB] bg-[#FAFAF8]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          ) : null}
+              {currentStep === 3 ? (
+                <div className="space-y-5">
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="budgetRange"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[#1A1A1A]">
+                            Budget range
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            value={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]">
+                                <SelectValue placeholder="Select budget range" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="rounded-2xl border-[#E5E7EB] bg-white">
+                              {contactBudgetRanges.map((budgetRange) => (
+                                <SelectItem key={budgetRange} value={budgetRange}>
+                                  {budgetRange}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="timeline"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[#1A1A1A]">Timeline</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            value={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]">
+                                <SelectValue placeholder="Select target timeline" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="rounded-2xl border-[#E5E7EB] bg-white">
+                              {contactTimelines.map((timeline) => (
+                                <SelectItem key={timeline} value={timeline}>
+                                  {timeline}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#1A1A1A]">Message</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Describe the workflow, customer experience, or AI use case you want to improve."
+                            className="min-h-32 resize-none rounded-[1.25rem] border-[#E5E7EB] bg-[#FAFAF8]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ) : null}
+            </motion.div>
+          </AnimatePresence>
 
           <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
             <Button
@@ -372,6 +396,7 @@ export function LeadForm() {
               <Button
                 type="button"
                 onClick={goNext}
+                disabled={isSubmitting}
                 className="rounded-full bg-[#0D9488] px-5 hover:bg-[#14B8A6]"
               >
                 Next step
@@ -396,6 +421,6 @@ export function LeadForm() {
           </div>
         </form>
       </Form>
-    </div>
+    </motion.div>
   );
 }

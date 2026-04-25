@@ -5,10 +5,15 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 
 import { AnimatedSection } from "@/app/components/AnimatedSection";
 import { Footer } from "@/app/components/Footer";
-import { LeadForm } from "@/app/components/LeadForm";
 import { Navigation } from "@/app/components/Navigation";
+import { ServiceLeadForm } from "@/app/components/ServiceLeadForm";
 import { serviceIconMap } from "@/app/services/icon-map";
-import { getServicePage, SERVICE_PAGE_ORDER } from "@/app/services/service-data";
+import {
+  getServicePage,
+  SERVICE_PAGE_ORDER,
+  type ServicePageName,
+  type ServicePageSlug,
+} from "@/app/services/service-data";
 import { Button } from "@/components/ui/button";
 
 const siteUrl = "https://aieasy.in";
@@ -203,21 +208,33 @@ export default async function ServicePage({ params }: ServicePageProps) {
           </div>
         </section>
 
-        <section className="container">
+        <section id="service-quote" className="container">
           <div className="grid gap-12 rounded-[2rem] border border-[#E5E7EB] bg-white p-8 shadow-card lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:p-10">
             <AnimatedSection className="space-y-6">
               <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
-                Start the conversation
+                Service quote
               </p>
               <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
-                Get a tailored {service.name.toLowerCase()} plan.
+                Get a {service.name} Quote
               </h2>
               <p className="text-lg leading-8 text-[#6B7280]">
-                Share your current workflow, goals, and delivery timeline. We&apos;ll recommend the right scope, rollout approach, and next steps.
+                Ready to implement {service.name} for your business? Share a few details and we&apos;ll come back with a focused scope, pricing guidance, and practical next steps.
               </p>
+              <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-[#FAFAF8] p-6">
+                <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0D9488]">
+                  Selected service
+                </p>
+                <p className="mt-3 text-2xl font-semibold text-[#1A1A1A]">{service.name}</p>
+                <p className="mt-3 text-sm leading-7 text-[#6B7280]">
+                  Tell us what you want to automate, improve, or launch. We&apos;ll tailor the follow-up to this service page instead of asking you to select it again.
+                </p>
+              </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1} direction="left">
-              <LeadForm />
+              <ServiceLeadForm
+                serviceName={service.name as ServicePageName}
+                serviceSlug={service.slug as ServicePageSlug}
+              />
             </AnimatedSection>
           </div>
         </section>

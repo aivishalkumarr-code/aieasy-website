@@ -40,6 +40,8 @@ export const SERVICE_PAGE_ORDER = [
   "generative-ai",
 ] as const;
 
+export type ServicePageSlug = (typeof SERVICE_PAGE_ORDER)[number];
+
 export const SERVICE_PAGE_DATA = {
   "ai-automation": {
     key: "ai_automation",
@@ -509,12 +511,26 @@ export const SERVICE_PAGE_DATA = {
       },
     ],
   },
-} satisfies Record<string, ServicePageData>;
+} satisfies Record<ServicePageSlug, ServicePageData>;
 
-export const FEATURED_SERVICE_SLUGS = SERVICE_PAGE_ORDER.slice(0, 6) as Array<(typeof SERVICE_PAGE_ORDER)[number]>;
+export const SERVICE_PAGE_NAMES = [
+  SERVICE_PAGE_DATA["ai-automation"].name,
+  SERVICE_PAGE_DATA["ai-web-apps"].name,
+  SERVICE_PAGE_DATA["website-design"].name,
+  SERVICE_PAGE_DATA["ai-marketing"].name,
+  SERVICE_PAGE_DATA["ai-content"].name,
+  SERVICE_PAGE_DATA["software-dev"].name,
+  SERVICE_PAGE_DATA["ivr-setup"].name,
+  SERVICE_PAGE_DATA["ai-agents"].name,
+  SERVICE_PAGE_DATA["generative-ai"].name,
+] as const;
+
+export type ServicePageName = (typeof SERVICE_PAGE_NAMES)[number];
+
+export const FEATURED_SERVICE_SLUGS = SERVICE_PAGE_ORDER.slice(0, 6) as ServicePageSlug[];
 
 export const getServicePage = (slug: string) =>
-  SERVICE_PAGE_DATA[slug as keyof typeof SERVICE_PAGE_DATA];
+  SERVICE_PAGE_DATA[slug as ServicePageSlug];
 
 export const SERVICE_PAGE_LIST = SERVICE_PAGE_ORDER.map(
   (slug) => SERVICE_PAGE_DATA[slug],

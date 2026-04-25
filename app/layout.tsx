@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import { PageTransition } from "@/app/components/PageTransition";
+
 import "@/app/globals.css";
 
 const inter = Inter({
@@ -20,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.variable}>{children}</body>
+      <body className={`${inter.variable} bg-[#FAFAF8] text-[#1A1A1A] antialiased`}>
+        <PageTransition>{children}</PageTransition>
+      </body>
     </html>
   );
 }
