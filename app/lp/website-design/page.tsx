@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Check } from "lucide-react";
 
 import { BenefitsSection } from "./components/BenefitsSection";
 import { HeroSlider } from "./components/HeroSlider";
@@ -9,13 +10,12 @@ import { LpHeader } from "./components/LpHeader";
 import { PortfolioSection } from "./components/PortfolioSection";
 import { PricingSection } from "./components/PricingSection";
 import { TestimonialsSection } from "./components/TestimonialsSection";
-import { ScrollToLeadCta } from "./components/ScrollToLeadCta";
 
 export const metadata: Metadata = {
   title:
     "Get a High-Converting Website That Grows Your Business | AIeasy - Starting at ₹9,999",
   description:
-    "Stop losing customers with a basic website. Get a professional, lead-generating website that works 24/7 for your business, starting at just ₹9,999.",
+    "Get a professional website that grows your business. Starting at just ₹9,999 with free domain, hosting, and SEO. Pay only when your website goes live.",
   keywords: [
     "website design",
     "high-converting website",
@@ -32,16 +32,12 @@ export const metadata: Metadata = {
   },
 };
 
-const heroProof = [
-  "Delivered in 7-14 days",
+const trustBadges = [
+  "Free Domain & Hosting for 1 Year",
+  "Fully SEO Optimized",
+  "Pay Only After Website Goes Live",
+  "Delivered in 7-14 Days",
   "1-Year Free Support",
-  "100+ Happy Clients",
-] as const;
-
-const heroHighlights = [
-  "Built to generate inquiries, not just look nice",
-  "Perfect on mobile where most customers discover you",
-  "Designed to build trust from the first click",
 ] as const;
 
 export default function WebsiteDesignLandingPage() {
@@ -50,51 +46,52 @@ export default function WebsiteDesignLandingPage() {
       <LpHeader />
 
       <main className="overflow-x-clip">
-        <section className="relative isolate overflow-hidden border-b border-[#E5E7EB] bg-[radial-gradient(circle_at_top_left,_rgba(13,148,136,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(20,184,166,0.14),_transparent_30%),linear-gradient(180deg,_#ffffff_0%,_#fafaf8_100%)] pb-16 pt-10 sm:pt-14 lg:pb-20 lg:pt-16">
-          <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(13,148,136,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(13,148,136,0.05)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(circle_at_center,black,transparent_82%)]" />
-          <div className="container relative">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(320px,0.92fr)] lg:items-start">
-              <div className="max-w-2xl pt-4 lg:pt-8">
-                <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-[#0D9488]/15 bg-white/85 px-4 py-2 text-sm font-medium text-[#0D9488] shadow-sm backdrop-blur">
-                  <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[#0D9488]" />
-                  Limited availability for this month&apos;s launches
-                </div>
-                <h1 className="mt-6 text-balance text-4xl font-semibold tracking-tight text-[#1A1A1A] sm:text-5xl lg:text-6xl">
-                  Get a High-Converting Website That Grows Your Business – Starting at Just ₹9,999
+        {/* Clean Hero Section */}
+        <section className="relative overflow-hidden bg-white pb-16 pt-12 sm:pt-16 lg:pb-24 lg:pt-20">
+          <div className="container">
+            <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
+              {/* Left Side - Clean Copy */}
+              <div className="flex flex-col justify-center pt-4 lg:pt-8">
+                <h1 className="text-balance text-4xl font-bold tracking-tight text-[#1A1A1A] sm:text-5xl lg:text-[3.25rem] lg:leading-[1.15]">
+                  Get a High-Converting Website That Grows Your Business
                 </h1>
-                <p className="mt-5 max-w-2xl text-lg leading-8 text-[#4B5563] sm:text-xl">
-                  Stop losing customers with a basic website. Get a professional, lead-generating website that works 24/7 for your business.
-                </p>
-                <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-                  <ScrollToLeadCta
-                    className="inline-flex h-14 items-center justify-center rounded-full bg-[#0D9488] px-8 text-base font-semibold text-white shadow-[0_18px_45px_-20px_rgba(13,148,136,0.8)] transition hover:bg-[#0f766e]"
-                  >
-                    Get Your Free Website Consultation
-                  </ScrollToLeadCta>
-                  <p className="text-sm font-medium text-[#6B7280]">
-                    Free consultation worth ₹2,000. No obligation quote.
-                  </p>
-                </div>
-                <p className="mt-5 text-sm font-medium text-[#1A1A1A] sm:text-base">
-                  {heroProof.join(" • ")}
+
+                <p className="mt-6 text-lg text-[#6B7280]">
+                  Starting at just ₹9,999 • Free Domain + Hosting • SEO Friendly • Pay Only When Website is Live
                 </p>
 
-                <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                  {heroHighlights.map((item) => (
-                    <div
-                      key={item}
-                      className="rounded-2xl border border-white/80 bg-white/80 p-4 shadow-sm backdrop-blur"
-                    >
-                      <p className="text-sm font-medium leading-6 text-[#374151]">{item}</p>
+                <a
+                  href="#lead-form"
+                  className="mt-8 inline-flex h-14 w-full items-center justify-center rounded-full bg-[#0D9488] px-8 text-base font-semibold text-white shadow-lg transition-all hover:bg-[#0f766e] hover:shadow-xl sm:w-auto sm:self-start"
+                >
+                  Get Your Free Consultation – No Upfront Cost
+                </a>
+
+                {/* Clean Trust Badges */}
+                <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                  {trustBadges.map((badge) => (
+                    <div key={badge} className="flex items-center gap-3">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0D9488]/10">
+                        <Check className="h-3.5 w-3.5 text-[#0D9488]" />
+                      </div>
+                      <span className="text-sm font-medium text-[#374151]">{badge}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <LeadForm />
+              {/* Right Side - Lead Form */}
+              <div id="lead-form" className="lg:sticky lg:top-24">
+                <LeadForm />
+              </div>
             </div>
+          </div>
+        </section>
 
-            <div className="mt-10 rounded-[2rem] border border-white/80 bg-white/65 p-3 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.35)] backdrop-blur sm:mt-14 sm:p-5">
+        {/* Portfolio Slider Section */}
+        <section className="bg-[#fafaf8] py-12 lg:py-16">
+          <div className="container">
+            <div className="rounded-[2rem] border border-[#E5E7EB] bg-white p-4 shadow-lg sm:p-6">
               <HeroSlider />
             </div>
           </div>
