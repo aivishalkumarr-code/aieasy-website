@@ -49,17 +49,17 @@ export default function WebsiteDesignLandingPage() {
         {/* Premium Hero Section - Delhi Focused */}
         <section className="relative overflow-hidden bg-white pb-16 pt-12 sm:pt-16 lg:pb-20 lg:pt-16">
           <div className="container">
-            <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-12">
+            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
               {/* Left Side - Delhi Website Design Company Copy */}
-              <div className="flex flex-col justify-center pt-2 lg:pt-4">
+              <div className="flex flex-col justify-center text-center lg:text-left pt-2 lg:pt-4">
                 {/* Eyebrow */}
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0D9488]">
                   Website Design Company in Delhi
                 </p>
 
-                {/* Main Headline */}
-                <h1 className="mt-4 text-balance text-[2rem] font-bold leading-[1.2] tracking-tight text-[#111827] sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
-                  Professional Website Design Company in Delhi for Businesses That Want More Leads
+                {/* Main Headline - Conversion Focused */}
+                <h1 className="mt-4 text-balance text-[2.25rem] font-bold leading-[1.08] tracking-tight text-[#111827] sm:text-5xl lg:text-[3rem] lg:leading-[1.05]">
+                  Get a Website That Brings You More Business
                 </h1>
 
                 {/* Subheadline */}
@@ -75,7 +75,7 @@ export default function WebsiteDesignLandingPage() {
                 {/* Primary CTA */}
                 <a
                   href="#lead-form"
-                  className="mt-7 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#0D9488] px-6 text-base font-semibold text-white shadow-md transition-all hover:bg-[#0F766E] hover:shadow-lg sm:w-auto sm:self-start"
+                  className="mt-7 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#0D9488] px-6 text-base font-semibold text-white shadow-md transition-all hover:bg-[#0F766E] hover:shadow-lg sm:w-auto lg:self-start"
                 >
                   Get Free Website Consultation
                 </a>
