@@ -1,16 +1,39 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Building2, Loader2, Mail, MessageSquare, Phone, Send, User } from "lucide-react";
+import {
+  Building2,
+  CheckCircle2,
+  Loader2,
+  MessageSquare,
+  Phone,
+  User,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 import { submitLead } from "../actions/submitLead";
+import { primaryButtonClass } from "./LandingPrimitives";
+import {
+  formTrustChips,
+  websiteTypeOptions,
+} from "./landingPageContent";
 import { SuccessMessage } from "./SuccessMessage";
 
 type FormValues = {
   name: string;
-  businessName: string;
   phone: string;
-  email: string;
+  businessName: string;
+  websiteType: string;
   message: string;
 };
 
@@ -18,20 +41,11 @@ type FieldErrors = Partial<Record<keyof FormValues, string>>;
 
 const initialValues: FormValues = {
   name: "",
-  businessName: "",
   phone: "",
-  email: "",
+  businessName: "",
+  websiteType: "",
   message: "",
 };
-
-const benefits = [
-  "Free Consultation Worth ₹2,000",
-  "Custom Design Mockup in 48 Hours",
-  "No Obligation Quote",
-  "7-14 Day Delivery Guarantee",
-] as const;
-
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 declare global {
   interface Window {
@@ -50,26 +64,24 @@ function validate(values: FormValues): FieldErrors {
     errors.name = "Name should be at least 2 characters.";
   }
 
-  if (!values.businessName.trim()) {
-    errors.businessName = "Enter your business name.";
-  } else if (values.businessName.trim().length < 2) {
-    errors.businessName = "Business name should be at least 2 characters.";
-  }
-
   if (!values.phone.trim()) {
     errors.phone = "Enter your phone number.";
   } else if (phoneDigits.length < 10) {
     errors.phone = "Enter a valid phone number.";
   }
 
-  if (!values.email.trim()) {
-    errors.email = "Enter your email address.";
-  } else if (!emailPattern.test(values.email.trim())) {
-    errors.email = "Enter a valid email address.";
+  if (!values.businessName.trim()) {
+    errors.businessName = "Enter your business name.";
+  } else if (values.businessName.trim().length < 2) {
+    errors.businessName = "Business name should be at least 2 characters.";
+  }
+
+  if (!values.websiteType.trim()) {
+    errors.websiteType = "Select the website type you need.";
   }
 
   if (values.message.trim() && values.message.trim().length < 12) {
-    errors.message = "Add a few more details or leave this field blank.";
+    errors.message = "Add a little more detail or leave this blank.";
   }
 
   return errors;
@@ -80,7 +92,14 @@ function FieldError({ message }: { message?: string }) {
     return null;
   }
 
-  return <p className="mt-2 text-xs font-medium text-red-600">{message}</p>;
+  return <p className="mt-2 text-sm font-medium text-rose-600">{message}</p>;
+}
+
+function fieldClasses(hasError?: boolean) {
+  return [
+    "h-12 rounded-2xl border bg-white pl-11 text-[15px] text-slate-900 placeholder:text-slate-400 focus-visible:border-[#0D9488] focus-visible:ring-4 focus-visible:ring-[#0D9488]/10 focus-visible:ring-offset-0",
+    hasError ? "border-rose-300" : "border-slate-200/80",
+  ].join(" ");
 }
 
 export function LeadForm() {
@@ -112,6 +131,7 @@ export function LeadForm() {
       event: "generate_lead",
       lead_source: "Landing Page - Website Design",
       lead_type: "website_design",
+      website_type: values.websiteType,
     });
   };
 
@@ -131,9 +151,9 @@ export function LeadForm() {
     try {
       const formData = new FormData();
       formData.set("name", values.name.trim());
-      formData.set("businessName", values.businessName.trim());
       formData.set("phone", values.phone.trim());
-      formData.set("email", values.email.trim());
+      formData.set("businessName", values.businessName.trim());
+      formData.set("websiteType", values.websiteType.trim());
       formData.set("message", values.message.trim());
 
       const result = await submitLead(formData);
@@ -144,9 +164,9 @@ export function LeadForm() {
       }
 
       setSubmittedName(result.name || values.name.trim());
-      setIsSuccess(true);
       setValues(initialValues);
       setErrors({});
+      setIsSuccess(true);
       trackLead();
     } catch {
       setError("Failed to submit. Please try again.");
@@ -165,81 +185,67 @@ export function LeadForm() {
 
   return (
     <div id="contact" className="scroll-mt-28 lg:sticky lg:top-28">
-      <div className="overflow-hidden rounded-[2rem] border border-[#0D9488]/15 bg-white shadow-[0_30px_70px_-40px_rgba(15,23,42,0.35)]">
-        <div className="bg-[linear-gradient(180deg,rgba(13,148,136,0.1),rgba(13,148,136,0.04))] px-6 pb-5 pt-6 sm:px-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#0D9488]">
+      <div
+        className="overflow-hidden rounded-[28px] border border-teal-100 bg-white shadow-[0_30px_80px_rgba(15,148,136,0.16)]"
+      >
+        <div className="bg-gradient-to-br from-teal-50 via-white to-white px-6 pb-5 pt-6 sm:px-8 sm:pb-6 sm:pt-7">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-600">
             Free website consultation
           </p>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#1A1A1A] sm:text-[2rem]">
-            Get My Website Proposal in 60 Seconds
+          <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-[2rem]">
+            Get Your Website Proposal in 60 Seconds
           </h2>
-          <p className="mt-3 text-sm leading-6 text-[#4B5563] sm:text-base">
-            Share a few details and we&apos;ll send you a tailored recommendation, pricing direction, and the fastest path to launch.
+          <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
+            Tell us what you need and we&apos;ll suggest the right website plan,
+            pricing direction and launch timeline.
           </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {benefits.map((benefit) => (
-              <div key={benefit} className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-medium text-[#1A1A1A] shadow-sm">
-                <span className="text-[#0D9488]">✓</span> {benefit}
+          <div className="mt-5 flex flex-wrap gap-2">
+            {formTrustChips.map((chip) => (
+              <div
+                key={chip}
+                className="inline-flex items-center rounded-full border border-teal-100 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm"
+              >
+                <CheckCircle2 className="mr-1.5 h-3.5 w-3.5 text-teal-600" />
+                {chip}
               </div>
             ))}
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5 px-6 py-6 sm:px-8 sm:py-8">
+        <form onSubmit={handleSubmit} className="space-y-4 px-6 py-6 sm:px-8 sm:py-8">
           {error ? (
-            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
               {error}
             </div>
           ) : null}
 
-          <div>
-            <label htmlFor="name" className="mb-2 block text-sm font-medium text-[#1A1A1A]">
-              Name <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <User className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#6B7280]" />
-              <input
-                id="name"
-                name="name"
-                type="text"
-                autoComplete="name"
-                value={values.name}
-                onChange={(event) => updateField("name", event.target.value)}
-                placeholder="Your full name"
-                className="h-14 w-full rounded-2xl border border-[#E5E7EB] bg-white py-3 pl-11 pr-4 text-sm text-[#1A1A1A] outline-none transition focus:border-[#0D9488] focus:ring-4 focus:ring-[#0D9488]/10"
-              />
-            </div>
-            <FieldError message={errors.name} />
-          </div>
-
-          <div>
-            <label htmlFor="businessName" className="mb-2 block text-sm font-medium text-[#1A1A1A]">
-              Business Name <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <Building2 className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#6B7280]" />
-              <input
-                id="businessName"
-                name="businessName"
-                type="text"
-                autoComplete="organization"
-                value={values.businessName}
-                onChange={(event) => updateField("businessName", event.target.value)}
-                placeholder="Your business name"
-                className="h-14 w-full rounded-2xl border border-[#E5E7EB] bg-white py-3 pl-11 pr-4 text-sm text-[#1A1A1A] outline-none transition focus:border-[#0D9488] focus:ring-4 focus:ring-[#0D9488]/10"
-              />
-            </div>
-            <FieldError message={errors.businessName} />
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="phone" className="mb-2 block text-sm font-medium text-[#1A1A1A]">
-                Phone Number <span className="text-red-500">*</span>
+              <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-900">
+                Name
               </label>
               <div className="relative">
-                <Phone className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#6B7280]" />
-                <input
+                <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Input
+                  id="name"
+                  name="name"
+                  autoComplete="name"
+                  value={values.name}
+                  onChange={(event) => updateField("name", event.target.value)}
+                  placeholder="Your full name"
+                  className={fieldClasses(Boolean(errors.name))}
+                />
+              </div>
+              <FieldError message={errors.name} />
+            </div>
+
+            <div>
+              <label htmlFor="phone" className="mb-2 block text-sm font-medium text-slate-900">
+                Phone Number
+              </label>
+              <div className="relative">
+                <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Input
                   id="phone"
                   name="phone"
                   type="tel"
@@ -247,72 +253,95 @@ export function LeadForm() {
                   value={values.phone}
                   onChange={(event) => updateField("phone", event.target.value)}
                   placeholder="+91 98XXX XXXXX"
-                  className="h-14 w-full rounded-2xl border border-[#E5E7EB] bg-white py-3 pl-11 pr-4 text-sm text-[#1A1A1A] outline-none transition focus:border-[#0D9488] focus:ring-4 focus:ring-[#0D9488]/10"
+                  className={fieldClasses(Boolean(errors.phone))}
                 />
               </div>
               <FieldError message={errors.phone} />
             </div>
+          </div>
 
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="email" className="mb-2 block text-sm font-medium text-[#1A1A1A]">
-                Email <span className="text-red-500">*</span>
+              <label htmlFor="businessName" className="mb-2 block text-sm font-medium text-slate-900">
+                Business Name
               </label>
               <div className="relative">
-                <Mail className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#6B7280]" />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  value={values.email}
-                  onChange={(event) => updateField("email", event.target.value)}
-                  placeholder="you@business.com"
-                  className="h-14 w-full rounded-2xl border border-[#E5E7EB] bg-white py-3 pl-11 pr-4 text-sm text-[#1A1A1A] outline-none transition focus:border-[#0D9488] focus:ring-4 focus:ring-[#0D9488]/10"
+                <Building2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Input
+                  id="businessName"
+                  name="businessName"
+                  autoComplete="organization"
+                  value={values.businessName}
+                  onChange={(event) => updateField("businessName", event.target.value)}
+                  placeholder="Your business name"
+                  className={fieldClasses(Boolean(errors.businessName))}
                 />
               </div>
-              <FieldError message={errors.email} />
+              <FieldError message={errors.businessName} />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-900">
+                Website Type
+              </label>
+              <div className="relative">
+                <Building2 className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Select
+                  value={values.websiteType || undefined}
+                  onValueChange={(value) => updateField("websiteType", value)}
+                >
+                  <SelectTrigger className={fieldClasses(Boolean(errors.websiteType))}>
+                    <SelectValue placeholder="Select website type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {websiteTypeOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <FieldError message={errors.websiteType} />
             </div>
           </div>
 
           <div>
-            <label htmlFor="message" className="mb-2 block text-sm font-medium text-[#1A1A1A]">
-              What is your business about?
+            <label htmlFor="message" className="mb-2 block text-sm font-medium text-slate-900">
+              Message
             </label>
             <div className="relative">
-              <MessageSquare className="pointer-events-none absolute left-3 top-3.5 h-5 w-5 text-[#6B7280]" />
-              <textarea
+              <MessageSquare className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
+              <Textarea
                 id="message"
                 name="message"
                 rows={4}
                 value={values.message}
                 onChange={(event) => updateField("message", event.target.value)}
-                placeholder="Tell us what you sell, who you serve, or what kind of website you need."
-                className="w-full resize-none rounded-2xl border border-[#E5E7EB] bg-white py-3 pl-11 pr-4 text-sm text-[#1A1A1A] outline-none transition focus:border-[#0D9488] focus:ring-4 focus:ring-[#0D9488]/10"
+                placeholder="Tell us what you need, what your business does, or what kind of website you want."
+                className={`min-h-[120px] resize-none rounded-2xl border bg-white pl-11 text-[15px] text-slate-900 placeholder:text-slate-400 focus-visible:border-[#0D9488] focus-visible:ring-4 focus-visible:ring-[#0D9488]/10 focus-visible:ring-offset-0 ${errors.message ? "border-rose-300" : "border-slate-200/80"}`}
               />
             </div>
             <FieldError message={errors.message} />
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-[#0D9488] px-6 text-base font-semibold text-white shadow-[0_20px_50px_-24px_rgba(13,148,136,0.85)] transition hover:bg-[#0f766e] disabled:cursor-not-allowed disabled:opacity-70"
+            className={`${primaryButtonClass} h-12 w-full text-base disabled:pointer-events-none disabled:opacity-70`}
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Sending your request...
               </>
             ) : (
-              <>
-                <Send className="h-5 w-5" />
-                Get My Website Proposal in 60 Seconds
-              </>
+              "Get My Free Website Proposal"
             )}
-          </button>
+          </Button>
 
-          <p className="text-center text-xs leading-5 text-[#6B7280]">
-            No spam. No pressure. Just a clear quote, a smart plan, and a fast next step for your business.
+          <p className="text-center text-xs leading-5 text-slate-500">
+            No spam. No pressure. We&apos;ll contact you with a clear plan.
           </p>
         </form>
       </div>

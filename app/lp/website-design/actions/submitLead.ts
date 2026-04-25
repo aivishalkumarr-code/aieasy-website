@@ -2,11 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import {
-  DEFAULT_FROM_EMAIL,
-  getResendClient,
-  isResendConfigured,
-} from "@/lib/resend";
+import { DEFAULT_FROM_EMAIL, getResendClient, isResendConfigured } from "@/lib/resend";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 interface SubmitLeadResult {
@@ -15,10 +11,8 @@ interface SubmitLeadResult {
   name?: string;
 }
 
-const calendlyLink = "https://calendly.com/aieasy/30min";
 const adminEmail = "hello@aieasy.in";
 const leadSource = "Landing Page - Website Design";
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const sanitize = (value: FormDataEntryValue | null) =>
   typeof value === "string" ? value.trim() : "";
@@ -28,16 +22,17 @@ const escapeHtml = (value: string) =>
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
+    .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
 export async function submitLead(formData: FormData): Promise<SubmitLeadResult> {
   const name = sanitize(formData.get("name"));
   const businessName = sanitize(formData.get("businessName"));
   const phone = sanitize(formData.get("phone"));
-  const email = sanitize(formData.get("email")).toLowerCase();
+  const websiteType = sanitize(formData.get("websiteType"));
   const message = sanitize(formData.get("message"));
   const phoneDigits = phone.replace(/\D/g, "");
+  const generatedEmail = `website-design-${phoneDigits}-${Date.now()}@aieasy.in`;
 
   if (!name || name.length < 2) {
     return { success: false, message: "Please enter your name." };
@@ -51,8 +46,8 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     return { success: false, message: "Please enter a valid phone number." };
   }
 
-  if (!emailPattern.test(email)) {
-    return { success: false, message: "Please enter a valid email address." };
+  if (!websiteType) {
+    return { success: false, message: "Please select the website type you need." };
   }
 
   if (message && message.length < 12) {
@@ -81,14 +76,15 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
 
   const notes = [
     "Service Interest: Website Design",
+    `Website Type: ${websiteType}`,
     `Business Name: ${businessName}`,
     `Phone: ${phone}`,
-    `What is your business about?: ${message || "Not provided"}`,
+    `Requirement Details: ${message || "Not provided"}`,
   ].join("\n\n");
 
   const { error } = await supabase.from("contacts").insert({
     name,
-    email,
+    email: generatedEmail,
     phone,
     company: businessName,
     status: "New",
@@ -98,14 +94,6 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
   });
 
   if (error) {
-    if (error.code === "23505") {
-      return {
-        success: false,
-        message:
-          "This email is already in our system. Please book your free consultation or use another email address.",
-      };
-    }
-
     return {
       success: false,
       message: "Failed to save your request. Please try again.",
@@ -117,34 +105,23 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
 
     if (resend) {
       const safeName = escapeHtml(name);
-      const safeBusinessName = escapeHtml(businessName);
-      const safeEmail = escapeHtml(email);
       const safePhone = escapeHtml(phone);
+      const safeBusinessName = escapeHtml(businessName);
+      const safeWebsiteType = escapeHtml(websiteType);
       const safeMessage = escapeHtml(message || "Not provided").replace(/\n/g, "<br />");
 
-      await Promise.allSettled([
-        resend.emails.send({
-          from: DEFAULT_FROM_EMAIL,
-          to: [email],
-          subject: "Your AIeasy website consultation request is confirmed",
-          html: buildCustomerEmail({
-            name: safeName,
-            businessName: safeBusinessName,
-          }),
+      await resend.emails.send({
+        from: DEFAULT_FROM_EMAIL,
+        to: [adminEmail],
+        subject: `New Website Design Lead: ${name}`,
+        html: buildAdminEmail({
+          name: safeName,
+          phone: safePhone,
+          businessName: safeBusinessName,
+          websiteType: safeWebsiteType,
+          message: safeMessage,
         }),
-        resend.emails.send({
-          from: DEFAULT_FROM_EMAIL,
-          to: [adminEmail],
-          subject: `New Website Design Lead: ${name}`,
-          html: buildAdminEmail({
-            name: safeName,
-            email: safeEmail,
-            phone: safePhone,
-            businessName: safeBusinessName,
-            message: safeMessage,
-          }),
-        }),
-      ]);
+      });
     }
   }
 
@@ -159,84 +136,17 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
   };
 }
 
-function buildCustomerEmail({
-  name,
-  businessName,
-}: {
-  name: string;
-  businessName: string;
-}) {
-  return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Your website consultation request is confirmed</title>
-      </head>
-      <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#fafaf8;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fafaf8;">
-          <tr>
-            <td align="center" style="padding:40px 20px;">
-              <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background-color:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 6px 20px rgba(15,23,42,0.08);">
-                <tr>
-                  <td style="background:linear-gradient(135deg,#0f766e 0%,#0D9488 55%,#14B8A6 100%);padding:36px 40px;text-align:center;">
-                    <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">AIeasy</h1>
-                    <p style="margin:10px 0 0;color:rgba(255,255,255,0.86);font-size:14px;">Websites built to grow businesses</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:40px;">
-                    <h2 style="margin:0 0 16px;color:#1A1A1A;font-size:26px;font-weight:700;">Thanks, ${name}.</h2>
-                    <p style="margin:0 0 16px;color:#4B5563;font-size:16px;line-height:1.7;">
-                      We&apos;ve received your request for a high-converting website for <strong>${businessName}</strong>.
-                    </p>
-                    <p style="margin:0 0 24px;color:#4B5563;font-size:16px;line-height:1.7;">
-                      Our team will review the details and follow up with your next step. If you want faster clarity, book a free consultation right now.
-                    </p>
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0;border-radius:16px;background-color:#f0fdfa;">
-                      <tr>
-                        <td style="padding:24px;text-align:center;">
-                          <p style="margin:0 0 10px;color:#0D9488;font-size:18px;font-weight:700;">Book your free consultation</p>
-                          <p style="margin:0 0 18px;color:#4B5563;font-size:14px;line-height:1.6;">Pick a 30-minute call and we&apos;ll discuss goals, pricing direction, and the fastest path to launch.</p>
-                          <a href="${calendlyLink}" style="display:inline-block;background-color:#0D9488;color:#ffffff;text-decoration:none;padding:13px 24px;border-radius:9999px;font-weight:600;font-size:14px;">Book on Calendly</a>
-                        </td>
-                      </tr>
-                    </table>
-                    <p style="margin:0;color:#4B5563;font-size:14px;line-height:1.7;">
-                      What happens next:<br>
-                      1. We review your business goals<br>
-                      2. We recommend the best package or scope<br>
-                      3. We align on timeline and priorities<br>
-                      4. We launch a website built to win more customers
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:24px 40px;border-top:1px solid #E5E7EB;text-align:center;">
-                    <p style="margin:0;color:#9CA3AF;font-size:12px;line-height:1.7;">AIeasy • Delhi, India<br>hello@aieasy.in</p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </body>
-    </html>
-  `;
-}
-
 function buildAdminEmail({
   name,
-  email,
   phone,
   businessName,
+  websiteType,
   message,
 }: {
   name: string;
-  email: string;
   phone: string;
   businessName: string;
+  websiteType: string;
   message: string;
 }) {
   return `
@@ -246,37 +156,37 @@ function buildAdminEmail({
         <meta charset="utf-8">
         <title>New Website Design Lead</title>
       </head>
-      <body style="margin:0;padding:20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#fafaf8;">
-        <div style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:18px;padding:36px;box-shadow:0 6px 20px rgba(15,23,42,0.08);">
+      <body style="margin:0;padding:20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f8fafc;">
+        <div style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:20px;padding:36px;box-shadow:0 20px 60px rgba(15,148,136,0.12);">
           <h1 style="margin:0 0 24px;color:#0D9488;font-size:28px;font-weight:700;">New Website Design Lead</h1>
           <table style="width:100%;border-collapse:collapse;">
             <tr>
-              <td style="padding:10px 0;color:#6B7280;width:150px;">Name</td>
-              <td style="padding:10px 0;color:#1A1A1A;font-weight:600;">${name}</td>
+              <td style="padding:10px 0;color:#64748B;width:170px;">Name</td>
+              <td style="padding:10px 0;color:#0F172A;font-weight:600;">${name}</td>
             </tr>
             <tr>
-              <td style="padding:10px 0;color:#6B7280;">Business</td>
-              <td style="padding:10px 0;color:#1A1A1A;">${businessName}</td>
+              <td style="padding:10px 0;color:#64748B;">Business</td>
+              <td style="padding:10px 0;color:#0F172A;">${businessName}</td>
             </tr>
             <tr>
-              <td style="padding:10px 0;color:#6B7280;">Email</td>
-              <td style="padding:10px 0;color:#1A1A1A;">${email}</td>
+              <td style="padding:10px 0;color:#64748B;">Phone</td>
+              <td style="padding:10px 0;color:#0F172A;">${phone}</td>
             </tr>
             <tr>
-              <td style="padding:10px 0;color:#6B7280;">Phone</td>
-              <td style="padding:10px 0;color:#1A1A1A;">${phone}</td>
+              <td style="padding:10px 0;color:#64748B;">Website Type</td>
+              <td style="padding:10px 0;color:#0F172A;">${websiteType}</td>
             </tr>
             <tr>
-              <td style="padding:10px 0;color:#6B7280;vertical-align:top;">Business details</td>
-              <td style="padding:10px 0;color:#1A1A1A;line-height:1.7;">${message}</td>
+              <td style="padding:10px 0;color:#64748B;vertical-align:top;">Requirement Details</td>
+              <td style="padding:10px 0;color:#0F172A;line-height:1.7;">${message}</td>
             </tr>
             <tr>
-              <td style="padding:10px 0;color:#6B7280;">Source</td>
-              <td style="padding:10px 0;color:#1A1A1A;">${leadSource}</td>
+              <td style="padding:10px 0;color:#64748B;">Source</td>
+              <td style="padding:10px 0;color:#0F172A;">${leadSource}</td>
             </tr>
           </table>
-          <div style="margin-top:24px;padding-top:24px;border-top:1px solid #E5E7EB;">
-            <p style="margin:0;color:#9CA3AF;font-size:12px;">Received at ${new Date().toLocaleString("en-IN", {
+          <div style="margin-top:24px;padding-top:24px;border-top:1px solid #E2E8F0;">
+            <p style="margin:0;color:#94A3B8;font-size:12px;">Received at ${new Date().toLocaleString("en-IN", {
               timeZone: "Asia/Kolkata",
             })}</p>
           </div>

@@ -1,46 +1,64 @@
 "use client";
 
-import type { MouseEvent, ReactNode } from "react";
+import {
+  forwardRef,
+  type AnchorHTMLAttributes,
+  type MouseEvent,
+} from "react";
 
 import { cn } from "@/lib/utils";
 
-interface ScrollToLeadCtaProps {
-  children: ReactNode;
-  className?: string;
-  onClick?: () => void;
-}
+interface ScrollToLeadCtaProps
+  extends AnchorHTMLAttributes<HTMLAnchorElement> {}
 
-export function ScrollToLeadCta({
-  children,
-  className,
-  onClick,
-}: ScrollToLeadCtaProps) {
+export const ScrollToLeadCta = forwardRef<
+  HTMLAnchorElement,
+  ScrollToLeadCtaProps
+>(({ children, className, href = "#contact", onClick, ...props }, ref) => {
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    onClick?.();
+    onClick?.(event);
 
-    const target = document.getElementById("contact");
-    const firstField = document.getElementById("name") as HTMLInputElement | null;
-
-    if (!target) {
-      window.location.hash = "contact";
+    if (event.defaultPrevented) {
       return;
     }
 
-    const offset = window.innerWidth < 1024 ? 84 : 96;
-    const top = Math.max(window.scrollY + target.getBoundingClientRect().top - offset, 0);
+    const hash = href.startsWith("#") ? href.slice(1) : "contact";
+    const targetId = hash || "contact";
+    const target = document.getElementById(targetId);
+    const firstField = document.getElementById("name") as HTMLInputElement | null;
 
-    window.history.replaceState(null, "", "#contact");
+    event.preventDefault();
+
+    if (!target) {
+      window.location.hash = targetId;
+      return;
+    }
+
+    const offset = window.innerWidth < 1024 ? 92 : 104;
+    const top = Math.max(
+      window.scrollY + target.getBoundingClientRect().top - offset,
+      0,
+    );
+
+    window.history.replaceState(null, "", `#${targetId}`);
     window.scrollTo({ top, behavior: "smooth" });
 
     window.setTimeout(() => {
       firstField?.focus({ preventScroll: true });
-    }, 450);
+    }, 420);
   };
 
   return (
-    <a href="#contact" onClick={handleClick} className={cn(className)}>
+    <a
+      ref={ref}
+      href={href}
+      onClick={handleClick}
+      className={cn(className)}
+      {...props}
+    >
       {children}
     </a>
   );
-}
+});
+
+ScrollToLeadCta.displayName = "ScrollToLeadCta";

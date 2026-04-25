@@ -1,109 +1,97 @@
-import { Check, ShieldCheck } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
-import { AnimatedSection } from "./AnimatedSection";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+
+import {
+  SectionIntro,
+  primaryButtonClass,
+  sectionContainerClass,
+  sectionPaddingClass,
+  secondaryButtonClass,
+} from "./LandingPrimitives";
+import { pricingTiers } from "./landingPageContent";
 import { ScrollToLeadCta } from "./ScrollToLeadCta";
-
-const tiers = [
-  {
-    name: "Starter",
-    price: "₹9,999",
-    description: "Perfect for local businesses that need a professional website fast.",
-    features: ["5 pages", "Mobile responsive", "Basic SEO", "1-year support"],
-    featured: false,
-  },
-  {
-    name: "Business",
-    price: "₹19,999",
-    description: "Best for businesses that want more leads, better tracking, and a stronger funnel.",
-    features: ["10 pages", "Lead capture forms", "Advanced SEO", "Analytics", "1-year support"],
-    featured: true,
-  },
-  {
-    name: "Premium",
-    price: "₹34,999",
-    description: "For brands that need a bigger build, e-commerce, or custom functionality.",
-    features: ["Unlimited pages", "E-commerce", "Custom features", "Priority support", "2-year support"],
-    featured: false,
-  },
-] as const;
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="container scroll-mt-28 py-20 sm:py-24">
-      <AnimatedSection className="mx-auto max-w-3xl text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#0D9488]">
-          Pricing
-        </p>
-        <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-[#1A1A1A] sm:text-4xl">
-          Simple, Transparent Pricing
-        </h2>
-        <p className="mt-4 text-lg leading-8 text-[#6B7280]">
-          Choose the website package that matches your current stage. Every tier is designed to help you launch faster and grow with confidence.
-        </p>
-      </AnimatedSection>
+    <section id="pricing" className={sectionPaddingClass}>
+      <div className={sectionContainerClass}>
+        <SectionIntro
+          eyebrow="Pricing"
+          title="Simple website packages with clear starting points."
+          description="Choose the package that fits your current stage. Each option is structured to keep the launch practical, fast and easy to understand."
+        />
 
-      <div className="mt-12 grid gap-6 lg:grid-cols-3">
-        {tiers.map((tier, index) => (
-          <AnimatedSection key={tier.name} delay={index * 0.07}>
-            <div
-              className={`relative flex h-full flex-col rounded-[2rem] border p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
+        <div className="mt-12 grid gap-6 lg:grid-cols-3 lg:items-stretch">
+          {pricingTiers.map((tier) => (
+            <Card
+              key={tier.name}
+              className={cn(
+                "relative flex h-full rounded-2xl border bg-white transition duration-200 hover:-translate-y-1",
                 tier.featured
-                  ? "border-[#0D9488] bg-white shadow-[0_25px_60px_-40px_rgba(13,148,136,0.45)]"
-                  : "border-[#E5E7EB] bg-white"
-              }`}
+                  ? "scale-100 border-teal-500 shadow-[0_20px_60px_rgba(13,148,136,0.18)] lg:scale-[1.02]"
+                  : "border-slate-200/70 shadow-[0_20px_60px_rgba(15,148,136,0.12)] hover:border-teal-200",
+              )}
             >
-              {tier.featured ? (
-                <div className="absolute left-8 top-0 -translate-y-1/2 rounded-full bg-[#0D9488] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white">
-                  Most popular
+              <CardContent className="flex h-full w-full flex-col p-6 sm:p-7">
+                {tier.featured ? (
+                  <Badge className="absolute left-6 top-0 -translate-y-1/2 rounded-full bg-[#0D9488] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+                    Most Popular
+                  </Badge>
+                ) : null}
+
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    {tier.name}
+                  </p>
+                  <div className="mt-4 text-4xl font-bold tracking-tight text-slate-900">
+                    {tier.price}
+                  </div>
+                  <p className="mt-4 text-sm leading-6 text-slate-600">
+                    {tier.description}
+                  </p>
                 </div>
-              ) : null}
 
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#6B7280]">{tier.name}</p>
-                <div className="mt-4 text-4xl font-semibold tracking-tight text-[#1A1A1A]">{tier.price}</div>
-                <p className="mt-4 text-sm leading-7 text-[#6B7280]">{tier.description}</p>
-              </div>
+                <Separator className="my-6 bg-slate-200/80" />
 
-              <ul className="mt-8 space-y-3">
-                {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3 text-sm text-[#4B5563]">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0D9488]/10 text-[#0D9488]">
-                      <Check className="h-3.5 w-3.5" />
-                    </span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+                <div className="rounded-2xl bg-slate-50 px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    Best suited for
+                  </p>
+                  <p className="mt-2 text-sm font-medium leading-6 text-slate-700">
+                    {tier.outcome}
+                  </p>
+                </div>
 
-              <div className="mt-8 flex flex-1 flex-col justify-end gap-4">
-                <ScrollToLeadCta
-                  className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold transition ${
-                    tier.featured
-                      ? "bg-[#0D9488] text-white hover:bg-[#0f766e]"
-                      : "bg-[#1A1A1A] text-white hover:bg-[#0f172a]"
-                  }`}
-                >
-                  Get Started
-                </ScrollToLeadCta>
-                <p className="text-center text-xs font-medium text-[#6B7280]">
-                  Limited onboarding spots available each month.
-                </p>
-              </div>
-            </div>
-          </AnimatedSection>
-        ))}
-      </div>
+                <ul className="mt-6 space-y-3">
+                  {tier.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3 text-sm leading-6 text-slate-700">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#0D9488]" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
 
-      <AnimatedSection className="mt-8">
-        <div className="flex flex-col items-center justify-center gap-3 rounded-[1.8rem] border border-[#0D9488]/15 bg-[#f0fdfa] px-6 py-5 text-center sm:flex-row sm:text-left">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#0D9488] text-white">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
-          <p className="text-sm font-semibold text-[#1A1A1A] sm:text-base">
-            100% Satisfaction Guaranteed • Full Source Code Delivered
-          </p>
+                <div className="mt-8 flex flex-1 items-end">
+                  <Button
+                    asChild
+                    className={cn(
+                      tier.featured ? primaryButtonClass : secondaryButtonClass,
+                      "h-12 w-full",
+                    )}
+                  >
+                    <ScrollToLeadCta>{tier.cta}</ScrollToLeadCta>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      </AnimatedSection>
+      </div>
     </section>
   );
 }

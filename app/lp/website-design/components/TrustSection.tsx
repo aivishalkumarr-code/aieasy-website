@@ -5,33 +5,33 @@ import {
   sectionContainerClass,
   sectionPaddingClass,
 } from "./LandingPrimitives";
-import { benefits } from "./landingPageContent";
+import { trustCards } from "./landingPageContent";
 
-export function BenefitsSection() {
+export function TrustSection() {
   return (
-    <section id="benefits" className={sectionPaddingClass}>
+    <section className="bg-slate-50 py-12 sm:py-14 lg:py-20">
       <div className={sectionContainerClass}>
         <SectionIntro
-          eyebrow="Benefits"
-          title="Your website should bring enquiries, not just sit online."
-          description="We design business websites with better structure, clearer messaging and stronger conversion paths so your traffic has a better chance of turning into conversations."
+          eyebrow="Why Choose AIeasy"
+          title="Why businesses choose AIeasy for website design."
+          description="We keep the process clear, the communication fast and the website direction focused on results you can actually use."
         />
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {benefits.map((benefit) => (
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {trustCards.map((card) => (
             <Card
-              key={benefit.title}
+              key={card.title}
               className="h-full rounded-2xl border border-slate-200/70 bg-white shadow-[0_20px_60px_rgba(15,148,136,0.12)] transition duration-200 hover:-translate-y-1 hover:border-teal-200"
             >
-              <CardContent className="flex h-full flex-col p-6">
+              <CardContent className="p-6">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 text-[#0D9488]">
-                  <benefit.icon className="h-5 w-5" />
+                  <card.icon className="h-5 w-5" />
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-slate-900">
-                  {benefit.title}
+                  {card.title}
                 </h3>
                 <p className="mt-3 text-base leading-7 text-slate-600">
-                  {benefit.description}
+                  {card.description}
                 </p>
               </CardContent>
             </Card>
