@@ -1,83 +1,72 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+import { primaryButtonClass, sectionContainerClass } from "./LandingPrimitives";
+import { navLinks } from "./landingPageContent";
 import { ScrollToLeadCta } from "./ScrollToLeadCta";
 
-const links = [
-  { label: "Benefits", href: "#benefits" },
-  { label: "Portfolio", href: "#portfolio" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Testimonials", href: "#testimonials" },
-] as const;
-
 export function LpHeader() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const updateScroll = () => {
+      setIsScrolled(window.scrollY > 14);
+    };
+
+    updateScroll();
+    window.addEventListener("scroll", updateScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", updateScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#E5E7EB]/80 bg-[#fafaf8]/92 backdrop-blur-xl">
-      <div className="container flex h-16 items-center justify-between gap-4 lg:h-20">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#0D9488] text-base font-bold text-white shadow-sm">
+    <header
+      className={cn(
+        "sticky top-0 z-50 transition-all duration-300",
+        isScrolled
+          ? "border-b border-slate-200/80 bg-white/80 shadow-[0_20px_60px_rgba(15,148,136,0.08)] backdrop-blur-xl"
+          : "bg-white/65 backdrop-blur-sm",
+      )}
+    >
+      <div className={cn(sectionContainerClass, "flex h-16 items-center justify-between gap-4 lg:h-20")}>
+        <Link href="/" className="flex min-w-0 items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#0D9488] text-base font-bold text-white shadow-[0_20px_60px_rgba(15,148,136,0.18)]">
             A
           </div>
-          <div>
-            <p className="text-lg font-semibold tracking-tight text-[#1A1A1A]">AIeasy</p>
-            <p className="hidden text-xs text-[#6B7280] sm:block">Websites built to grow revenue</p>
+          <div className="min-w-0">
+            <p className="truncate text-lg font-semibold tracking-tight text-slate-900">AIeasy</p>
+            <p className="truncate text-xs text-slate-500 sm:text-sm">
+              Website Design Company in Delhi
+            </p>
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex">
-          {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-[#6B7280] transition-colors hover:text-[#0D9488]"
-            >
-              {link.label}
-            </a>
-          ))}
-          <ScrollToLeadCta
-            className="inline-flex h-11 items-center justify-center rounded-full bg-[#0D9488] px-6 text-sm font-semibold text-white transition hover:bg-[#0f766e]"
-          >
-            Get Free Consultation
-          </ScrollToLeadCta>
-        </nav>
-
-        <button
-          type="button"
-          aria-label="Toggle menu"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1A1A1A] lg:hidden"
-          onClick={() => setMobileMenuOpen((prev) => !prev)}
-        >
-          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </div>
-
-      {mobileMenuOpen ? (
-        <div className="border-t border-[#E5E7EB] bg-white lg:hidden">
-          <div className="container flex flex-col gap-4 py-4">
-            {links.map((link) => (
+        <div className="flex items-center gap-3 lg:gap-8">
+          <nav className="hidden items-center gap-7 lg:flex">
+            {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-[#6B7280]"
-                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm font-medium text-slate-600 transition-colors hover:text-[#0D9488]"
               >
                 {link.label}
               </a>
             ))}
-            <ScrollToLeadCta
-              className="inline-flex h-12 items-center justify-center rounded-full bg-[#0D9488] px-6 text-sm font-semibold text-white"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Get Free Consultation
+          </nav>
+
+          <Button asChild className={cn(primaryButtonClass, "h-11 px-5 text-sm sm:px-6")}> 
+            <ScrollToLeadCta>
+              <span className="sm:hidden">Free Consultation</span>
+              <span className="hidden sm:inline">Get Free Consultation</span>
             </ScrollToLeadCta>
-          </div>
+          </Button>
         </div>
-      ) : null}
+      </div>
     </header>
   );
 }

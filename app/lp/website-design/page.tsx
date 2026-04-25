@@ -1,113 +1,138 @@
 import type { Metadata } from "next";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 import { BenefitsSection } from "./components/BenefitsSection";
-import { HeroSlider } from "./components/HeroSlider";
-import { HowItWorksSection } from "./components/HowItWorksSection";
+import { FinalCtaSection } from "./components/FinalCtaSection";
+import {
+  primaryButtonClass,
+  sectionContainerClass,
+  secondaryButtonClass,
+} from "./components/LandingPrimitives";
 import { LeadForm } from "./components/LeadForm";
 import { LpFooter } from "./components/LpFooter";
 import { LpHeader } from "./components/LpHeader";
+import { MobileStickyCta } from "./components/MobileStickyCta";
 import { PortfolioSection } from "./components/PortfolioSection";
 import { PricingSection } from "./components/PricingSection";
-import { TestimonialsSection } from "./components/TestimonialsSection";
+import { ProcessSection } from "./components/ProcessSection";
+import { FaqSection } from "./components/FaqSection";
 import { ScrollToLeadCta } from "./components/ScrollToLeadCta";
+import { TrustSection } from "./components/TrustSection";
+import { WebsiteTypesSection } from "./components/WebsiteTypesSection";
+import { WhatsIncludedSection } from "./components/WhatsIncludedSection";
+import { heroBenefitBullets, heroTrustPoints } from "./components/landingPageContent";
 
 export const metadata: Metadata = {
   title:
-    "Get a High-Converting Website That Grows Your Business | AIeasy - Starting at ₹9,999",
+    "Website Design Company in Delhi | Professional Business Websites from ₹9,999 | AIeasy",
   description:
-    "Stop losing customers with a basic website. Get a professional, lead-generating website that works 24/7 for your business, starting at just ₹9,999.",
+    "Get a premium, mobile-friendly and SEO-ready website for your Delhi business starting at ₹9,999 with free domain, hosting and support included.",
   keywords: [
-    "website design",
-    "high-converting website",
-    "lead generation website",
-    "business website India",
+    "website design company in Delhi",
     "website design Delhi",
+    "business website design Delhi",
+    "landing page design Delhi",
     "AIeasy",
   ],
   openGraph: {
-    title: "Get a High-Converting Website That Grows Your Business | AIeasy",
+    title: "Website Design Company in Delhi | AIeasy",
     description:
-      "Professional, mobile-first business websites that generate leads, build trust, and help you grow.",
+      "Professional website design for Delhi businesses that want more leads, better trust and a cleaner online presence.",
     type: "website",
   },
 };
 
-const heroProof = [
-  "Delivered in 7-14 days",
-  "1-Year Free Support",
-  "100+ Happy Clients",
-] as const;
-
-const heroHighlights = [
-  "Built to generate inquiries, not just look nice",
-  "Perfect on mobile where most customers discover you",
-  "Designed to build trust from the first click",
-] as const;
-
 export default function WebsiteDesignLandingPage() {
   return (
-    <div className="min-h-screen bg-[#fafaf8] text-[#1A1A1A]">
+    <div className="min-h-screen bg-white pb-24 text-slate-900 md:pb-0">
       <LpHeader />
 
       <main className="overflow-x-clip">
-        <section className="relative isolate overflow-hidden border-b border-[#E5E7EB] bg-[radial-gradient(circle_at_top_left,_rgba(13,148,136,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(20,184,166,0.14),_transparent_30%),linear-gradient(180deg,_#ffffff_0%,_#fafaf8_100%)] pb-16 pt-10 sm:pt-14 lg:pb-20 lg:pt-16">
-          <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(13,148,136,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(13,148,136,0.05)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(circle_at_center,black,transparent_82%)]" />
-          <div className="container relative">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(320px,0.92fr)] lg:items-start">
-              <div className="max-w-2xl pt-4 lg:pt-8">
-                <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-[#0D9488]/15 bg-white/85 px-4 py-2 text-sm font-medium text-[#0D9488] shadow-sm backdrop-blur">
-                  <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[#0D9488]" />
-                  Limited availability for this month&apos;s launches
-                </div>
-                <h1 className="mt-6 text-balance text-4xl font-semibold tracking-tight text-[#1A1A1A] sm:text-5xl lg:text-6xl">
-                  Get a High-Converting Website That Grows Your Business – Starting at Just ₹9,999
-                </h1>
-                <p className="mt-5 max-w-2xl text-lg leading-8 text-[#4B5563] sm:text-xl">
-                  Stop losing customers with a basic website. Get a professional, lead-generating website that works 24/7 for your business.
-                </p>
-                <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-                  <ScrollToLeadCta
-                    className="inline-flex h-14 items-center justify-center rounded-full bg-[#0D9488] px-8 text-base font-semibold text-white shadow-[0_18px_45px_-20px_rgba(13,148,136,0.8)] transition hover:bg-[#0f766e]"
-                  >
-                    Get Your Free Website Consultation
-                  </ScrollToLeadCta>
-                  <p className="text-sm font-medium text-[#6B7280]">
-                    Free consultation worth ₹2,000. No obligation quote.
-                  </p>
-                </div>
-                <p className="mt-5 text-sm font-medium text-[#1A1A1A] sm:text-base">
-                  {heroProof.join(" • ")}
-                </p>
+        <section className="relative overflow-hidden border-b border-slate-200/80 bg-[radial-gradient(circle_at_top_left,_rgba(13,148,136,0.12),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(13,148,136,0.08),_transparent_28%),linear-gradient(180deg,_#ffffff_0%,_#f8fafc_100%)] py-12 sm:py-14 lg:py-20">
+          <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(15,23,42,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.03)_1px,transparent_1px)] bg-[size:56px_56px] [mask-image:radial-gradient(circle_at_center,black,transparent_82%)]" />
+          <div className={cn(sectionContainerClass, "grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:items-start lg:gap-14")}>
+            <div className="max-w-2xl pt-2 lg:pt-6">
+              <Badge variant="outline" className="rounded-full border-teal-100 bg-white/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-600 shadow-sm">
+                Website Design Company in Delhi
+              </Badge>
+              <h1 className="mt-6 text-4xl font-bold leading-[1.05] text-slate-900 md:text-5xl lg:text-6xl">
+                Professional Website Design Company in Delhi for Businesses That Want More Leads
+              </h1>
+              <p className="mt-5 text-base leading-relaxed text-slate-600 md:text-lg">
+                Get a custom, mobile-friendly and SEO-ready website starting at ₹9,999 — with free domain, hosting and support included.
+              </p>
 
-                <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                  {heroHighlights.map((item) => (
-                    <div
-                      key={item}
-                      className="rounded-2xl border border-white/80 bg-white/80 p-4 shadow-sm backdrop-blur"
-                    >
-                      <p className="text-sm font-medium leading-6 text-[#374151]">{item}</p>
-                    </div>
-                  ))}
-                </div>
+              <div className="mt-6 inline-flex flex-wrap items-center gap-2 rounded-full border border-teal-100 bg-teal-50/70 px-4 py-2 text-sm font-medium text-slate-700">
+                <CheckCircle2 className="h-4 w-4 text-[#0D9488]" />
+                Built for Google Ads, SEO, mobile users and fast loading speed.
               </div>
 
-              <LeadForm />
+              <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                <Button asChild className={cn(primaryButtonClass, "h-12 gap-2 px-6")}>
+                  <ScrollToLeadCta>
+                    Get Free Website Consultation
+                    <ArrowRight className="h-4 w-4" />
+                  </ScrollToLeadCta>
+                </Button>
+                <Button asChild variant="outline" className={cn(secondaryButtonClass, "h-12 gap-2 px-6")}>
+                  <a href="#pricing">View Website Packages</a>
+                </Button>
+              </div>
+
+              <p className="mt-4 text-sm font-medium text-slate-500">
+                No upfront payment. Get a clear website plan before you decide.
+              </p>
+
+              <Separator className="my-8 max-w-xl bg-slate-200/80" />
+
+              <div className="flex flex-wrap gap-2">
+                {heroTrustPoints.map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-full border border-slate-200/80 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-8 grid gap-3 md:grid-cols-2">
+                {heroBenefitBullets.map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-white px-4 py-4 shadow-[0_20px_60px_rgba(15,148,136,0.12)]"
+                  >
+                    <CheckCircle2 className="h-5 w-5 shrink-0 text-[#0D9488]" />
+                    <span className="text-sm font-semibold text-slate-700 sm:text-base">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="mt-10 rounded-[2rem] border border-white/80 bg-white/65 p-3 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.35)] backdrop-blur sm:mt-14 sm:p-5">
-              <HeroSlider />
-            </div>
+            <LeadForm />
           </div>
         </section>
 
+        <WebsiteTypesSection />
         <BenefitsSection />
+        <WhatsIncludedSection />
         <PortfolioSection />
         <PricingSection />
-        <TestimonialsSection />
-        <HowItWorksSection />
+        <TrustSection />
+        <ProcessSection />
+        <FaqSection />
+        <FinalCtaSection />
       </main>
 
       <LpFooter />
+      <MobileStickyCta />
     </div>
   );
 }
