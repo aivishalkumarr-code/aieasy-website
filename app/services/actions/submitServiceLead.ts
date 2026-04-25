@@ -11,11 +11,11 @@ import { addDemoContact } from "@/lib/demo-contacts";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 import {
-  contactLeadFormSchema,
-  type ContactLeadFormValues,
-} from "../contactFormSchema";
+  serviceLeadFormSchema,
+  type ServiceLeadFormValues,
+} from "../serviceLeadFormSchema";
 
-interface SubmitContactResult {
+interface SubmitServiceLeadResult {
   success: boolean;
   message?: string;
   name?: string;
@@ -24,10 +24,10 @@ interface SubmitContactResult {
 const calendlyLink = "https://calendly.com/aieasy/30min";
 const adminEmail = "hello@aieasy.in";
 
-export async function submitContact(
-  values: ContactLeadFormValues,
-): Promise<SubmitContactResult> {
-  const parsed = contactLeadFormSchema.safeParse(values);
+export async function submitServiceLead(
+  values: ServiceLeadFormValues,
+): Promise<SubmitServiceLeadResult> {
+  const parsed = serviceLeadFormSchema.safeParse(values);
 
   if (!parsed.success) {
     return {
@@ -38,22 +38,21 @@ export async function submitContact(
     };
   }
 
-  const lead = parsed.data;
-  const notes = `Service Interest: ${lead.serviceInterest}
-Budget Range: ${lead.budgetRange}
-Timeline: ${lead.timeline}
+  const data = parsed.data;
+  const source = `Service Page - ${data.serviceName}`;
+  const notes = `Service Interest: ${data.serviceName}
 
 Message:
-${lead.message}`;
+${data.message}`;
   const contact = {
     id: crypto.randomUUID(),
-    name: lead.name.trim(),
-    email: lead.email.trim().toLowerCase(),
-    company: lead.company.trim(),
-    phone: null,
+    name: data.name.trim(),
+    email: data.email.trim().toLowerCase(),
+    company: data.company.trim(),
+    phone: data.phone.trim(),
     status: "New" as const,
     notes,
-    source: "Contact Page",
+    source,
     created_at: new Date().toISOString(),
   };
 
@@ -61,12 +60,12 @@ ${lead.message}`;
     addDemoContact(contact);
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/leads");
-    revalidatePath("/contact");
+    revalidatePath(`/services/${data.serviceSlug}`);
 
     return {
       success: true,
-      name: lead.name,
-      message: "Your submission has been received successfully!",
+      name: data.name,
+      message: "Your service inquiry has been received successfully!",
     };
   }
 
@@ -79,62 +78,59 @@ ${lead.message}`;
     };
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("contacts")
     .insert(contact)
     .select("*")
     .single();
 
   if (error) {
-    console.error("Supabase insert error:", error);
+    console.error("Service lead insert error:", error);
     return {
       success: false,
       message: "Failed to save your submission. Please try again.",
     };
   }
 
-  // Send emails via Resend if configured
   if (isResendConfigured()) {
     const resend = getResendClient();
+
     if (resend) {
       try {
-        // Send confirmation email to customer
         await resend.emails.send({
           from: DEFAULT_FROM_EMAIL,
-          to: [lead.email],
-          subject: "Thank you for contacting AIeasy!",
-          html: buildCustomerEmail(lead.name, lead.company, lead.serviceInterest),
+          to: [data.email],
+          subject: `Thanks for requesting a ${data.serviceName} quote`,
+          html: buildCustomerEmail(data.name, data.company, data.serviceName),
         });
 
         await resend.emails.send({
           from: DEFAULT_FROM_EMAIL,
           to: [adminEmail],
-          subject: `New Contact Form Submission: ${lead.name}`,
-          html: buildAdminEmail(lead),
+          subject: `New ${data.serviceName} lead: ${data.name}`,
+          html: buildAdminEmail(data, source),
         });
-      } catch (err) {
-        console.error("Resend email error:", err);
-        // Don't fail the submission if email fails
+      } catch (error) {
+        console.error("Service lead email error:", error);
       }
     }
   }
 
-  // Revalidate paths to refresh data
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/leads");
-  revalidatePath("/contact");
+  revalidatePath(`/services/${data.serviceSlug}`);
 
   return {
     success: true,
-    name: lead.name,
-    message: "Your submission has been received successfully!",
+    name: data.name,
+    message: "Your service inquiry has been received successfully!",
   };
 }
 
 function buildCustomerEmail(
   name: string,
   company: string,
-  serviceInterest: string,
+  serviceName: string,
 ): string {
   return `
     <!DOCTYPE html>
@@ -159,7 +155,7 @@ function buildCustomerEmail(
                 <td style="padding: 40px;">
                   <h2 style="color: #1A1A1A; margin: 0 0 16px 0; font-size: 24px;">Thank you, ${name}!</h2>
                   <p style="color: #6B7280; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">
-                    We've received your inquiry about <strong>${serviceInterest}</strong> for <strong>${company}</strong>.
+                    We&apos;ve received your request for <strong>${serviceName}</strong> from <strong>${company}</strong>.
                   </p>
                   <p style="color: #6B7280; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">
                     Our team will review your requirements and get back to you within <strong>24 hours</strong>.
@@ -173,13 +169,6 @@ function buildCustomerEmail(
                       </td>
                     </tr>
                   </table>
-                  <p style="color: #6B7280; margin: 24px 0 0 0; font-size: 14px; line-height: 1.6;">
-                    <strong>What's next?</strong><br>
-                    1. We'll review your project requirements<br>
-                    2. Our team will prepare a custom recommendation<br>
-                    3. We'll schedule a call to discuss details<br>
-                    4. Start your project with confidence
-                  </p>
                 </td>
               </tr>
               <tr>
@@ -199,17 +188,20 @@ function buildCustomerEmail(
   `;
 }
 
-function buildAdminEmail(values: ContactLeadFormValues): string {
+function buildAdminEmail(
+  values: ServiceLeadFormValues,
+  source: string,
+): string {
   return `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
-      <title>New Contact Form Submission</title>
+      <title>New Service Page Lead</title>
     </head>
     <body style="margin: 0; padding: 20px; font-family: sans-serif; background-color: #fafaf8;">
       <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-        <h1 style="color: #0D9488; margin: 0 0 24px 0;">🎯 New Contact Form Lead</h1>
+        <h1 style="color: #0D9488; margin: 0 0 24px 0;">New Service Page Lead</h1>
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <td style="padding: 8px 0; color: #6B7280; width: 120px;">Name:</td>
@@ -224,16 +216,12 @@ function buildAdminEmail(values: ContactLeadFormValues): string {
             <td style="padding: 8px 0; color: #1A1A1A;">${values.company}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #6B7280;">Service Interest:</td>
-            <td style="padding: 8px 0; color: #1A1A1A;">${values.serviceInterest}</td>
+            <td style="padding: 8px 0; color: #6B7280;">Phone:</td>
+            <td style="padding: 8px 0; color: #1A1A1A;">${values.phone}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #6B7280;">Budget Range:</td>
-            <td style="padding: 8px 0; color: #1A1A1A;">${values.budgetRange}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 0; color: #6B7280;">Timeline:</td>
-            <td style="padding: 8px 0; color: #1A1A1A;">${values.timeline}</td>
+            <td style="padding: 8px 0; color: #6B7280;">Service:</td>
+            <td style="padding: 8px 0; color: #1A1A1A;">${values.serviceName}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6B7280; vertical-align: top;">Message:</td>
@@ -241,7 +229,7 @@ function buildAdminEmail(values: ContactLeadFormValues): string {
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6B7280;">Source:</td>
-            <td style="padding: 8px 0; color: #1A1A1A;">Contact Page Form</td>
+            <td style="padding: 8px 0; color: #1A1A1A;">${source}</td>
           </tr>
         </table>
         <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #E5E7EB;">

@@ -2,19 +2,22 @@
 
 import { revalidatePath } from "next/cache";
 
+import { mergeDemoContacts } from "@/lib/demo-contacts";
 import { getMockContacts } from "@/lib/mock-data";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import type { ActionResult, Contact, LeadStatus } from "@/types";
 
 export const getLeads = async (status?: LeadStatus): Promise<Contact[]> => {
   if (!isSupabaseConfigured()) {
-    return getMockContacts().filter((contact) => (status ? contact.status === status : true));
+    return mergeDemoContacts(getMockContacts()).filter((contact) =>
+      status ? contact.status === status : true,
+    );
   }
 
   const supabase = await createClient();
 
   if (!supabase) {
-    return getMockContacts();
+    return mergeDemoContacts(getMockContacts());
   }
 
   let query = supabase.from("contacts").select("*").order("created_at", { ascending: false });
@@ -26,7 +29,9 @@ export const getLeads = async (status?: LeadStatus): Promise<Contact[]> => {
   const { data, error } = await query;
 
   if (error || !data) {
-    return getMockContacts().filter((contact) => (status ? contact.status === status : true));
+    return mergeDemoContacts(getMockContacts()).filter((contact) =>
+      status ? contact.status === status : true,
+    );
   }
 
   return data as Contact[];

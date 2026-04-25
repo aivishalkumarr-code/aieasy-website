@@ -1,16 +1,8 @@
 import { z } from "zod";
 
-export const contactServices = [
-  "AI Automation",
-  "AI Web Apps",
-  "Website Design",
-  "AI Marketing",
-  "AI Content",
-  "Software Development",
-  "IVR Setup",
-  "AI Agents",
-  "Generative AI Solutions",
-] as const;
+import { SERVICE_PAGE_NAMES } from "@/app/services/service-data";
+
+export const contactServices = SERVICE_PAGE_NAMES;
 
 export const contactBudgetRanges = [
   "Under $5k",

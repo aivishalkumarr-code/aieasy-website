@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type FocusEvent, type MouseEvent } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -32,28 +33,78 @@ const serviceLinks = SERVICE_PAGE_ORDER.map((slug) => {
 });
 
 export function Navigation() {
+  const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
-  const pathname = usePathname();
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    router.prefetch("/contact");
+    serviceLinks.forEach((service) => router.prefetch(service.href));
+  }, [router]);
+
+  useEffect(() => {
+    setServicesOpen(false);
+    setMobileServicesOpen(false);
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(
+    () => () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    },
+    [],
+  );
+
+  const clearCloseTimeout = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
+
+  const openServicesMenu = () => {
+    clearCloseTimeout();
+    setServicesOpen(true);
+  };
+
+  const scheduleServicesClose = () => {
+    clearCloseTimeout();
+    closeTimeoutRef.current = setTimeout(() => {
+      setServicesOpen(false);
+    }, 120);
+  };
 
   const handleAnchorClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    setOpen(false);
+    setMobileServicesOpen(false);
+    setServicesOpen(false);
+
     if (pathname !== "/" || !href.startsWith("/#")) {
-      setOpen(false);
       return;
     }
 
     const target = document.querySelector(href.slice(1));
 
     if (!target) {
-      setOpen(false);
       return;
     }
 
     event.preventDefault();
     target.scrollIntoView({ behavior: "smooth", block: "start" });
     window.history.replaceState(null, "", href);
-    setOpen(false);
+  };
+
+  const handleDesktopBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (event.currentTarget.contains(event.relatedTarget as Node | null)) {
+      return;
+    }
+
+    scheduleServicesClose();
   };
 
   return (
@@ -64,15 +115,19 @@ export function Navigation() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          {/* Services Dropdown */}
           <div
             className="relative"
-            onMouseEnter={() => setServicesOpen(true)}
-            onMouseLeave={() => setServicesOpen(false)}
+            onMouseEnter={openServicesMenu}
+            onMouseLeave={scheduleServicesClose}
+            onFocusCapture={openServicesMenu}
+            onBlurCapture={handleDesktopBlur}
           >
             <button
               type="button"
-              onClick={() => setServicesOpen((prev) => !prev)}
+              onClick={() => {
+                clearCloseTimeout();
+                setServicesOpen((prev) => !prev);
+              }}
               className="flex items-center gap-1 text-sm font-medium text-[#6B7280] transition-colors hover:text-[#1A1A1A]"
               aria-expanded={servicesOpen}
               aria-haspopup="true"
@@ -85,42 +140,50 @@ export function Navigation() {
               />
             </button>
 
-            {servicesOpen && (
-              <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3">
-                <div className="w-[520px] rounded-2xl border border-[#E5E7EB] bg-white p-3 shadow-xl">
-                  <div className="grid grid-cols-2 gap-1">
-                    {serviceLinks.map((service) => (
+            <AnimatePresence>
+              {servicesOpen ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                  transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute left-1/2 top-full z-50 w-[520px] -translate-x-1/2 pt-3"
+                >
+                  <div className="rounded-2xl border border-[#E5E7EB] bg-white p-3 shadow-xl">
+                    <div className="grid grid-cols-2 gap-1">
+                      {serviceLinks.map((service) => (
+                        <Link
+                          key={service.slug}
+                          href={service.href}
+                          onClick={() => {
+                            clearCloseTimeout();
+                            setServicesOpen(false);
+                          }}
+                          className="group rounded-xl px-3 py-2.5 transition-colors hover:bg-[#F4F6F2]"
+                        >
+                          <p className="text-sm font-medium text-[#1A1A1A] group-hover:text-[#0D9488]">
+                            {service.name}
+                          </p>
+                          <p className="mt-0.5 line-clamp-1 text-xs text-[#6B7280]">
+                            {service.tagline}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="mt-2 border-t border-[#F3F4F6] pt-2">
                       <Link
-                        key={service.slug}
-                        href={service.href}
-                        onClick={() => setServicesOpen(false)}
-                        className="group rounded-xl px-3 py-2.5 transition-colors hover:bg-[#F4F6F2]"
+                        href="/#services"
+                        onClick={(event) => handleAnchorClick(event, "/#services")}
+                        className="flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium text-[#0D9488] hover:bg-[#ECFDF5]"
                       >
-                        <p className="text-sm font-medium text-[#1A1A1A] group-hover:text-[#0D9488]">
-                          {service.name}
-                        </p>
-                        <p className="mt-0.5 line-clamp-1 text-xs text-[#6B7280]">
-                          {service.tagline}
-                        </p>
+                        View all services
+                        <span aria-hidden>→</span>
                       </Link>
-                    ))}
+                    </div>
                   </div>
-                  <div className="mt-2 border-t border-[#F3F4F6] pt-2">
-                    <Link
-                      href="/#services"
-                      onClick={(event) => {
-                        setServicesOpen(false);
-                        handleAnchorClick(event, "/#services");
-                      }}
-                      className="flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium text-[#0D9488] hover:bg-[#ECFDF5]"
-                    >
-                      View all services
-                      <span aria-hidden>→</span>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
 
           {links.map((link) => (
@@ -141,7 +204,15 @@ export function Navigation() {
           </Button>
         </div>
 
-        <Sheet open={open} onOpenChange={setOpen}>
+        <Sheet
+          open={open}
+          onOpenChange={(nextOpen) => {
+            setOpen(nextOpen);
+            if (!nextOpen) {
+              setMobileServicesOpen(false);
+            }
+          }}
+        >
           <SheetTrigger asChild className="md:hidden">
             <Button
               variant="outline"
@@ -159,8 +230,7 @@ export function Navigation() {
               <SheetTitle className="text-[#1A1A1A]">Navigate</SheetTitle>
             </SheetHeader>
             <div className="mt-10 flex flex-col gap-3">
-              {/* Mobile Services accordion */}
-              <div className="rounded-2xl border border-[#E5E7EB] bg-white">
+              <div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
                 <button
                   type="button"
                   onClick={() => setMobileServicesOpen((prev) => !prev)}
@@ -174,20 +244,33 @@ export function Navigation() {
                     }`}
                   />
                 </button>
-                {mobileServicesOpen && (
-                  <div className="border-t border-[#F3F4F6] p-2">
-                    {serviceLinks.map((service) => (
-                      <Link
-                        key={service.slug}
-                        href={service.href}
-                        onClick={() => setOpen(false)}
-                        className="block rounded-lg px-3 py-2 text-sm text-[#4B5563] hover:bg-[#F4F6F2] hover:text-[#0D9488]"
-                      >
-                        {service.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {mobileServicesOpen ? (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden border-t border-[#F3F4F6]"
+                    >
+                      <div className="p-2">
+                        {serviceLinks.map((service) => (
+                          <Link
+                            key={service.slug}
+                            href={service.href}
+                            onClick={() => {
+                              setOpen(false);
+                              setMobileServicesOpen(false);
+                            }}
+                            className="block rounded-lg px-3 py-2 text-sm text-[#4B5563] hover:bg-[#F4F6F2] hover:text-[#0D9488]"
+                          >
+                            {service.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
               </div>
 
               {links.map((link) => (
