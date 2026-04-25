@@ -1,66 +1,80 @@
-import { Clock, Smartphone, Search, HeadphonesIcon } from "lucide-react";
+import {
+  BadgeCheck,
+  Gauge,
+  Search,
+  Smartphone,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+
+import { AnimatedSection } from "./AnimatedSection";
 
 const benefits = [
   {
-    icon: Clock,
-    title: "Fast Delivery",
-    description: "Your website delivered in 7-14 days. We prioritize speed without compromising quality.",
-    highlight: "7-14 Days",
+    icon: Users,
+    title: "More Leads & Customers",
+    description:
+      "Your website becomes a 24/7 sales machine that captures leads while you sleep.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Higher Sales Conversion",
+    description:
+      "Professional design builds trust and turns visitors into paying customers.",
+  },
+  {
+    icon: BadgeCheck,
+    title: "Professional Brand Image",
+    description:
+      "Stand out from competitors with a premium website that screams credibility.",
   },
   {
     icon: Smartphone,
-    title: "Mobile Responsive",
-    description: "Looks perfect on all devices - desktop, tablet, and mobile. Google mobile-first optimized.",
-    highlight: "100% Responsive",
+    title: "Mobile Customers Love It",
+    description:
+      "70% of your customers browse on mobile, so we make every screen convert.",
   },
   {
     icon: Search,
-    title: "SEO Ready",
-    description: "Built with best SEO practices. Fast loading, proper meta tags, and structured data included.",
-    highlight: "SEO Optimized",
+    title: "SEO That Brings Free Traffic",
+    description:
+      "Rank on Google and get customers without spending on ads for every click.",
   },
   {
-    icon: HeadphonesIcon,
-    title: "1-Year Support",
-    description: "Free maintenance and support for a full year. Minor changes included at no extra cost.",
-    highlight: "12 Months Free",
+    icon: Gauge,
+    title: "Lightning Fast Loading",
+    description:
+      "Slow websites lose customers. Ours are built to load in under 2 seconds.",
   },
-];
+] as const;
 
 export function BenefitsSection() {
   return (
-    <section id="benefits" className="py-20">
-      <div className="container">
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-[#1A1A1A] sm:text-4xl">
-            Why Choose AIeasy?
-          </h2>
-          <p className="mx-auto max-w-2xl text-lg text-[#6B7280]">
-            We deliver more than just websites. We deliver results.
-          </p>
-        </div>
+    <section id="benefits" className="container scroll-mt-28 py-20 sm:py-24">
+      <AnimatedSection className="mx-auto max-w-3xl text-center">
+        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#0D9488]">
+          Built for growth
+        </p>
+        <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-[#1A1A1A] sm:text-4xl">
+          Your website should grow the business, not just sit online.
+        </h2>
+        <p className="mt-4 text-lg leading-8 text-[#6B7280]">
+          Every section, page, and call-to-action is designed around a simple goal: helping more visitors trust you, contact you, and buy from you.
+        </p>
+      </AnimatedSection>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {benefits.map((benefit, index) => (
-            <div
-              key={index}
-              className="group rounded-2xl border border-[#E5E7EB] bg-white p-6 transition-all hover:border-[#0D9488]/30 hover:shadow-lg"
-            >
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#0D9488]/10 text-[#0D9488] transition-all group-hover:bg-[#0D9488] group-hover:text-white">
+      <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {benefits.map((benefit, index) => (
+          <AnimatedSection key={benefit.title} delay={index * 0.06}>
+            <div className="h-full rounded-[1.8rem] border border-[#E5E7EB] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-[#0D9488]/20 hover:shadow-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0D9488]/10 text-[#0D9488]">
                 <benefit.icon className="h-6 w-6" />
               </div>
-              <h3 className="mb-2 text-lg font-semibold text-[#1A1A1A]">
-                {benefit.title}
-              </h3>
-              <p className="mb-3 text-sm text-[#6B7280]">
-                {benefit.description}
-              </p>
-              <span className="inline-block rounded-full bg-[#0D9488]/10 px-3 py-1 text-xs font-semibold text-[#0D9488]">
-                {benefit.highlight}
-              </span>
+              <h3 className="mt-5 text-xl font-semibold text-[#1A1A1A]">{benefit.title}</h3>
+              <p className="mt-3 text-sm leading-7 text-[#6B7280]">{benefit.description}</p>
             </div>
-          ))}
-        </div>
+          </AnimatedSection>
+        ))}
       </div>
     </section>
   );

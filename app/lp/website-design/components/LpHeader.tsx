@@ -1,89 +1,83 @@
 "use client";
 
+import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+
+import { ScrollToLeadCta } from "./ScrollToLeadCta";
+
+const links = [
+  { label: "Benefits", href: "#benefits" },
+  { label: "Portfolio", href: "#portfolio" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Testimonials", href: "#testimonials" },
+] as const;
 
 export function LpHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#E5E7EB] bg-white/80 backdrop-blur-md">
-      <div className="container flex h-16 items-center justify-between">
-        <a href="#" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0D9488] text-white font-bold">
+    <header className="sticky top-0 z-50 border-b border-[#E5E7EB]/80 bg-[#fafaf8]/92 backdrop-blur-xl">
+      <div className="container flex h-16 items-center justify-between gap-4 lg:h-20">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#0D9488] text-base font-bold text-white shadow-sm">
             A
           </div>
-          <span className="text-xl font-bold text-[#1A1A1A]">AIeasy</span>
-        </a>
+          <div>
+            <p className="text-lg font-semibold tracking-tight text-[#1A1A1A]">AIeasy</p>
+            <p className="hidden text-xs text-[#6B7280] sm:block">Websites built to grow revenue</p>
+          </div>
+        </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-8 md:flex">
-          <a href="#benefits" className="text-sm font-medium text-[#6B7280] hover:text-[#0D9488]">
-            Benefits
-          </a>
-          <a href="#portfolio" className="text-sm font-medium text-[#6B7280] hover:text-[#0D9488]">
-            Portfolio
-          </a>
-          <a href="#pricing" className="text-sm font-medium text-[#6B7280] hover:text-[#0D9488]">
-            Pricing
-          </a>
-          <a
-            href="#contact"
-            className="rounded-full bg-[#0D9488] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#14B8A6]"
+        <nav className="hidden items-center gap-7 lg:flex">
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium text-[#6B7280] transition-colors hover:text-[#0D9488]"
+            >
+              {link.label}
+            </a>
+          ))}
+          <ScrollToLeadCta
+            className="inline-flex h-11 items-center justify-center rounded-full bg-[#0D9488] px-6 text-sm font-semibold text-white transition hover:bg-[#0f766e]"
           >
-            Get Quote
-          </a>
+            Get Free Consultation
+          </ScrollToLeadCta>
         </nav>
 
-        {/* Mobile Menu Button */}
         <button
-          className="md:hidden"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          type="button"
           aria-label="Toggle menu"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1A1A1A] lg:hidden"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
         >
-          {mobileMenuOpen ? (
-            <X className="h-6 w-6 text-[#1A1A1A]" />
-          ) : (
-            <Menu className="h-6 w-6 text-[#1A1A1A]" />
-          )}
+          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Mobile Navigation */}
-      {mobileMenuOpen && (
-        <div className="border-t border-[#E5E7EB] bg-white px-4 py-4 md:hidden">
-          <nav className="flex flex-col gap-4">
-            <a
-              href="#benefits"
-              className="text-base font-medium text-[#6B7280] hover:text-[#0D9488]"
+      {mobileMenuOpen ? (
+        <div className="border-t border-[#E5E7EB] bg-white lg:hidden">
+          <div className="container flex flex-col gap-4 py-4">
+            {links.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium text-[#6B7280]"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </a>
+            ))}
+            <ScrollToLeadCta
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[#0D9488] px-6 text-sm font-semibold text-white"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Benefits
-            </a>
-            <a
-              href="#portfolio"
-              className="text-base font-medium text-[#6B7280] hover:text-[#0D9488]"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Portfolio
-            </a>
-            <a
-              href="#pricing"
-              className="text-base font-medium text-[#6B7280] hover:text-[#0D9488]"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Pricing
-            </a>
-            <a
-              href="#contact"
-              className="rounded-full bg-[#0D9488] px-6 py-3 text-center text-base font-semibold text-white hover:bg-[#14B8A6]"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Get Quote
-            </a>
-          </nav>
+              Get Free Consultation
+            </ScrollToLeadCta>
+          </div>
         </div>
-      )}
+      ) : null}
     </header>
   );
 }
