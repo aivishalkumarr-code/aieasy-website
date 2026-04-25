@@ -100,11 +100,14 @@ export default async function ServicePage({ params }: ServicePageProps) {
                     {service.description}
                   </p>
                 </div>
-                <Button asChild className="h-12 rounded-full bg-[#0D9488] px-6 text-sm font-medium hover:bg-[#14B8A6]">
-                  <Link href="/contact">
+                <Button
+                  asChild
+                  className="h-12 rounded-full bg-[#0D9488] px-6 text-sm font-medium hover:bg-[#14B8A6]"
+                >
+                  <a href="#service-form">
                     Start a project
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
+                  </a>
                 </Button>
               </div>
 
@@ -203,7 +206,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
           </div>
         </section>
 
-        <section className="container">
+        <section id="service-form" className="container scroll-mt-28">
           <div className="grid gap-12 rounded-[2rem] border border-[#E5E7EB] bg-white p-8 shadow-card lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:p-10">
             <AnimatedSection className="space-y-6">
               <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
