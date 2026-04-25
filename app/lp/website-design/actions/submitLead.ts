@@ -36,6 +36,7 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
   const businessName = sanitize(formData.get("businessName"));
   const phone = sanitize(formData.get("phone"));
   const email = sanitize(formData.get("email")).toLowerCase();
+  const websiteType = sanitize(formData.get("websiteType"));
   const message = sanitize(formData.get("message"));
   const phoneDigits = phone.replace(/\D/g, "");
 
@@ -51,7 +52,8 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     return { success: false, message: "Please enter a valid phone number." };
   }
 
-  if (!emailPattern.test(email)) {
+  // Email is optional - if provided, validate it
+  if (email && !emailPattern.test(email)) {
     return { success: false, message: "Please enter a valid email address." };
   }
 
@@ -79,23 +81,37 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     };
   }
 
+  const websiteTypeLabel = websiteType ? websiteType.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase()) : "Not specified";
+  
   const notes = [
     "Service Interest: Website Design",
+    `Website Type: ${websiteTypeLabel}`,
     `Business Name: ${businessName}`,
     `Phone: ${phone}`,
+    `Email: ${email || "Not provided"}`,
     `What is your business about?: ${message || "Not provided"}`,
   ].join("\n\n");
 
-  const { error } = await supabase.from("contacts").insert({
+  // Insert with fallback if email is empty or if there's an error
+  const insertData: any = {
     name,
-    email,
+    email: email || null,
     phone,
     company: businessName,
     status: "New",
     notes,
     source: leadSource,
     created_at: new Date().toISOString(),
-  });
+  };
+
+  let { error } = await supabase.from("contacts").insert(insertData);
+
+  // If email column requires value but is empty, try without email
+  if (error && error.message && (error.message.includes("email") || error.message.includes("not-null"))) {
+    delete insertData.email;
+    const result = await supabase.from("contacts").insert(insertData);
+    error = result.error;
+  }
 
   if (error) {
     if (error.code === "23505") {
@@ -122,8 +138,10 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
       const safePhone = escapeHtml(phone);
       const safeMessage = escapeHtml(message || "Not provided").replace(/\n/g, "<br />");
 
+      const safeWebsiteType = escapeHtml(websiteTypeLabel);
+
       await Promise.allSettled([
-        resend.emails.send({
+        email ? resend.emails.send({
           from: DEFAULT_FROM_EMAIL,
           to: [email],
           subject: "Your AIeasy website consultation request is confirmed",
@@ -131,7 +149,7 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
             name: safeName,
             businessName: safeBusinessName,
           }),
-        }),
+        }) : Promise.resolve(),
         resend.emails.send({
           from: DEFAULT_FROM_EMAIL,
           to: [adminEmail],
@@ -141,6 +159,7 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
             email: safeEmail,
             phone: safePhone,
             businessName: safeBusinessName,
+            websiteType: safeWebsiteType,
             message: safeMessage,
           }),
         }),
@@ -231,12 +250,14 @@ function buildAdminEmail({
   email,
   phone,
   businessName,
+  websiteType,
   message,
 }: {
   name: string;
   email: string;
   phone: string;
   businessName: string;
+  websiteType: string;
   message: string;
 }) {
   return `
@@ -259,8 +280,12 @@ function buildAdminEmail({
               <td style="padding:10px 0;color:#1A1A1A;">${businessName}</td>
             </tr>
             <tr>
+              <td style="padding:10px 0;color:#6B7280;">Website Type</td>
+              <td style="padding:10px 0;color:#1A1A1A;font-weight:600;">${websiteType}</td>
+            </tr>
+            <tr>
               <td style="padding:10px 0;color:#6B7280;">Email</td>
-              <td style="padding:10px 0;color:#1A1A1A;">${email}</td>
+              <td style="padding:10px 0;color:#1A1A1A;">${email || "Not provided"}</td>
             </tr>
             <tr>
               <td style="padding:10px 0;color:#6B7280;">Phone</td>
