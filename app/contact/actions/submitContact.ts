@@ -81,7 +81,16 @@ ${lead.message}`;
 
   const { data, error } = await supabase
     .from("contacts")
-    .insert(contact)
+    .insert({
+      name: values.name.trim(),
+      email: values.email.trim().toLowerCase(),
+      company: values.company.trim(),
+      phone: null,
+      status: "New",
+      notes: notes,
+      source: "Contact Page",
+      created_at: new Date().toISOString(),
+    })
     .select("*")
     .single();
 

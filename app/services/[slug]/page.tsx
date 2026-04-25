@@ -110,7 +110,6 @@ export default async function ServicePage({ params }: ServicePageProps) {
                   className="h-12 rounded-full bg-[#0D9488] px-6 text-sm font-medium hover:bg-[#14B8A6]"
                 >
                   <a href="#service-quote">
-                    Start a project
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
@@ -211,7 +210,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
           </div>
         </section>
 
-        <section id="service-quote" className="container">
+        <section id="service-quote" className="container scroll-mt-28">
           <div className="grid gap-12 rounded-[2rem] border border-[#E5E7EB] bg-white p-8 shadow-card lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:p-10">
             <AnimatedSection className="space-y-6">
               <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
