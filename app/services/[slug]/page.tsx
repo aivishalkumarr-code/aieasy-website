@@ -105,11 +105,14 @@ export default async function ServicePage({ params }: ServicePageProps) {
                     {service.description}
                   </p>
                 </div>
-                <Button asChild className="h-12 rounded-full bg-[#0D9488] px-6 text-sm font-medium hover:bg-[#14B8A6]">
-                  <Link href="/contact">
+                <Button
+                  asChild
+                  className="h-12 rounded-full bg-[#0D9488] px-6 text-sm font-medium hover:bg-[#14B8A6]"
+                >
+                  <a href="#service-quote">
                     Start a project
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
+                  </a>
                 </Button>
               </div>
 
