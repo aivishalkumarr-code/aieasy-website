@@ -7,7 +7,6 @@ import {
   Globe2,
   Loader2,
   Mail,
-  Phone,
   Send,
   User,
 } from "lucide-react";
@@ -17,7 +16,6 @@ import { SuccessMessage } from "./SuccessMessage";
 
 type FormValues = {
   name: string;
-  phone: string;
   businessName: string;
   websiteType: string;
   email: string;
@@ -27,7 +25,6 @@ type FieldErrors = Partial<Record<keyof FormValues, string>>;
 
 const initialValues: FormValues = {
   name: "",
-  phone: "",
   businessName: "",
   websiteType: "",
   email: "",
@@ -51,16 +48,18 @@ function validate(values: FormValues): FieldErrors {
     errors.name = "Enter your name.";
   }
 
-  if (!values.phone.trim() || values.phone.replace(/\D/g, "").length < 10) {
-    errors.phone = "Enter a valid phone number.";
-  }
-
   if (!values.businessName.trim() || values.businessName.trim().length < 2) {
     errors.businessName = "Enter your business name.";
   }
 
   if (!values.websiteType) {
     errors.websiteType = "Select a website type.";
+  }
+
+  if (!values.email.trim()) {
+    errors.email = "Enter your email address.";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
+    errors.email = "Enter a valid email address.";
   }
 
   return errors;
@@ -102,7 +101,6 @@ export function LeadForm() {
     try {
       const formData = new FormData();
       formData.set("name", values.name.trim());
-      formData.set("phone", values.phone.trim());
       formData.set("businessName", values.businessName.trim());
       formData.set("websiteType", values.websiteType);
       formData.set("email", values.email.trim());
@@ -135,8 +133,8 @@ export function LeadForm() {
 
   return (
     <div id="contact" className="scroll-mt-28">
-      <div className="w-full max-w-[560px] overflow-hidden rounded-[28px] border border-teal-100 bg-white shadow-[0_24px_70px_rgba(15,148,136,0.14)]">
-        <div className="bg-gradient-to-br from-teal-50 via-white to-white px-5 pb-5 pt-6 sm:px-7">
+      <div className="w-full max-w-[560px] overflow-hidden rounded-[28px] border border-blue-100 bg-white shadow-[0_24px_70px_rgba(37,99,235,0.14)]">
+        <div className="bg-gradient-to-br from-blue-50 via-white to-white px-5 pb-5 pt-6 sm:px-7">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">
             FREE WEBSITE CONSULTATION
           </p>
@@ -150,7 +148,7 @@ export function LeadForm() {
             {trustChips.map((chip) => (
               <div
                 key={chip}
-                className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-white px-3 py-1.5 text-sm text-slate-700"
+                className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-1.5 text-sm text-slate-700"
               >
                 <CheckCircle2 className="h-3.5 w-3.5 text-[#2563EB]" />
                 {chip}
@@ -184,26 +182,6 @@ export function LeadForm() {
               />
             </div>
             <FieldError message={errors.name} />
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
-              Phone Number <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                autoComplete="tel"
-                value={values.phone}
-                onChange={(event) => updateField("phone", event.target.value)}
-                placeholder="+91 98XXX XXXXX"
-                className={inputClass}
-              />
-            </div>
-            <FieldError message={errors.phone} />
           </div>
 
           <div>
@@ -258,7 +236,7 @@ export function LeadForm() {
 
           <div>
             <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
-              Email <span className="font-medium text-[#64748B]">(optional)</span>
+              Email <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -273,12 +251,13 @@ export function LeadForm() {
                 className={inputClass}
               />
             </div>
+            <FieldError message={errors.email} />
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#2563EB] px-5 text-base font-semibold text-white shadow-lg shadow-teal-600/20 transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#2563EB] px-5 text-base font-semibold text-white shadow-lg shadow-blue-600/20 transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting ? (
               <>
