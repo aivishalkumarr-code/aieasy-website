@@ -302,7 +302,7 @@ function SectionIntro({
 }) {
   return (
     <div className={centered ? "mx-auto max-w-3xl text-center" : "max-w-2xl"}>
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D9488]">{eyebrow}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">{eyebrow}</p>
       <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#0F172A] md:text-4xl">
         {title}
       </h2>
@@ -340,7 +340,7 @@ function BrowserMockup({ title, compact = false }: { title: string; compact?: bo
         </div>
         <div className="flex items-center justify-between gap-3">
           <div className="h-3 w-28 rounded-full bg-slate-200" />
-          <div className="h-8 w-24 rounded-full bg-[#0D9488]" />
+          <div className="h-8 w-24 rounded-full bg-[#2563EB]" />
         </div>
         <span className="sr-only">{title} browser mockup</span>
       </div>
@@ -351,7 +351,7 @@ function BrowserMockup({ title, compact = false }: { title: string; compact?: bo
 function CheckItem({ children }: { children: string }) {
   return (
     <li className="flex gap-3 text-sm leading-6 text-[#475569]">
-      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#0D9488]" />
+      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#2563EB]" />
       <span>{children}</span>
     </li>
   );
@@ -367,7 +367,7 @@ export default function WebsiteDesignLandingPage() {
           <div className={containerClass}>
             <div className="grid items-center gap-y-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(420px,0.98fr)] lg:gap-x-16">
               <div className="max-w-[560px]">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D9488]">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">
                   WEBSITE DESIGN COMPANY IN DELHI
                 </p>
                 <h1 className="mt-4 text-4xl font-bold leading-[1.04] tracking-tight text-[#0F172A] md:text-5xl lg:text-[56px]">
@@ -381,7 +381,7 @@ export default function WebsiteDesignLandingPage() {
                 </p>
 
                 <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-                  <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#0D9488] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.22)] transition-all hover:-translate-y-0.5 hover:bg-[#0F766E] sm:w-auto">
+                  <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.22)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
                     Get Free Website Consultation
                   </ScrollToLeadCta>
                   <a
@@ -398,7 +398,7 @@ export default function WebsiteDesignLandingPage() {
                 <div className="mt-8 grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-8">
                   {heroBenefits.map((benefit) => (
                     <div key={benefit} className="flex items-start gap-3">
-                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#0D9488]" />
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#2563EB]" />
                       <span className="text-sm font-semibold leading-6 text-[#334155]">{benefit}</span>
                     </div>
                   ))}
@@ -430,7 +430,7 @@ export default function WebsiteDesignLandingPage() {
                 >
                   <BrowserMockup title={item.title} compact />
                   <div className="mt-5 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#ECFDF5] text-sm font-bold text-[#0D9488]">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#EFF6FF] text-sm font-bold text-[#2563EB]">
                       0{index + 1}
                     </div>
                     <h3 className="text-lg font-semibold text-[#0F172A]">{item.title}</h3>
@@ -454,7 +454,7 @@ export default function WebsiteDesignLandingPage() {
                 const Icon = benefit.icon;
                 return (
                   <article key={benefit.title} className="flex h-full flex-col rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ECFDF5] text-[#0D9488]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EFF6FF] text-[#2563EB]">
                       <Icon className="h-5 w-5" />
                     </div>
                     <h3 className="mt-5 text-lg font-semibold text-[#0F172A]">{benefit.title}</h3>
@@ -476,7 +476,7 @@ export default function WebsiteDesignLandingPage() {
                   description="From design to domain, hosting, forms and basic SEO setup — we help you launch with everything required to look professional online."
                   centered={false}
                 />
-                <ScrollToLeadCta className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#0D9488] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#0F766E] sm:w-auto">
+                <ScrollToLeadCta className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
                   Get My Free Website Plan
                 </ScrollToLeadCta>
               </div>
@@ -484,7 +484,7 @@ export default function WebsiteDesignLandingPage() {
                 <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
                   {includedItems.map((item) => (
                     <div key={item} className="flex items-center gap-3">
-                      <CheckCircle2 className="h-5 w-5 shrink-0 text-[#0D9488]" />
+                      <CheckCircle2 className="h-5 w-5 shrink-0 text-[#2563EB]" />
                       <span className="text-sm font-semibold text-[#334155]">{item}</span>
                     </div>
                   ))}
@@ -506,13 +506,13 @@ export default function WebsiteDesignLandingPage() {
                 <article key={item.title} className="rounded-3xl border border-[#E2E8F0] bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)]">
                   <BrowserMockup title={item.title} />
                   <div className="mt-6">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D9488]">{item.type}</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">{item.type}</p>
                     <h3 className="mt-2 text-xl font-bold text-[#0F172A]">{item.title}</h3>
                     <div className="mt-4 space-y-3 text-sm leading-6 text-[#475569]">
                       <p><span className="font-semibold text-[#0F172A]">Who it is for:</span> {item.for}</p>
                       <p><span className="font-semibold text-[#0F172A]">Main conversion goal:</span> {item.goal}</p>
                     </div>
-                    <ScrollToLeadCta className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#0D9488] transition hover:text-[#0F766E]">
+                    <ScrollToLeadCta className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#2563EB] transition hover:text-[#1D4ED8]">
                       View Example <ArrowRight className="h-4 w-4" />
                     </ScrollToLeadCta>
                   </div>
@@ -537,13 +537,13 @@ export default function WebsiteDesignLandingPage() {
                     key={plan.name}
                     className={`flex h-full flex-col rounded-3xl border bg-white p-6 shadow-sm transition-all ${
                       featured
-                        ? "border-[#0D9488] shadow-[0_20px_60px_rgba(13,148,136,0.18)] lg:scale-[1.02]"
+                        ? "border-[#2563EB] shadow-[0_20px_60px_rgba(13,148,136,0.18)] lg:scale-[1.02]"
                         : "border-[#E2E8F0]"
                     }`}
                   >
                     <div className="flex min-h-7 items-center justify-between gap-3">
                       {plan.badge ? (
-                        <span className="rounded-full bg-[#ECFDF5] px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-[#0D9488]">
+                        <span className="rounded-full bg-[#EFF6FF] px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-[#2563EB]">
                           {plan.badge}
                         </span>
                       ) : (
@@ -561,7 +561,7 @@ export default function WebsiteDesignLandingPage() {
                     <ScrollToLeadCta
                       className={`mt-8 inline-flex h-12 w-full items-center justify-center rounded-full px-6 text-sm font-semibold transition-all hover:-translate-y-0.5 ${
                         featured
-                          ? "bg-[#0D9488] text-white shadow-lg shadow-teal-600/20 hover:bg-[#0F766E]"
+                          ? "bg-[#2563EB] text-white shadow-lg shadow-teal-600/20 hover:bg-[#1D4ED8]"
                           : "border border-[#E2E8F0] bg-white text-[#0F172A] hover:border-teal-200 hover:bg-teal-50"
                       }`}
                     >
@@ -575,7 +575,7 @@ export default function WebsiteDesignLandingPage() {
               <p className="text-base font-semibold text-[#334155]">
                 Not sure which package is right? Get a free recommendation based on your business.
               </p>
-              <ScrollToLeadCta className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-full bg-[#0D9488] px-6 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#0F766E] sm:w-auto">
+              <ScrollToLeadCta className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-full bg-[#2563EB] px-6 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
                 Get Free Recommendation
               </ScrollToLeadCta>
             </div>
@@ -594,7 +594,7 @@ export default function WebsiteDesignLandingPage() {
                 const Icon = item.icon;
                 return (
                   <article key={item.title} className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ECFDF5] text-[#0D9488]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EFF6FF] text-[#2563EB]">
                       <Icon className="h-5 w-5" />
                     </div>
                     <h3 className="mt-5 text-lg font-semibold text-[#0F172A]">{item.title}</h3>
@@ -617,7 +617,7 @@ export default function WebsiteDesignLandingPage() {
               <div className="absolute left-[12.5%] right-[12.5%] top-8 hidden h-px bg-[#E2E8F0] lg:block" />
               {processSteps.map((step, index) => (
                 <article key={step.title} className="relative rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0D9488] text-lg font-bold text-white shadow-[0_12px_30px_rgba(13,148,136,0.22)]">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2563EB] text-lg font-bold text-white shadow-[0_12px_30px_rgba(13,148,136,0.22)]">
                     {index + 1}
                   </div>
                   <h3 className="mt-5 text-lg font-semibold text-[#0F172A]">{step.title}</h3>
@@ -626,7 +626,7 @@ export default function WebsiteDesignLandingPage() {
               ))}
             </div>
             <div className="mt-10 text-center">
-              <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#0D9488] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#0F766E] sm:w-auto">
+              <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
                 Start My Website Plan
               </ScrollToLeadCta>
             </div>
@@ -645,14 +645,14 @@ export default function WebsiteDesignLandingPage() {
                 <details key={faq.question} open={index === 0} className="group rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-sm">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-base font-semibold text-[#0F172A] [&::-webkit-details-marker]:hidden">
                     {faq.question}
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F8FAFC] text-[#0D9488] transition group-open:rotate-45">+</span>
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F8FAFC] text-[#2563EB] transition group-open:rotate-45">+</span>
                   </summary>
                   <p className="mt-4 text-sm leading-7 text-[#475569]">{faq.answer}</p>
                 </details>
               ))}
             </div>
             <div className="mt-10 text-center">
-              <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#0D9488] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#0F766E] sm:w-auto">
+              <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
                 Get Free Consultation
               </ScrollToLeadCta>
             </div>
@@ -668,7 +668,7 @@ export default function WebsiteDesignLandingPage() {
             <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/86 md:text-lg">
               Tell us about your business and we’ll suggest the right website package, pricing direction and launch timeline.
             </p>
-            <ScrollToLeadCta className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-white px-7 text-base font-semibold text-[#0D9488] shadow-lg transition-all hover:-translate-y-0.5 hover:bg-[#ECFDF5] sm:w-auto">
+            <ScrollToLeadCta className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-white px-7 text-base font-semibold text-[#2563EB] shadow-lg transition-all hover:-translate-y-0.5 hover:bg-[#EFF6FF] sm:w-auto">
               Get Free Website Consultation
             </ScrollToLeadCta>
             <p className="mt-4 text-sm text-white/80">No spam. No pressure. Just a clear website plan.</p>

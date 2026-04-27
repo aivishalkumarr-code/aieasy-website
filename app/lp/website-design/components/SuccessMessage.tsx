@@ -10,9 +10,9 @@ export function SuccessMessage({
   calendlyUrl = "https://calendly.com/aieasy/30min",
 }: SuccessMessageProps) {
   return (
-    <div className="overflow-hidden rounded-[2rem] border border-[#0D9488]/15 bg-white shadow-[0_30px_70px_-40px_rgba(15,23,42,0.35)]">
+    <div className="overflow-hidden rounded-[2rem] border border-[#2563EB]/15 bg-white shadow-[0_30px_70px_-40px_rgba(15,23,42,0.35)]">
       <div className="bg-[linear-gradient(180deg,rgba(13,148,136,0.12),rgba(13,148,136,0.04))] px-6 pb-6 pt-7 text-center sm:px-8">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#0D9488] text-white shadow-lg">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-lg">
           <CheckCircle2 className="h-8 w-8" />
         </div>
         <h2 className="mt-5 text-2xl font-semibold tracking-tight text-[#1A1A1A] sm:text-[2rem]">
@@ -24,8 +24,8 @@ export function SuccessMessage({
       </div>
 
       <div className="space-y-5 px-6 py-6 sm:px-8 sm:py-8">
-        <div className="rounded-[1.6rem] border border-[#0D9488]/15 bg-[#f0fdfa] p-5">
-          <div className="flex items-center justify-center gap-2 text-[#0D9488]">
+        <div className="rounded-[1.6rem] border border-[#2563EB]/15 bg-[#f0fdfa] p-5">
+          <div className="flex items-center justify-center gap-2 text-[#2563EB]">
             <Calendar className="h-5 w-5" />
             <span className="font-semibold">Book your free strategy call now</span>
           </div>
@@ -52,7 +52,7 @@ export function SuccessMessage({
               key={item.title}
               className="flex items-start gap-3 rounded-2xl border border-[#E5E7EB] bg-white p-4"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0D9488]/10 text-[#0D9488]">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2563EB]/10 text-[#2563EB]">
                 <item.icon className="h-5 w-5" />
               </div>
               <div>

@@ -72,7 +72,7 @@ function FieldError({ message }: { message?: string }) {
 }
 
 const inputClass =
-  "h-12 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3 text-base text-[#0F172A] outline-none transition placeholder:text-slate-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/20";
+  "h-12 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3 text-base text-[#0F172A] outline-none transition placeholder:text-slate-400 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20";
 
 export function LeadForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
@@ -137,7 +137,7 @@ export function LeadForm() {
     <div id="contact" className="scroll-mt-28">
       <div className="w-full max-w-[560px] overflow-hidden rounded-[28px] border border-teal-100 bg-white shadow-[0_24px_70px_rgba(15,148,136,0.14)]">
         <div className="bg-gradient-to-br from-teal-50 via-white to-white px-5 pb-5 pt-6 sm:px-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D9488]">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">
             FREE WEBSITE CONSULTATION
           </p>
           <h2 className="mt-2 text-2xl font-bold tracking-tight text-[#0F172A]">
@@ -152,7 +152,7 @@ export function LeadForm() {
                 key={chip}
                 className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-white px-3 py-1.5 text-sm text-slate-700"
               >
-                <CheckCircle2 className="h-3.5 w-3.5 text-[#0D9488]" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-[#2563EB]" />
                 {chip}
               </div>
             ))}
@@ -237,7 +237,7 @@ export function LeadForm() {
                 name="websiteType"
                 value={values.websiteType}
                 onChange={(event) => updateField("websiteType", event.target.value)}
-                className="h-12 w-full appearance-none rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-base text-[#0F172A] outline-none transition focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/20"
+                className="h-12 w-full appearance-none rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-base text-[#0F172A] outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
                 style={{
                   backgroundImage:
                     'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%2364748B\' stroke-width=\'2\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M19 9l-7 7-7-7\'/%3E%3C/svg%3E")',
@@ -278,7 +278,7 @@ export function LeadForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#0D9488] px-5 text-base font-semibold text-white shadow-lg shadow-teal-600/20 transition-all hover:-translate-y-0.5 hover:bg-[#0F766E] disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#2563EB] px-5 text-base font-semibold text-white shadow-lg shadow-teal-600/20 transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting ? (
               <>

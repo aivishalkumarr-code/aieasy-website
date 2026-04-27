@@ -23,7 +23,7 @@ export function MobileStickyCta() {
         isVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
       }`}
     >
-      <ScrollToLeadCta className="flex h-12 items-center justify-center rounded-full bg-[#0D9488] px-6 text-base font-semibold text-white shadow-[0_18px_42px_rgba(15,23,42,0.24)]">
+      <ScrollToLeadCta className="flex h-12 items-center justify-center rounded-full bg-[#2563EB] px-6 text-base font-semibold text-white shadow-[0_18px_42px_rgba(15,23,42,0.24)]">
         Get Free Consultation
       </ScrollToLeadCta>
     </div>

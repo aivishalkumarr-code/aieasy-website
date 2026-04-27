@@ -13,11 +13,11 @@ export function LpFooter() {
         </div>
 
         <div className="flex flex-col gap-3 md:items-end">
-          <a href="mailto:hello@aieasy.in" className="inline-flex items-center gap-2 transition hover:text-[#0D9488]">
+          <a href="mailto:hello@aieasy.in" className="inline-flex items-center gap-2 transition hover:text-[#2563EB]">
             <Mail className="h-4 w-4" />
             hello@aieasy.in
           </a>
-          <Link href="/" className="transition hover:text-[#0D9488]">
+          <Link href="/" className="transition hover:text-[#2563EB]">
             Back to AIeasy main site
           </Link>
         </div>
