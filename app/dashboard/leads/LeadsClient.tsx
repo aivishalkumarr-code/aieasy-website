@@ -26,9 +26,9 @@ const formatDate = (value: string) =>
 const statusStyles: Record<LeadStatus, string> = {
   New: "bg-[#EFF6FF] text-[#1D4ED8]",
   Contacted: "bg-[#F5F3FF] text-[#7C3AED]",
-  Qualified: "bg-[#ECFDF5] text-[#0F766E]",
+  Qualified: "bg-[#EFF6FF] text-[#1D4ED8]",
   "Proposal Sent": "bg-[#FFF7ED] text-[#C2410C]",
-  Closed: "bg-[#0D9488] text-white",
+  Closed: "bg-[#2563EB] text-white",
 };
 
 interface LeadsClientProps {
@@ -133,8 +133,8 @@ export function LeadsClient({ initialLeads }: LeadsClientProps) {
                 onClick={() => setFilter(status)}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                   active
-                    ? "bg-[#0D9488] text-white"
-                    : "bg-[#F4F6F2] text-[#4B5563] hover:bg-[#E7F5F2] hover:text-[#0D9488]"
+                    ? "bg-[#2563EB] text-white"
+                    : "bg-[#F4F6F2] text-[#4B5563] hover:bg-[#DBEAFE] hover:text-[#2563EB]"
                 }`}
               >
                 {status} ({count})
@@ -229,13 +229,13 @@ export function LeadsClient({ initialLeads }: LeadsClientProps) {
               />
             </div>
 
-            {feedback ? <p className="mt-3 text-sm text-[#0F766E]">{feedback}</p> : null}
+            {feedback ? <p className="mt-3 text-sm text-[#1D4ED8]">{feedback}</p> : null}
 
             <Button
               type="button"
               onClick={handleNotesSave}
               disabled={isPending}
-              className="mt-5 h-11 w-full rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+              className="mt-5 h-11 w-full rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
             >
               {isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               Save notes

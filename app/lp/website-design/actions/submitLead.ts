@@ -188,7 +188,7 @@ function buildCustomerEmail({
             <td align="center" style="padding:40px 20px;">
               <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background-color:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 6px 20px rgba(15,23,42,0.08);">
                 <tr>
-                  <td style="background:linear-gradient(135deg,#0f766e 0%,#0D9488 55%,#14B8A6 100%);padding:36px 40px;text-align:center;">
+                  <td style="background:linear-gradient(135deg,#1D4ED8 0%,#2563EB 55%,#3B82F6 100%);padding:36px 40px;text-align:center;">
                     <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">AIeasy</h1>
                     <p style="margin:10px 0 0;color:rgba(255,255,255,0.86);font-size:14px;">Websites built to grow businesses</p>
                   </td>
@@ -202,12 +202,12 @@ function buildCustomerEmail({
                     <p style="margin:0 0 24px;color:#4B5563;font-size:16px;line-height:1.7;">
                       Our team will review the details and follow up with your next step. If you want faster clarity, book a free consultation right now.
                     </p>
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0;border-radius:16px;background-color:#f0fdfa;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0;border-radius:16px;background-color:#EFF6FF;">
                       <tr>
                         <td style="padding:24px;text-align:center;">
-                          <p style="margin:0 0 10px;color:#0D9488;font-size:18px;font-weight:700;">Book your free consultation</p>
+                          <p style="margin:0 0 10px;color:#2563EB;font-size:18px;font-weight:700;">Book your free consultation</p>
                           <p style="margin:0 0 18px;color:#4B5563;font-size:14px;line-height:1.6;">Pick a 30-minute call and we&apos;ll discuss goals, pricing direction, and the fastest path to launch.</p>
-                          <a href="${calendlyLink}" style="display:inline-block;background-color:#0D9488;color:#ffffff;text-decoration:none;padding:13px 24px;border-radius:9999px;font-weight:600;font-size:14px;">Book on Calendly</a>
+                          <a href="${calendlyLink}" style="display:inline-block;background-color:#2563EB;color:#ffffff;text-decoration:none;padding:13px 24px;border-radius:9999px;font-weight:600;font-size:14px;">Book on Calendly</a>
                         </td>
                       </tr>
                     </table>
@@ -256,7 +256,7 @@ function buildAdminEmail({
       </head>
       <body style="margin:0;padding:20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#fafaf8;">
         <div style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:18px;padding:36px;box-shadow:0 6px 20px rgba(15,23,42,0.08);">
-          <h1 style="margin:0 0 24px;color:#0D9488;font-size:28px;font-weight:700;">New Website Design Lead</h1>
+          <h1 style="margin:0 0 24px;color:#2563EB;font-size:28px;font-weight:700;">New Website Design Lead</h1>
           <table style="width:100%;border-collapse:collapse;">
             <tr>
               <td style="padding:10px 0;color:#6B7280;width:150px;">Name</td>

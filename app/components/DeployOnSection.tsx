@@ -9,7 +9,7 @@ export async function DeployOnSection() {
   return (
     <section className="container py-24">
       <AnimatedSection className="mx-auto max-w-3xl space-y-4 text-center">
-        <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+        <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
           Trusted Deployment Platforms
         </p>
         <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">

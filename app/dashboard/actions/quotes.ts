@@ -38,7 +38,7 @@ const generateQuotePDF = (
   const doc = new jsPDF({ unit: "pt", format: "a4" });
 
   // Header with brand color
-  doc.setFillColor(13, 148, 136);
+  doc.setFillColor(37, 99, 235);
   doc.rect(0, 0, 595, 80, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
@@ -118,7 +118,7 @@ const generateQuotePDF = (
     // Notes if present
     if (service.notes) {
       cursorY += splitDescription.length * 12;
-      doc.setTextColor(13, 148, 136);
+      doc.setTextColor(37, 99, 235);
       doc.setFontSize(8);
       doc.text(`Note: ${service.notes}`, 50, cursorY);
       doc.setTextColor(107, 114, 128);
@@ -136,7 +136,7 @@ const generateQuotePDF = (
     cursorY += 10;
     doc.setFillColor(236, 253, 245);
     doc.rect(40, cursorY - 5, 515, 40, "F");
-    doc.setTextColor(13, 148, 136);
+    doc.setTextColor(37, 99, 235);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
     doc.text("Additional Notes:", 50, cursorY + 8);
@@ -162,14 +162,14 @@ const generateQuotePDF = (
   doc.text(formatCurrency(quote.tax_amount), 545, cursorY, { align: "right" });
 
   cursorY += 8;
-  doc.setDrawColor(13, 148, 136);
+  doc.setDrawColor(37, 99, 235);
   doc.setLineWidth(1);
   doc.line(380, cursorY, 555, cursorY);
 
   cursorY += 18;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12);
-  doc.setTextColor(13, 148, 136);
+  doc.setTextColor(37, 99, 235);
   doc.text("Total:", 380, cursorY);
   doc.text(formatCurrency(quote.total), 545, cursorY, { align: "right" });
 
@@ -193,7 +193,7 @@ const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServ
         `<tr>
           <td style="padding: 12px; border-bottom: 1px solid #E5E7EB;">
             <strong>${service.label}</strong>
-            ${service.notes ? `<br/><span style="font-size: 12px; color: #0D9488;">Note: ${service.notes}</span>` : ""}
+            ${service.notes ? `<br/><span style="font-size: 12px; color: #2563EB;">Note: ${service.notes}</span>` : ""}
           </td>
           <td style="padding: 12px; border-bottom: 1px solid #E5E7EB; text-align: right;">
             ${formatCurrency(service.customPrice)}
@@ -204,7 +204,7 @@ const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServ
 
   return `
     <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto;">
-      <div style="background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%); padding: 40px 30px; text-align: center;">
+      <div style="background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); padding: 40px 30px; text-align: center;">
         <h1 style="color: #ffffff; margin: 0; font-size: 28px;">AIeasy</h1>
         <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0; font-size: 14px;">Premium AI Solutions</p>
       </div>
@@ -220,9 +220,9 @@ const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServ
         
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background: #F8FAF9; border-radius: 12px; overflow: hidden;">
           <thead>
-            <tr style="background: #ECFDF5;">
-              <th style="padding: 12px; text-align: left; color: #0F766E; font-size: 12px; text-transform: uppercase;">Service</th>
-              <th style="padding: 12px; text-align: right; color: #0F766E; font-size: 12px; text-transform: uppercase;">Price</th>
+            <tr style="background: #EFF6FF;">
+              <th style="padding: 12px; text-align: left; color: #1D4ED8; font-size: 12px; text-transform: uppercase;">Service</th>
+              <th style="padding: 12px; text-align: right; color: #1D4ED8; font-size: 12px; text-transform: uppercase;">Price</th>
             </tr>
           </thead>
           <tbody>
@@ -239,13 +239,13 @@ const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServ
             <span>Tax (${quote.tax_rate}%):</span>
             <span>${formatCurrency(quote.tax_amount)}</span>
           </div>
-          <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 2px solid #0D9488; font-weight: bold; font-size: 18px; color: #0D9488;">
+          <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 2px solid #2563EB; font-weight: bold; font-size: 18px; color: #2563EB;">
             <span>Total:</span>
             <span>${formatCurrency(quote.total)}</span>
           </div>
         </div>
         
-        ${quote.global_notes ? `<div style="background: #ECFDF5; padding: 15px; border-radius: 8px; margin: 20px 0; color: #0F766E; font-size: 14px;"><strong>Additional Notes:</strong><br/>${quote.global_notes}</div>` : ""}
+        ${quote.global_notes ? `<div style="background: #EFF6FF; padding: 15px; border-radius: 8px; margin: 20px 0; color: #1D4ED8; font-size: 14px;"><strong>Additional Notes:</strong><br/>${quote.global_notes}</div>` : ""}
         
         <p style="color: #4B5563; margin: 25px 0 0;">
           <strong>Valid until:</strong> ${quote.valid_until}<br/>
@@ -254,7 +254,7 @@ const buildQuoteEmailHtml = (contact: Contact, quote: Quote, services: QuoteServ
         
         <p style="color: #4B5563; margin: 25px 0 0;">
           Best regards,<br/>
-          <strong style="color: #0D9488;">AIeasy Team</strong>
+          <strong style="color: #2563EB;">AIeasy Team</strong>
         </p>
       </div>
       
@@ -279,7 +279,7 @@ const buildQuoteWithAcceptEmailHtml = (
           <td style="padding: 14px 16px; border-bottom: 1px solid #E5E7EB; vertical-align: top;">
             <div style="font-weight: 600; color: #111827;">${service.label}</div>
             <div style="margin-top: 4px; font-size: 13px; color: #6B7280;">${service.description}</div>
-            ${service.notes ? `<div style="margin-top: 6px; font-size: 12px; color: #0D9488;">Note: ${service.notes}</div>` : ""}
+            ${service.notes ? `<div style="margin-top: 6px; font-size: 12px; color: #2563EB;">Note: ${service.notes}</div>` : ""}
           </td>
           <td style="padding: 14px 16px; border-bottom: 1px solid #E5E7EB; text-align: right; white-space: nowrap; vertical-align: top; font-weight: 600; color: #111827;">
             ${formatCurrency(service.customPrice)}
@@ -290,7 +290,7 @@ const buildQuoteWithAcceptEmailHtml = (
 
   return `
     <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto;">
-      <div style="background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%); padding: 40px 30px; text-align: center;">
+      <div style="background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); padding: 40px 30px; text-align: center;">
         <h1 style="color: #ffffff; margin: 0; font-size: 28px;">AIeasy</h1>
         <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0; font-size: 14px;">Premium AI Solutions</p>
       </div>
@@ -306,9 +306,9 @@ const buildQuoteWithAcceptEmailHtml = (
         
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background: #F8FAF9; border-radius: 12px; overflow: hidden;">
           <thead>
-            <tr style="background: #ECFDF5;">
-              <th style="padding: 12px; text-align: left; color: #0F766E; font-size: 12px; text-transform: uppercase;">Service</th>
-              <th style="padding: 12px; text-align: right; color: #0F766E; font-size: 12px; text-transform: uppercase;">Price</th>
+            <tr style="background: #EFF6FF;">
+              <th style="padding: 12px; text-align: left; color: #1D4ED8; font-size: 12px; text-transform: uppercase;">Service</th>
+              <th style="padding: 12px; text-align: right; color: #1D4ED8; font-size: 12px; text-transform: uppercase;">Price</th>
             </tr>
           </thead>
           <tbody>
@@ -325,23 +325,23 @@ const buildQuoteWithAcceptEmailHtml = (
             <span>Tax (${quote.tax_rate}%):</span>
             <span>${formatCurrency(quote.tax_amount)}</span>
           </div>
-          <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 2px solid #0D9488; font-weight: bold; font-size: 18px; color: #0D9488;">
+          <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 2px solid #2563EB; font-weight: bold; font-size: 18px; color: #2563EB;">
             <span>Total:</span>
             <span>${formatCurrency(quote.total)}</span>
           </div>
         </div>
         
-        ${quote.global_notes ? `<div style="background: #ECFDF5; padding: 15px; border-radius: 8px; margin: 20px 0; color: #0F766E; font-size: 14px;"><strong>Additional Notes:</strong><br/>${quote.global_notes}</div>` : ""}
+        ${quote.global_notes ? `<div style="background: #EFF6FF; padding: 15px; border-radius: 8px; margin: 20px 0; color: #1D4ED8; font-size: 14px;"><strong>Additional Notes:</strong><br/>${quote.global_notes}</div>` : ""}
         
         <!-- Accept CTA -->
         <div style="text-align: center; margin: 32px 0;">
-          <a href="${acceptUrl}" style="background: #0D9488; color: #ffffff; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px; display: inline-block;">
+          <a href="${acceptUrl}" style="background: #2563EB; color: #ffffff; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px; display: inline-block;">
             ACCEPT QUOTE
           </a>
         </div>
         
         <p style="text-align: center; color: #6B7280; font-size: 14px; margin: 0 0 20px;">
-          Or copy this link: <span style="color: #0D9488;">${acceptUrl}</span>
+          Or copy this link: <span style="color: #2563EB;">${acceptUrl}</span>
         </p>
         
         <p style="color: #4B5563; margin: 0 0 15px;">
@@ -354,7 +354,7 @@ const buildQuoteWithAcceptEmailHtml = (
         
         <p style="color: #4B5563; margin: 25px 0 0;">
           Best regards,<br/>
-          <strong style="color: #0D9488;">AIeasy Team</strong>
+          <strong style="color: #2563EB;">AIeasy Team</strong>
         </p>
       </div>
       

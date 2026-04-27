@@ -186,7 +186,7 @@ export function CRMClient({ initialContacts, initialDeals }: CRMClientProps) {
               type="button"
               disabled={isPending || !contactForm.name || !contactForm.email}
               onClick={handleContactCreate}
-              className="h-11 w-full rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+              className="h-11 w-full rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
             >
               {isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
               Save contact
@@ -265,7 +265,7 @@ export function CRMClient({ initialContacts, initialDeals }: CRMClientProps) {
               type="button"
               disabled={isPending || !dealForm.title || !dealForm.contactId}
               onClick={handleDealCreate}
-              className="h-11 w-full rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+              className="h-11 w-full rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
             >
               {isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
               Add deal
@@ -281,7 +281,7 @@ export function CRMClient({ initialContacts, initialDeals }: CRMClientProps) {
                 Central list of people attached to current opportunities.
               </p>
             </div>
-            <span className="rounded-full bg-[#ECFDF5] px-3 py-1 text-xs font-medium text-[#0F766E]">
+            <span className="rounded-full bg-[#EFF6FF] px-3 py-1 text-xs font-medium text-[#1D4ED8]">
               {contacts.length} total
             </span>
           </div>
@@ -313,7 +313,7 @@ export function CRMClient({ initialContacts, initialDeals }: CRMClientProps) {
               Kanban view for moving opportunities through each stage.
             </p>
           </div>
-          {feedback ? <p className="text-sm text-[#0F766E]">{feedback}</p> : null}
+          {feedback ? <p className="text-sm text-[#1D4ED8]">{feedback}</p> : null}
         </div>
 
         <div className="mt-6 grid gap-4 xl:grid-cols-5">

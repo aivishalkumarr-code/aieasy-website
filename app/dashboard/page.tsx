@@ -65,10 +65,10 @@ export default async function DashboardPage() {
               className="rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card"
             >
               <div className="flex items-center justify-between">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0D9488]/10 text-[#0D9488]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2563EB]/10 text-[#2563EB]">
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className="rounded-full bg-[#ECFDF5] px-3 py-1 text-xs font-medium text-[#0F766E]">
+                <span className="rounded-full bg-[#EFF6FF] px-3 py-1 text-xs font-medium text-[#1D4ED8]">
                   Live
                 </span>
               </div>
@@ -117,7 +117,7 @@ export default async function DashboardPage() {
                       </div>
                     </td>
                     <td className="py-4">
-                      <span className="rounded-full bg-[#ECFDF5] px-3 py-1 text-xs font-medium text-[#0F766E]">
+                      <span className="rounded-full bg-[#EFF6FF] px-3 py-1 text-xs font-medium text-[#1D4ED8]">
                         {contact.status}
                       </span>
                     </td>
@@ -146,7 +146,7 @@ export default async function DashboardPage() {
                     </div>
                     <div className="h-2 rounded-full bg-[#F1F5F4]">
                       <div
-                        className="h-2 rounded-full bg-[#0D9488]"
+                        className="h-2 rounded-full bg-[#2563EB]"
                         style={{ width: `${share}%` }}
                       />
                     </div>
@@ -163,7 +163,7 @@ export default async function DashboardPage() {
                 <div key={email.id} className="rounded-[1.25rem] bg-[#F8FAF9] p-4">
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-medium text-[#1A1A1A]">{email.subject}</p>
-                    <span className="text-xs uppercase tracking-[0.2em] text-[#0D9488]">
+                    <span className="text-xs uppercase tracking-[0.2em] text-[#2563EB]">
                       {email.status}
                     </span>
                   </div>

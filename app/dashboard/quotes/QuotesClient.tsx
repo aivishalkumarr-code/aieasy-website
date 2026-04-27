@@ -83,7 +83,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
     const doc = new jsPDF({ unit: "pt", format: "a4" });
 
     // Header
-    doc.setFillColor(13, 148, 136);
+    doc.setFillColor(37, 99, 235);
     doc.rect(0, 0, 595, 80, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
@@ -165,7 +165,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
       // Notes if present
       if (service.notes) {
         cursorY += splitDescription.length * 12;
-        doc.setTextColor(13, 148, 136);
+        doc.setTextColor(37, 99, 235);
         doc.setFontSize(8);
         doc.text(`Note: ${service.notes}`, 50, cursorY);
         doc.setTextColor(107, 114, 128);
@@ -183,7 +183,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
       cursorY += 10;
       doc.setFillColor(236, 253, 245);
       doc.rect(40, cursorY - 5, 515, 40, "F");
-      doc.setTextColor(13, 148, 136);
+      doc.setTextColor(37, 99, 235);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
       doc.text("Additional Notes:", 50, cursorY + 8);
@@ -209,14 +209,14 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
     doc.text(formatCurrency(taxAmount), 545, cursorY, { align: "right" });
 
     cursorY += 8;
-    doc.setDrawColor(13, 148, 136);
+    doc.setDrawColor(37, 99, 235);
     doc.setLineWidth(1);
     doc.line(380, cursorY, 555, cursorY);
 
     cursorY += 18;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
-    doc.setTextColor(13, 148, 136);
+    doc.setTextColor(37, 99, 235);
     doc.text("Total:", 380, cursorY);
     doc.text(formatCurrency(total), 545, cursorY, { align: "right" });
 
@@ -363,7 +363,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
         <button
           onClick={() => setActiveTab("generator")}
           className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-medium transition ${
-            activeTab === "generator" ? "bg-[#0D9488] text-white" : "text-[#4B5563] hover:bg-[#F4F6F2]"
+            activeTab === "generator" ? "bg-[#2563EB] text-white" : "text-[#4B5563] hover:bg-[#F4F6F2]"
           }`}
         >
           <span className="flex items-center justify-center gap-2">
@@ -374,7 +374,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
         <button
           onClick={() => setActiveTab("history")}
           className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-medium transition ${
-            activeTab === "history" ? "bg-[#0D9488] text-white" : "text-[#4B5563] hover:bg-[#F4F6F2]"
+            activeTab === "history" ? "bg-[#2563EB] text-white" : "text-[#4B5563] hover:bg-[#F4F6F2]"
           }`}
         >
           <span className="flex items-center justify-center gap-2">
@@ -421,7 +421,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                   <select
                     value={contactId}
                     onChange={(e) => setContactId(e.target.value)}
-                    className="h-11 w-full rounded-xl border border-[#DDE7E3] bg-[#FAFAF8] px-3 text-sm text-[#1A1A1A] focus:border-[#0D9488] focus:outline-none focus:ring-1 focus:ring-[#0D9488]"
+                    className="h-11 w-full rounded-xl border border-[#DDE7E3] bg-[#FAFAF8] px-3 text-sm text-[#1A1A1A] focus:border-[#2563EB] focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
                   >
                     {initialContacts.map((entry) => (
                       <option key={entry.id} value={entry.id}>
@@ -446,8 +446,8 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                           key={service.key}
                           className={`rounded-xl border p-4 transition-all ${
                             service.selected
-                              ? "border-[#0D9488] bg-[#ECFDF5] ring-1 ring-[#0D9488]/20"
-                              : "border-[#DDE7E3] bg-[#FAFAF8] hover:border-[#0D9488]/40"
+                              ? "border-[#2563EB] bg-[#EFF6FF] ring-1 ring-[#2563EB]/20"
+                              : "border-[#DDE7E3] bg-[#FAFAF8] hover:border-[#2563EB]/40"
                           }`}
                         >
                           <div className="flex items-start gap-4">
@@ -456,7 +456,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                               onClick={() => toggleService(service.key)}
                               className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition ${
                                 service.selected
-                                  ? "border-[#0D9488] bg-[#0D9488] text-white"
+                                  ? "border-[#2563EB] bg-[#2563EB] text-white"
                                   : "border-[#DDE7E3] bg-white"
                               }`}
                             >
@@ -483,7 +483,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                                         next.delete(service.key);
                                         return next;
                                       })}
-                                      className="rounded-lg p-1 text-[#0D9488] hover:bg-[#0D9488]/10"
+                                      className="rounded-lg p-1 text-[#2563EB] hover:bg-[#2563EB]/10"
                                     >
                                       <Save className="h-4 w-4" />
                                     </button>
@@ -491,7 +491,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                                 ) : (
                                   <button
                                     onClick={() => setEditingPrices((prev) => new Set(prev).add(service.key))}
-                                    className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-[#0D9488] hover:bg-[#0D9488]/10"
+                                    className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-[#2563EB] hover:bg-[#2563EB]/10"
                                   >
                                     <Edit2 className="h-3.5 w-3.5" />
                                     {formatCurrency(price)}
@@ -509,7 +509,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                                     placeholder="Add notes for this service (what was discussed with client)..."
                                     value={service.notes}
                                     onChange={(e) => updateServiceNotes(service.key, e.target.value)}
-                                    className="w-full rounded-lg border border-[#DDE7E3] bg-white px-3 py-2 text-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:border-[#0D9488] focus:outline-none focus:ring-1 focus:ring-[#0D9488]"
+                                    className="w-full rounded-lg border border-[#DDE7E3] bg-white px-3 py-2 text-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:border-[#2563EB] focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
                                   />
                                 </div>
                               )}
@@ -553,12 +553,12 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                     onChange={(e) => setGlobalNotes(e.target.value)}
                     placeholder="Additional notes that will appear at the end of the quote..."
                     rows={3}
-                    className="w-full rounded-xl border border-[#DDE7E3] bg-[#FAFAF8] px-3 py-2.5 text-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:border-[#0D9488] focus:outline-none focus:ring-1 focus:ring-[#0D9488]"
+                    className="w-full rounded-xl border border-[#DDE7E3] bg-[#FAFAF8] px-3 py-2.5 text-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:border-[#2563EB] focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
                   />
                 </div>
 
                 {/* Summary Card */}
-                <div className="rounded-2xl bg-gradient-to-br from-[#F8FAF9] to-[#ECFDF5] p-5">
+                <div className="rounded-2xl bg-gradient-to-br from-[#F8FAF9] to-[#EFF6FF] p-5">
                   <div className="flex items-center justify-between text-sm text-[#4B5563]">
                     <span>Subtotal ({selectedServices.length} services)</span>
                     <span className="font-medium">{formatCurrency(subtotal)}</span>
@@ -567,9 +567,9 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                     <span>Tax ({taxRate}%)</span>
                     <span className="font-medium">{formatCurrency(taxAmount)}</span>
                   </div>
-                  <div className="mt-4 flex items-center justify-between border-t border-[#0D9488]/20 pt-4">
+                  <div className="mt-4 flex items-center justify-between border-t border-[#2563EB]/20 pt-4">
                     <span className="text-lg font-semibold text-[#1A1A1A]">Total</span>
-                    <span className="text-2xl font-bold text-[#0D9488]">{formatCurrency(total)}</span>
+                    <span className="text-2xl font-bold text-[#2563EB]">{formatCurrency(total)}</span>
                   </div>
                 </div>
 
@@ -579,7 +579,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                     type="button"
                     disabled={isCreating || !contactId || selectedServices.length === 0}
                     onClick={handleCreateQuote}
-                    className="h-12 flex-1 rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+                    className="h-12 flex-1 rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
                   >
                   {isCreating ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                   Save Quote
@@ -642,10 +642,10 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
           </div>
 
           {createdQuoteId && (
-            <div className="mt-4 rounded-xl border border-[#0D9488]/30 bg-[#ECFDF5] p-4">
+            <div className="mt-4 rounded-xl border border-[#2563EB]/30 bg-[#EFF6FF] p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0D9488] text-white">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563EB] text-white">
                     <Check className="h-5 w-5" />
                   </div>
                   <div>
@@ -658,7 +658,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                     variant="outline"
                     onClick={() => handleSendQuote(createdQuoteId, "simple")}
                     disabled={isSending === createdQuoteId}
-                    className="h-11 rounded-xl border-[#0D9488]/50 bg-white text-[#0D9488] hover:bg-[#0D9488]/10"
+                    className="h-11 rounded-xl border-[#2563EB]/50 bg-white text-[#2563EB] hover:bg-[#2563EB]/10"
                   >
                     {isSending === createdQuoteId ? (
                       <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
@@ -670,7 +670,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                   <Button
                     onClick={() => handleSendQuote(createdQuoteId, "accept")}
                     disabled={isSending === createdQuoteId}
-                    className="h-11 rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+                    className="h-11 rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
                   >
                     {isSending === createdQuoteId ? (
                       <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
@@ -752,7 +752,7 @@ export function QuotesClient({ initialContacts, initialQuotes }: QuotesClientPro
                                 size="sm"
                                 disabled={isSending === quote.id}
                                 onClick={() => handleSendQuote(quote.id, "accept")}
-                                className="h-9 rounded-lg bg-[#0D9488] text-white hover:bg-[#0F766E]"
+                                className="h-9 rounded-lg bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
                                 title="Send with Accept button"
                               >
                                 {isSending === quote.id ? (

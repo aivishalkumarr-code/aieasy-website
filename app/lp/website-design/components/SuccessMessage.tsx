@@ -11,7 +11,7 @@ export function SuccessMessage({
 }: SuccessMessageProps) {
   return (
     <div className="overflow-hidden rounded-[2rem] border border-[#2563EB]/15 bg-white shadow-[0_30px_70px_-40px_rgba(15,23,42,0.35)]">
-      <div className="bg-[linear-gradient(180deg,rgba(13,148,136,0.12),rgba(13,148,136,0.04))] px-6 pb-6 pt-7 text-center sm:px-8">
+      <div className="bg-[linear-gradient(180deg,rgba(37,99,235,0.12),rgba(37,99,235,0.04))] px-6 pb-6 pt-7 text-center sm:px-8">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-lg">
           <CheckCircle2 className="h-8 w-8" />
         </div>
@@ -24,7 +24,7 @@ export function SuccessMessage({
       </div>
 
       <div className="space-y-5 px-6 py-6 sm:px-8 sm:py-8">
-        <div className="rounded-[1.6rem] border border-[#2563EB]/15 bg-[#f0fdfa] p-5">
+        <div className="rounded-[1.6rem] border border-[#2563EB]/15 bg-[#EFF6FF] p-5">
           <div className="flex items-center justify-center gap-2 text-[#2563EB]">
             <Calendar className="h-5 w-5" />
             <span className="font-semibold">Book your free strategy call now</span>

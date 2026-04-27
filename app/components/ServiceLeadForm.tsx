@@ -91,7 +91,7 @@ export function ServiceLeadForm({
         animate={{ opacity: 1, y: 0 }}
         className="flex min-h-[520px] flex-col items-center justify-center rounded-[1.75rem] border border-[#E5E7EB] bg-white p-8 text-center shadow-sm"
       >
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0D9488]/10 text-[#0D9488]">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#2563EB]/10 text-[#2563EB]">
           <CheckCircle2 className="h-7 w-7" />
         </div>
         <div className="mt-6 space-y-3">
@@ -104,8 +104,8 @@ export function ServiceLeadForm({
           </p>
         </div>
 
-        <div className="mt-6 w-full max-w-sm rounded-xl border border-[#0D9488]/20 bg-[#0D9488]/5 p-5">
-          <div className="flex items-center justify-center gap-2 text-[#0D9488]">
+        <div className="mt-6 w-full max-w-sm rounded-xl border border-[#2563EB]/20 bg-[#2563EB]/5 p-5">
+          <div className="flex items-center justify-center gap-2 text-[#2563EB]">
             <Calendar className="h-5 w-5" />
             <span className="font-semibold">Book Your Free Consultation</span>
           </div>
@@ -130,7 +130,7 @@ export function ServiceLeadForm({
             setSubmittedName("");
             setSubmitError(null);
           }}
-          className="mt-6 rounded-full bg-[#0D9488] px-6 hover:bg-[#14B8A6]"
+          className="mt-6 rounded-full bg-[#2563EB] px-6 hover:bg-[#1D4ED8]"
         >
           Submit another inquiry
         </Button>
@@ -158,7 +158,7 @@ export function ServiceLeadForm({
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-6">
           <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-[#FAFAF8] p-5">
-            <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0D9488]">
+            <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#2563EB]">
               Service selected
             </p>
             <Input
@@ -245,7 +245,7 @@ export function ServiceLeadForm({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="h-12 w-full rounded-full bg-[#0D9488] px-6 text-sm font-medium hover:bg-[#14B8A6] disabled:opacity-70"
+            className="h-12 w-full rounded-full bg-[#2563EB] px-6 text-sm font-medium hover:bg-[#1D4ED8] disabled:opacity-70"
           >
             {isSubmitting ? (
               <>

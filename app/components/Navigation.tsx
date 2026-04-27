@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FocusEvent, type MouseEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -109,12 +110,19 @@ export function Navigation() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#E5E7EB]/80 bg-[#FAFAF8]/90 backdrop-blur-xl">
-      <div className="container flex h-20 items-center justify-between">
-        <Link href="/" className="text-2xl font-semibold tracking-tight text-[#1A1A1A]">
-          AIeasy
+      <div className="container flex h-24 items-center justify-between gap-6">
+        <Link href="/" className="relative h-14 w-[220px] shrink-0 md:w-[200px] lg:w-[270px]" aria-label="aicosy home">
+          <Image
+            src="/logo.png"
+            alt="aicosy | AI Made Easy"
+            fill
+            className="object-contain object-left"
+            sizes="(min-width: 1024px) 270px, (min-width: 768px) 200px, 220px"
+            priority
+          />
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-5 lg:gap-8 md:flex">
           <div
             className="relative"
             onMouseEnter={openServicesMenu}
@@ -161,7 +169,7 @@ export function Navigation() {
                           }}
                           className="group rounded-xl px-3 py-2.5 transition-colors hover:bg-[#F4F6F2]"
                         >
-                          <p className="text-sm font-medium text-[#1A1A1A] group-hover:text-[#0D9488]">
+                          <p className="text-sm font-medium text-[#1A1A1A] group-hover:text-[#2563EB]">
                             {service.name}
                           </p>
                           <p className="mt-0.5 line-clamp-1 text-xs text-[#6B7280]">
@@ -174,7 +182,7 @@ export function Navigation() {
                       <Link
                         href="/#services"
                         onClick={(event) => handleAnchorClick(event, "/#services")}
-                        className="flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium text-[#0D9488] hover:bg-[#ECFDF5]"
+                        className="flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium text-[#2563EB] hover:bg-[#EFF6FF]"
                       >
                         View all services
                         <span aria-hidden>→</span>
@@ -199,7 +207,7 @@ export function Navigation() {
         </nav>
 
         <div className="hidden md:block">
-          <Button asChild className="rounded-full bg-[#0D9488] px-5 hover:bg-[#14B8A6]">
+          <Button asChild className="rounded-full bg-[#2563EB] px-5 hover:bg-[#1D4ED8]">
             <Link href="/contact">Start a project</Link>
           </Button>
         </div>
@@ -262,7 +270,7 @@ export function Navigation() {
                               setOpen(false);
                               setMobileServicesOpen(false);
                             }}
-                            className="block rounded-lg px-3 py-2 text-sm text-[#4B5563] hover:bg-[#F4F6F2] hover:text-[#0D9488]"
+                            className="block rounded-lg px-3 py-2 text-sm text-[#4B5563] hover:bg-[#F4F6F2] hover:text-[#2563EB]"
                           >
                             {service.name}
                           </Link>
@@ -278,12 +286,12 @@ export function Navigation() {
                   key={link.href}
                   href={link.href}
                   onClick={(event) => handleAnchorClick(event, link.href)}
-                  className="rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 text-left text-sm font-medium text-[#1A1A1A] transition-colors hover:border-[#0D9488] hover:text-[#0D9488]"
+                  className="rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 text-left text-sm font-medium text-[#1A1A1A] transition-colors hover:border-[#2563EB] hover:text-[#2563EB]"
                 >
                   {link.label}
                 </Link>
               ))}
-              <Button asChild className="mt-2 rounded-full bg-[#0D9488] hover:bg-[#14B8A6]">
+              <Button asChild className="mt-2 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8]">
                 <Link href="/contact" onClick={() => setOpen(false)}>
                   Start a project
                 </Link>

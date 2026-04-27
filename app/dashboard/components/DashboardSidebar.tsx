@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -51,14 +52,26 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
           href="/dashboard"
           className="flex items-center gap-3 transition-opacity hover:opacity-80"
         >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#0D9488] font-semibold text-white">
-            AE
+          <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-2xl bg-[#EFF6FF] ring-1 ring-[#2563EB]/10">
+            <Image
+              src="/logo.png"
+              alt="aicosy"
+              width={220}
+              height={56}
+              className="absolute left-1 top-1/2 h-8 w-[154px] max-w-none -translate-y-1/2 object-contain object-left"
+              sizes="44px"
+              priority
+            />
           </div>
-          <div className="min-w-0">
-            <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0D9488]">
-              AIeasy
-            </p>
-            <p className="truncate text-sm text-[#6B7280]">Operations</p>
+          <div className="relative h-12 min-w-0 flex-1">
+            <Image
+              src="/logo.png"
+              alt="aicosy | AI Made Easy"
+              fill
+              className="object-contain object-left"
+              sizes="180px"
+              priority
+            />
           </div>
         </Link>
 
@@ -75,7 +88,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
                 className={cn(
                   "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-150",
                   active
-                    ? "bg-[#0D9488] text-white shadow-sm"
+                    ? "bg-[#2563EB] text-white shadow-sm"
                     : "text-[#4B5563] hover:bg-[#F4F6F2] hover:text-[#1A1A1A]",
                 )}
               >

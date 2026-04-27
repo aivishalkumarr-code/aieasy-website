@@ -106,7 +106,7 @@ export function AIDemoChat() {
       <CardHeader className="border-b border-[#E5E7EB] bg-[#FAFAF8] px-6 py-5">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0D9488]/10 text-[#0D9488]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#2563EB]/10 text-[#2563EB]">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
@@ -116,7 +116,7 @@ export function AIDemoChat() {
               </p>
             </div>
           </div>
-          <Badge className="rounded-full bg-[#0D9488]/10 text-[#0D9488] hover:bg-[#0D9488]/10">
+          <Badge className="rounded-full bg-[#2563EB]/10 text-[#2563EB] hover:bg-[#2563EB]/10">
             Live simulation
           </Badge>
         </div>
@@ -133,7 +133,7 @@ export function AIDemoChat() {
                 }`}
               >
                 {message.role === "assistant" ? (
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#0D9488]/10 text-[#0D9488]">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#2563EB]/10 text-[#2563EB]">
                     <Bot className="h-4 w-4" />
                   </div>
                 ) : null}
@@ -141,7 +141,7 @@ export function AIDemoChat() {
                   className={`max-w-[85%] rounded-[1.25rem] px-4 py-3 text-sm leading-6 ${
                     message.role === "assistant"
                       ? "bg-[#FAFAF8] text-[#1A1A1A]"
-                      : "bg-[#0D9488] text-white"
+                      : "bg-[#2563EB] text-white"
                   }`}
                 >
                   {message.content}
@@ -156,13 +156,13 @@ export function AIDemoChat() {
 
             {isTyping ? (
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0D9488]/10 text-[#0D9488]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#2563EB]/10 text-[#2563EB]">
                   <Bot className="h-4 w-4" />
                 </div>
                 <div className="flex items-center gap-1 rounded-[1.25rem] bg-[#FAFAF8] px-4 py-3">
-                  <span className="h-2 w-2 rounded-full bg-[#0D9488] animate-blink" />
-                  <span className="h-2 w-2 rounded-full bg-[#0D9488] animate-blink [animation-delay:150ms]" />
-                  <span className="h-2 w-2 rounded-full bg-[#0D9488] animate-blink [animation-delay:300ms]" />
+                  <span className="h-2 w-2 rounded-full bg-[#2563EB] animate-blink" />
+                  <span className="h-2 w-2 rounded-full bg-[#2563EB] animate-blink [animation-delay:150ms]" />
+                  <span className="h-2 w-2 rounded-full bg-[#2563EB] animate-blink [animation-delay:300ms]" />
                 </div>
               </div>
             ) : null}
@@ -178,7 +178,7 @@ export function AIDemoChat() {
                 key={suggestion}
                 type="button"
                 onClick={() => sendMessage(suggestion)}
-                className="rounded-full border border-[#E5E7EB] bg-[#FAFAF8] px-3 py-1.5 text-xs font-medium text-[#6B7280] transition-colors hover:border-[#0D9488] hover:text-[#0D9488]"
+                className="rounded-full border border-[#E5E7EB] bg-[#FAFAF8] px-3 py-1.5 text-xs font-medium text-[#6B7280] transition-colors hover:border-[#2563EB] hover:text-[#2563EB]"
               >
                 {suggestion}
               </button>
@@ -200,7 +200,7 @@ export function AIDemoChat() {
             <Button
               type="submit"
               size="icon"
-              className="h-12 w-12 rounded-full bg-[#0D9488] hover:bg-[#14B8A6]"
+              className="h-12 w-12 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8]"
             >
               <SendHorizonal className="h-4 w-4" />
             </Button>

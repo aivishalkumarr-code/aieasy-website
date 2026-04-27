@@ -17,7 +17,7 @@ export default async function LoginPage() {
   return (
     <main className="min-h-screen bg-[#FAFAF8] px-6 py-10">
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-        <section className="space-y-8 rounded-[2.5rem] bg-gradient-to-br from-[#0D9488] to-[#115E59] p-10 text-white shadow-card">
+        <section className="space-y-8 rounded-[2.5rem] bg-gradient-to-br from-[#2563EB] to-[#1E40AF] p-10 text-white shadow-card">
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
             <Sparkles className="h-7 w-7" />
           </div>

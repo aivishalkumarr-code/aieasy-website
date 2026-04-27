@@ -157,7 +157,7 @@ function buildCustomerEmail(
           <td align="center" style="padding: 40px 20px;">
             <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
               <tr>
-                <td style="background: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%); padding: 40px; text-align: center;">
+                <td style="background: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%); padding: 40px; text-align: center;">
                   <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: bold;">AIeasy</h1>
                   <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 14px;">Premium AI Solutions</p>
                 </td>
@@ -171,12 +171,12 @@ function buildCustomerEmail(
                   <p style="color: #6B7280; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">
                     Our team will review your requirements and get back to you within <strong>24 hours</strong>.
                   </p>
-                  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #0D9488; border-radius: 12px; margin: 24px 0;">
+                  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #2563EB; border-radius: 12px; margin: 24px 0;">
                     <tr>
                       <td style="padding: 24px; text-align: center;">
                         <p style="color: #ffffff; margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">Want to skip the wait?</p>
                         <p style="color: rgba(255,255,255,0.9); margin: 0 0 16px 0; font-size: 14px;">Book a free 30-minute consultation with our team right now.</p>
-                        <a href="${calendlyLink}" style="display: inline-block; background-color: #ffffff; color: #0D9488; text-decoration: none; padding: 12px 24px; border-radius: 9999px; font-weight: 600; font-size: 14px;">Book on Calendly</a>
+                        <a href="${calendlyLink}" style="display: inline-block; background-color: #ffffff; color: #2563EB; text-decoration: none; padding: 12px 24px; border-radius: 9999px; font-weight: 600; font-size: 14px;">Book on Calendly</a>
                       </td>
                     </tr>
                   </table>
@@ -216,7 +216,7 @@ function buildAdminEmail(values: ContactLeadFormValues): string {
     </head>
     <body style="margin: 0; padding: 20px; font-family: sans-serif; background-color: #fafaf8;">
       <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-        <h1 style="color: #0D9488; margin: 0 0 24px 0;">🎯 New Contact Form Lead</h1>
+        <h1 style="color: #2563EB; margin: 0 0 24px 0;">🎯 New Contact Form Lead</h1>
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <td style="padding: 8px 0; color: #6B7280; width: 120px;">Name:</td>

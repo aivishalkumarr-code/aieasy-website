@@ -77,7 +77,7 @@ export function Footer() {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={social.label}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-300 transition-colors hover:border-[#0D9488] hover:bg-[#0D9488] hover:text-white"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-300 transition-colors hover:border-[#2563EB] hover:bg-[#2563EB] hover:text-white"
                   >
                     <Icon className="h-4 w-4" />
                   </a>

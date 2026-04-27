@@ -30,6 +30,26 @@ export const getSentEmails = async (): Promise<SentEmail[]> => {
   return data as SentEmail[];
 };
 
+const renderEmailHtml = (body: string) => `
+  <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #0F172A; white-space: pre-wrap;">
+    <style>
+      a.button, .button, a[role="button"] {
+        background-color: #2563EB !important;
+        color: #ffffff !important;
+        border-radius: 9999px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        padding: 12px 24px !important;
+        text-decoration: none !important;
+      }
+      a.button:hover, .button:hover, a[role="button"]:hover {
+        background-color: #1D4ED8 !important;
+      }
+    </style>
+    ${body}
+  </div>
+`;
+
 export const sendEmail = async (payload: {
   toEmail: string;
   toName?: string;
@@ -49,7 +69,7 @@ export const sendEmail = async (payload: {
         from: DEFAULT_FROM_EMAIL,
         to: [payload.toEmail],
         subject: payload.subject,
-        html: `<div style="font-family: Inter, Arial, sans-serif; white-space: pre-wrap;">${payload.body}</div>`,
+        html: renderEmailHtml(payload.body),
       });
 
       if (response?.error) {
