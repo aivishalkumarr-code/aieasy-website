@@ -46,7 +46,7 @@ export function TestimonialsSection() {
     <section id="testimonials" className="bg-white py-20 sm:py-24">
       <div className="container">
         <AnimatedSection className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#0D9488]">
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2563EB]">
             Social proof
           </p>
           <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-[#1A1A1A] sm:text-4xl">

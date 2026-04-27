@@ -323,19 +323,19 @@ function BrowserMockup({ title, compact = false }: { title: string; compact?: bo
       <div className={compact ? "space-y-3 p-4" : "space-y-4 p-4"}>
         <div className="grid grid-cols-[1.2fr_0.8fr] gap-3">
           <div className="space-y-2">
-            <div className="h-3 w-16 rounded-full bg-teal-100" />
+            <div className="h-3 w-16 rounded-full bg-blue-100" />
             <div className="h-4 w-4/5 rounded-full bg-slate-800" />
             <div className="h-4 w-2/3 rounded-full bg-slate-800" />
             <div className="h-2.5 w-full rounded-full bg-slate-200" />
             <div className="h-2.5 w-4/5 rounded-full bg-slate-200" />
           </div>
-          <div className="rounded-xl bg-gradient-to-br from-teal-100 to-slate-100 p-3">
+          <div className="rounded-xl bg-gradient-to-br from-blue-100 to-slate-100 p-3">
             <div className="h-full min-h-20 rounded-lg border border-white/70 bg-white/70" />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2">
           <div className="h-10 rounded-xl bg-slate-100" />
-          <div className="h-10 rounded-xl bg-teal-50" />
+          <div className="h-10 rounded-xl bg-blue-50" />
           <div className="h-10 rounded-xl bg-slate-100" />
         </div>
         <div className="flex items-center justify-between gap-3">
@@ -381,12 +381,12 @@ export default function WebsiteDesignLandingPage() {
                 </p>
 
                 <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-                  <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.22)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
+                  <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.22)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
                     Get Free Website Consultation
                   </ScrollToLeadCta>
                   <a
                     href="#pricing"
-                    className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[#E2E8F0] bg-white px-7 text-base font-semibold text-[#0F172A] transition-all hover:-translate-y-0.5 hover:border-teal-200 hover:bg-teal-50 sm:w-auto"
+                    className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[#E2E8F0] bg-white px-7 text-base font-semibold text-[#0F172A] transition-all hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 sm:w-auto"
                   >
                     View Website Packages
                   </a>
@@ -406,7 +406,7 @@ export default function WebsiteDesignLandingPage() {
               </div>
 
               <div className="relative w-full max-w-[560px] justify-self-end self-start">
-                <div className="absolute -inset-8 -z-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(13,148,136,0.20),rgba(236,253,245,0.45)_38%,rgba(255,255,255,0)_72%)] blur-2xl" />
+                <div className="absolute -inset-8 -z-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.20),rgba(236,253,245,0.45)_38%,rgba(255,255,255,0)_72%)] blur-2xl" />
                 <div className="relative z-10">
                   <LeadForm />
                 </div>
@@ -476,7 +476,7 @@ export default function WebsiteDesignLandingPage() {
                   description="From design to domain, hosting, forms and basic SEO setup — we help you launch with everything required to look professional online."
                   centered={false}
                 />
-                <ScrollToLeadCta className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
+                <ScrollToLeadCta className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
                   Get My Free Website Plan
                 </ScrollToLeadCta>
               </div>
@@ -537,7 +537,7 @@ export default function WebsiteDesignLandingPage() {
                     key={plan.name}
                     className={`flex h-full flex-col rounded-3xl border bg-white p-6 shadow-sm transition-all ${
                       featured
-                        ? "border-[#2563EB] shadow-[0_20px_60px_rgba(13,148,136,0.18)] lg:scale-[1.02]"
+                        ? "border-[#2563EB] shadow-[0_20px_60px_rgba(37,99,235,0.18)] lg:scale-[1.02]"
                         : "border-[#E2E8F0]"
                     }`}
                   >
@@ -561,8 +561,8 @@ export default function WebsiteDesignLandingPage() {
                     <ScrollToLeadCta
                       className={`mt-8 inline-flex h-12 w-full items-center justify-center rounded-full px-6 text-sm font-semibold transition-all hover:-translate-y-0.5 ${
                         featured
-                          ? "bg-[#2563EB] text-white shadow-lg shadow-teal-600/20 hover:bg-[#1D4ED8]"
-                          : "border border-[#E2E8F0] bg-white text-[#0F172A] hover:border-teal-200 hover:bg-teal-50"
+                          ? "bg-[#2563EB] text-white shadow-lg shadow-blue-600/20 hover:bg-[#1D4ED8]"
+                          : "border border-[#E2E8F0] bg-white text-[#0F172A] hover:border-blue-200 hover:bg-blue-50"
                       }`}
                     >
                       {plan.cta}
@@ -571,7 +571,7 @@ export default function WebsiteDesignLandingPage() {
                 );
               })}
             </div>
-            <div className="mx-auto mt-10 flex max-w-3xl flex-col items-center gap-4 rounded-3xl border border-teal-100 bg-white p-6 text-center shadow-sm sm:flex-row sm:justify-between sm:text-left">
+            <div className="mx-auto mt-10 flex max-w-3xl flex-col items-center gap-4 rounded-3xl border border-blue-100 bg-white p-6 text-center shadow-sm sm:flex-row sm:justify-between sm:text-left">
               <p className="text-base font-semibold text-[#334155]">
                 Not sure which package is right? Get a free recommendation based on your business.
               </p>
@@ -617,7 +617,7 @@ export default function WebsiteDesignLandingPage() {
               <div className="absolute left-[12.5%] right-[12.5%] top-8 hidden h-px bg-[#E2E8F0] lg:block" />
               {processSteps.map((step, index) => (
                 <article key={step.title} className="relative rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2563EB] text-lg font-bold text-white shadow-[0_12px_30px_rgba(13,148,136,0.22)]">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2563EB] text-lg font-bold text-white shadow-[0_12px_30px_rgba(37,99,235,0.22)]">
                     {index + 1}
                   </div>
                   <h3 className="mt-5 text-lg font-semibold text-[#0F172A]">{step.title}</h3>
@@ -626,7 +626,7 @@ export default function WebsiteDesignLandingPage() {
               ))}
             </div>
             <div className="mt-10 text-center">
-              <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
+              <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
                 Start My Website Plan
               </ScrollToLeadCta>
             </div>
@@ -652,7 +652,7 @@ export default function WebsiteDesignLandingPage() {
               ))}
             </div>
             <div className="mt-10 text-center">
-              <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(13,148,136,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
+              <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
                 Get Free Consultation
               </ScrollToLeadCta>
             </div>
@@ -660,7 +660,7 @@ export default function WebsiteDesignLandingPage() {
         </section>
 
         <section className="bg-white px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
-          <div className="mx-auto max-w-[1180px] overflow-hidden rounded-3xl bg-gradient-to-br from-teal-700 to-teal-500 px-6 py-14 text-center text-white shadow-[0_28px_80px_rgba(13,148,136,0.26)] sm:px-10 lg:py-16">
+          <div className="mx-auto max-w-[1180px] overflow-hidden rounded-3xl bg-gradient-to-br from-blue-700 to-blue-500 px-6 py-14 text-center text-white shadow-[0_28px_80px_rgba(37,99,235,0.26)] sm:px-10 lg:py-16">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">FINAL CALL TO GROW</p>
             <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-bold tracking-tight md:text-4xl">
               Ready to Build a Website That Brings More Enquiries?

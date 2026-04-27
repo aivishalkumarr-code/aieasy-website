@@ -88,11 +88,11 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
             <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
               <div className="space-y-6">
-                <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0D9488]/10 text-[#0D9488]">
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2563EB]/10 text-[#2563EB]">
                   <ServiceIcon className="h-7 w-7" />
                 </div>
                 <div className="space-y-4">
-                  <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+                  <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
                     Service
                   </p>
                   <h1 className="max-w-3xl text-balance text-5xl font-semibold tracking-tight text-[#1A1A1A] sm:text-6xl">
@@ -107,7 +107,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 </div>
                 <Button
                   asChild
-                  className="h-12 rounded-full bg-[#0D9488] px-6 text-sm font-medium hover:bg-[#14B8A6]"
+                  className="h-12 rounded-full bg-[#2563EB] px-6 text-sm font-medium hover:bg-[#1D4ED8]"
                 >
                   <a href="#service-quote">
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -116,7 +116,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
               </div>
 
               <div className="rounded-[1.75rem] border border-[#E5E7EB] bg-[#FAFAF8] p-6">
-                <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0D9488]">
+                <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#2563EB]">
                   Outcomes
                 </p>
                 <div className="mt-5 space-y-4">
@@ -137,7 +137,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
         <section className="container py-24">
           <AnimatedSection className="mb-10 max-w-2xl space-y-4">
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
               Benefits
             </p>
             <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
@@ -151,7 +151,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
               return (
                 <AnimatedSection key={benefit.title} delay={index * 0.05}>
                   <div className="h-full rounded-[1.5rem] border border-[#E5E7EB] bg-white p-7 shadow-sm">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0D9488]/10 text-[#0D9488]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2563EB]/10 text-[#2563EB]">
                       <BenefitIcon className="h-6 w-6" />
                     </div>
                     <h3 className="mt-5 text-xl font-semibold text-[#1A1A1A]">{benefit.title}</h3>
@@ -165,7 +165,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
         <section className="container pb-24">
           <AnimatedSection className="mb-10 max-w-2xl space-y-4">
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
               How it works
             </p>
             <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
@@ -176,7 +176,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
             {service.steps.map((step, index) => (
               <AnimatedSection key={step} delay={index * 0.05}>
                 <div className="h-full rounded-[1.5rem] border border-[#E5E7EB] bg-white p-7 shadow-sm">
-                  <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0D9488]">
+                  <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#2563EB]">
                     Step {index + 1}
                   </p>
                   <p className="mt-4 text-base leading-7 text-[#1A1A1A]">{step}</p>
@@ -188,7 +188,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
         <section className="container pb-24">
           <AnimatedSection className="mb-10 max-w-2xl space-y-4">
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
               Results
             </p>
             <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
@@ -213,7 +213,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
         <section id="service-quote" className="container scroll-mt-28">
           <div className="grid gap-12 rounded-[2rem] border border-[#E5E7EB] bg-white p-8 shadow-card lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:p-10">
             <AnimatedSection className="space-y-6">
-              <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+              <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
                 Service quote
               </p>
               <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
@@ -223,7 +223,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 Ready to implement {service.name} for your business? Share a few details and we&apos;ll come back with a focused scope, pricing guidance, and practical next steps.
               </p>
               <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-[#FAFAF8] p-6">
-                <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0D9488]">
+                <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#2563EB]">
                   Selected service
                 </p>
                 <p className="mt-3 text-2xl font-semibold text-[#1A1A1A]">{service.name}</p>

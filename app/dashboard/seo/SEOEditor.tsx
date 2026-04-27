@@ -68,7 +68,7 @@ export function SEOEditor({ initialSettings }: SEOEditorProps) {
           >
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0D9488]">
+                <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#2563EB]">
                   Page path
                 </p>
                 <h3 className="mt-2 text-xl font-semibold text-[#1A1A1A]">{setting.page_path}</h3>
@@ -77,7 +77,7 @@ export function SEOEditor({ initialSettings }: SEOEditorProps) {
                 type="button"
                 onClick={() => handleSave(setting)}
                 disabled={isPending}
-                className="h-10 rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+                className="h-10 rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
               >
                 {isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Save
@@ -114,7 +114,7 @@ export function SEOEditor({ initialSettings }: SEOEditorProps) {
             </div>
 
             {feedback[setting.page_path] ? (
-              <p className="mt-4 text-sm text-[#0F766E]">{feedback[setting.page_path]}</p>
+              <p className="mt-4 text-sm text-[#1D4ED8]">{feedback[setting.page_path]}</p>
             ) : null}
           </article>
         ))}

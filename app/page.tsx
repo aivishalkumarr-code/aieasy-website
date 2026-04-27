@@ -144,7 +144,7 @@ export default function HomePage() {
         <section className="container">
           <div className="grid gap-16 lg:grid-cols-[minmax(0,1fr)_520px] lg:items-center">
             <AnimatedSection className="space-y-8">
-              <Badge className="rounded-full bg-[#0D9488]/10 px-4 py-2 text-sm font-medium text-[#0D9488] hover:bg-[#0D9488]/10">
+              <Badge className="rounded-full bg-[#2563EB]/10 px-4 py-2 text-sm font-medium text-[#2563EB] hover:bg-[#2563EB]/10">
                 Premium AI solutions company in Delhi
               </Badge>
               <div className="space-y-6">
@@ -159,7 +159,7 @@ export default function HomePage() {
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Button
                   asChild
-                  className="h-12 rounded-full bg-[#0D9488] px-6 text-sm font-medium hover:bg-[#14B8A6]"
+                  className="h-12 rounded-full bg-[#2563EB] px-6 text-sm font-medium hover:bg-[#1D4ED8]"
                 >
                   <Link href="/contact">
                     Start a project
@@ -190,7 +190,7 @@ export default function HomePage() {
               <div className="rounded-[2rem] border border-[#E5E7EB] bg-white p-6 shadow-card">
                 <div className="rounded-[1.75rem] bg-[#FAFAF8] p-6">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0D9488]/10 text-[#0D9488]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2563EB]/10 text-[#2563EB]">
                       <Sparkles className="h-5 w-5" />
                     </div>
                     <div>
@@ -229,7 +229,7 @@ export default function HomePage() {
 
         <section id="services" className="container scroll-mt-28 py-20">
           <AnimatedSection className="mb-10 max-w-2xl space-y-4">
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
               Services
             </p>
             <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
@@ -251,7 +251,7 @@ export default function HomePage() {
 
         <section id="testimonials" className="container scroll-mt-28 py-24">
           <AnimatedSection className="mb-10 max-w-2xl space-y-4">
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
               Testimonials
             </p>
             <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
@@ -272,7 +272,7 @@ export default function HomePage() {
 
         <section id="blog" className="container scroll-mt-28 py-24">
           <AnimatedSection className="mb-10 max-w-2xl space-y-4">
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
               Blog
             </p>
             <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">
@@ -292,7 +292,7 @@ export default function HomePage() {
               >
                 <BlogCard
                   {...post}
-                  coverImage={createPlaceholder(post.title, "#14B8A6")}
+                  coverImage={createPlaceholder(post.title, "#3B82F6")}
                 />
               </AnimatedSection>
             ))}
@@ -302,7 +302,7 @@ export default function HomePage() {
         <section id="contact" className="container scroll-mt-28">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start">
             <AnimatedSection className="space-y-6">
-              <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+              <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
                 Contact
               </p>
               <h2 className="text-4xl font-semibold tracking-tight text-[#1A1A1A]">

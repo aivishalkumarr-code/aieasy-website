@@ -45,14 +45,14 @@ export function BlogCard({
           <div className="flex items-center justify-between gap-3">
             <Badge
               variant="secondary"
-              className="rounded-full bg-[#0D9488]/10 px-3 py-1 text-xs font-medium text-[#0D9488] hover:bg-[#0D9488]/10"
+              className="rounded-full bg-[#2563EB]/10 px-3 py-1 text-xs font-medium text-[#2563EB] hover:bg-[#2563EB]/10"
             >
               {category}
             </Badge>
             <span className="text-xs text-[#6B7280]">{formattedDate}</span>
           </div>
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold leading-snug text-[#1A1A1A] transition-colors group-hover:text-[#0D9488]">
+            <h3 className="text-lg font-semibold leading-snug text-[#1A1A1A] transition-colors group-hover:text-[#2563EB]">
               {title}
             </h3>
             <p className="line-clamp-2 text-sm leading-6 text-[#6B7280]">

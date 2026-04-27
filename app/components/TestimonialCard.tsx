@@ -42,7 +42,7 @@ export function TestimonialCard({
               className="h-14 w-14 rounded-full object-cover"
             />
           ) : (
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0D9488]/10 text-sm font-semibold text-[#0D9488]">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#2563EB]/10 text-sm font-semibold text-[#2563EB]">
               {initials}
             </div>
           )}

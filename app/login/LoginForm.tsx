@@ -62,7 +62,7 @@ export function LoginForm() {
   return (
     <div className="rounded-[2rem] border border-[#DDE7E3] bg-white p-8 shadow-card sm:p-10">
       <div className="space-y-3">
-        <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0D9488]/10 text-[#0D9488]">
+        <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2563EB]/10 text-[#2563EB]">
           <ShieldCheck className="h-6 w-6" />
         </div>
         <div>
@@ -91,7 +91,7 @@ export function LoginForm() {
               className={cn(
                 "inline-flex items-center justify-center gap-2 rounded-[1rem] px-4 py-3 text-sm font-medium transition",
                 active
-                  ? "bg-white text-[#0D9488] shadow-sm"
+                  ? "bg-white text-[#2563EB] shadow-sm"
                   : "text-[#6B7280] hover:text-[#1A1A1A]",
               )}
             >
@@ -140,7 +140,7 @@ export function LoginForm() {
         ) : null}
 
         {message ? (
-          <div className="rounded-xl border border-[#BEE3DD] bg-[#ECFDF5] px-4 py-3 text-sm text-[#0F766E]">
+          <div className="rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] px-4 py-3 text-sm text-[#1D4ED8]">
             {message}
           </div>
         ) : null}
@@ -151,7 +151,7 @@ export function LoginForm() {
               type="button"
               onClick={() => handlePasswordSubmit("signIn")}
               disabled={isPending || !email || !password}
-              className="h-12 rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+              className="h-12 rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
             >
               {isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
               Sign in
@@ -172,7 +172,7 @@ export function LoginForm() {
             type="button"
             onClick={handleMagicLink}
             disabled={isPending || !email}
-            className="h-12 w-full rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+            className="h-12 w-full rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
           >
             {isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
             Send magic link

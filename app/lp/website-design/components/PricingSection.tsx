@@ -31,7 +31,7 @@ export function PricingSection() {
   return (
     <section id="pricing" className="container scroll-mt-28 py-20 sm:py-24">
       <AnimatedSection className="mx-auto max-w-3xl text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#0D9488]">
+        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2563EB]">
           Pricing
         </p>
         <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-[#1A1A1A] sm:text-4xl">
@@ -48,12 +48,12 @@ export function PricingSection() {
             <div
               className={`relative flex h-full flex-col rounded-[2rem] border p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
                 tier.featured
-                  ? "border-[#0D9488] bg-white shadow-[0_25px_60px_-40px_rgba(13,148,136,0.45)]"
+                  ? "border-[#2563EB] bg-white shadow-[0_25px_60px_-40px_rgba(37,99,235,0.45)]"
                   : "border-[#E5E7EB] bg-white"
               }`}
             >
               {tier.featured ? (
-                <div className="absolute left-8 top-0 -translate-y-1/2 rounded-full bg-[#0D9488] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+                <div className="absolute left-8 top-0 -translate-y-1/2 rounded-full bg-[#2563EB] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white">
                   Most popular
                 </div>
               ) : null}
@@ -67,7 +67,7 @@ export function PricingSection() {
               <ul className="mt-8 space-y-3">
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3 text-sm text-[#4B5563]">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0D9488]/10 text-[#0D9488]">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2563EB]/10 text-[#2563EB]">
                       <Check className="h-3.5 w-3.5" />
                     </span>
                     {feature}
@@ -79,7 +79,7 @@ export function PricingSection() {
                 <ScrollToLeadCta
                   className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold transition ${
                     tier.featured
-                      ? "bg-[#0D9488] text-white hover:bg-[#0f766e]"
+                      ? "bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
                       : "bg-[#1A1A1A] text-white hover:bg-[#0f172a]"
                   }`}
                 >
@@ -95,8 +95,8 @@ export function PricingSection() {
       </div>
 
       <AnimatedSection className="mt-8">
-        <div className="flex flex-col items-center justify-center gap-3 rounded-[1.8rem] border border-[#0D9488]/15 bg-[#f0fdfa] px-6 py-5 text-center sm:flex-row sm:text-left">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#0D9488] text-white">
+        <div className="flex flex-col items-center justify-center gap-3 rounded-[1.8rem] border border-[#2563EB]/15 bg-[#EFF6FF] px-6 py-5 text-center sm:flex-row sm:text-left">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#2563EB] text-white">
             <ShieldCheck className="h-5 w-5" />
           </div>
           <p className="text-sm font-semibold text-[#1A1A1A] sm:text-base">

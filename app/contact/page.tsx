@@ -37,7 +37,7 @@ export default function ContactPage() {
       <main className="pb-24 pt-28">
         <section className="container">
           <AnimatedSection className="max-w-3xl space-y-6">
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#0D9488]">
+            <p className="text-sm font-medium uppercase tracking-[0.28em] text-[#2563EB]">
               Contact
             </p>
             <h1 className="text-balance text-5xl font-semibold tracking-tight text-[#1A1A1A] sm:text-6xl">
@@ -66,7 +66,7 @@ export default function ContactPage() {
 
                   return (
                     <div key={item.label} className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 shadow-sm">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0D9488]/10 text-[#0D9488]">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2563EB]/10 text-[#2563EB]">
                         <Icon className="h-5 w-5" />
                       </div>
                       <p className="mt-5 text-sm font-medium uppercase tracking-[0.2em] text-[#6B7280]">

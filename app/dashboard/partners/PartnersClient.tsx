@@ -127,7 +127,7 @@ export function PartnersClient({ initialPartners }: PartnersClientProps) {
           <Button
             type="button"
             onClick={handleCreateClick}
-            className="h-11 rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+            className="h-11 rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
           >
             <Plus className="h-4 w-4" />
             Add Partner
@@ -184,7 +184,7 @@ export function PartnersClient({ initialPartners }: PartnersClientProps) {
                 type="button"
                 disabled={isPending || !form.name.trim() || !form.image_url.trim()}
                 onClick={handleSave}
-                className="rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+                className="rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
               >
                 {isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
                 {editingId ? "Save changes" : "Create partner"}
@@ -194,7 +194,7 @@ export function PartnersClient({ initialPartners }: PartnersClientProps) {
         ) : null}
 
         {feedback ? (
-        <div className={`mt-4 rounded-xl p-4 text-sm ${feedback.includes('error') || feedback.includes('unavailable') || feedback.includes('table') ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-green-50 text-[#0F766E] border border-[#0D9488]/20'}`}>
+        <div className={`mt-4 rounded-xl p-4 text-sm ${feedback.includes('error') || feedback.includes('unavailable') || feedback.includes('table') ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-green-50 text-[#1D4ED8] border border-[#2563EB]/20'}`}>
           <p className="font-medium">{feedback.includes('error') || feedback.includes('unavailable') || feedback.includes('table') ? '⚠️ Error' : '✓ Success'}</p>
           <p className="mt-1">{feedback}</p>
           {(feedback.includes('table unavailable') || feedback.includes('Partner table')) && (
@@ -244,7 +244,7 @@ export function PartnersClient({ initialPartners }: PartnersClientProps) {
                         href={partner.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="break-all text-[#0D9488] hover:underline"
+                        className="break-all text-[#2563EB] hover:underline"
                       >
                         {partner.url}
                       </a>

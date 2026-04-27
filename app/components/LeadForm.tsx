@@ -110,7 +110,7 @@ export function LeadForm() {
         animate={{ opacity: 1, y: 0 }}
         className="flex min-h-[420px] flex-col items-center justify-center rounded-[1.75rem] border border-[#E5E7EB] bg-white p-8 text-center shadow-sm"
       >
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0D9488]/10 text-[#0D9488]">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#2563EB]/10 text-[#2563EB]">
           <CheckCircle2 className="h-7 w-7" />
         </div>
         <div className="mt-6 space-y-3">
@@ -123,8 +123,8 @@ export function LeadForm() {
           </p>
         </div>
 
-        <div className="mt-6 w-full max-w-sm rounded-xl border border-[#0D9488]/20 bg-[#0D9488]/5 p-5">
-          <div className="flex items-center justify-center gap-2 text-[#0D9488]">
+        <div className="mt-6 w-full max-w-sm rounded-xl border border-[#2563EB]/20 bg-[#2563EB]/5 p-5">
+          <div className="flex items-center justify-center gap-2 text-[#2563EB]">
             <Calendar className="h-5 w-5" />
             <span className="font-semibold">Book Your Free Consultation</span>
           </div>
@@ -150,7 +150,7 @@ export function LeadForm() {
             setSubmittedName("");
             setSubmitError(null);
           }}
-          className="mt-6 rounded-full bg-[#0D9488] px-6 hover:bg-[#14B8A6]"
+          className="mt-6 rounded-full bg-[#2563EB] px-6 hover:bg-[#1D4ED8]"
         >
           Start another inquiry
         </Button>
@@ -168,7 +168,7 @@ export function LeadForm() {
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-[#0D9488]">
+            <p className="text-sm font-medium text-[#2563EB]">
               Step {currentStep} of 3
             </p>
             <h3 className="text-2xl font-semibold text-[#1A1A1A]">
@@ -179,7 +179,7 @@ export function LeadForm() {
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-[#E5E7EB]">
           <div
-            className="h-full rounded-full bg-[#0D9488] transition-all duration-300"
+            className="h-full rounded-full bg-[#2563EB] transition-all duration-300"
             style={{ width: progress }}
           />
         </div>
@@ -397,7 +397,7 @@ export function LeadForm() {
                 type="button"
                 onClick={goNext}
                 disabled={isSubmitting}
-                className="rounded-full bg-[#0D9488] px-5 hover:bg-[#14B8A6]"
+                className="rounded-full bg-[#2563EB] px-5 hover:bg-[#1D4ED8]"
               >
                 Next step
                 <ChevronRight className="ml-2 h-4 w-4" />
@@ -406,7 +406,7 @@ export function LeadForm() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-full bg-[#0D9488] px-5 hover:bg-[#14B8A6] disabled:opacity-70"
+                className="rounded-full bg-[#2563EB] px-5 hover:bg-[#1D4ED8] disabled:opacity-70"
               >
                 {isSubmitting ? (
                   <>

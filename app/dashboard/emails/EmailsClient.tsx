@@ -131,13 +131,13 @@ export function EmailsClient({ initialSentEmails }: EmailsClientProps) {
             className="min-h-[260px] rounded-xl border-[#DDE7E3] bg-[#FAFAF8]"
           />
 
-          {feedback ? <p className="text-sm text-[#0F766E]">{feedback}</p> : null}
+          {feedback ? <p className="text-sm text-[#1D4ED8]">{feedback}</p> : null}
 
           <Button
             type="button"
             disabled={isPending || !toEmail || !subject || !body}
             onClick={handleSend}
-            className="h-11 w-full rounded-xl bg-[#0D9488] text-white hover:bg-[#0F766E]"
+            className="h-11 w-full rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
           >
             {isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <SendHorizontal className="h-4 w-4" />}
             Send email
@@ -181,7 +181,7 @@ export function EmailsClient({ initialSentEmails }: EmailsClientProps) {
                   <td className="py-4 text-[#4B5563]">{email.subject}</td>
                   <td className="py-4 text-[#4B5563]">{email.template ?? "custom"}</td>
                   <td className="py-4">
-                    <span className="rounded-full bg-[#ECFDF5] px-3 py-1 text-xs font-medium uppercase text-[#0F766E]">
+                    <span className="rounded-full bg-[#EFF6FF] px-3 py-1 text-xs font-medium uppercase text-[#1D4ED8]">
                       {email.status}
                     </span>
                   </td>

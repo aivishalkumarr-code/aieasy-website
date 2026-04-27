@@ -34,7 +34,7 @@ export function CaseStudyCard({
         />
       </div>
       <CardContent className="space-y-4 p-6">
-        <Badge className="rounded-full bg-[#0D9488]/10 px-3 py-1 text-xs font-medium text-[#0D9488] hover:bg-[#0D9488]/10">
+        <Badge className="rounded-full bg-[#2563EB]/10 px-3 py-1 text-xs font-medium text-[#2563EB] hover:bg-[#2563EB]/10">
           {category}
         </Badge>
         <div className="space-y-3">
@@ -55,7 +55,7 @@ export function CaseStudyCard({
       <CardFooter className="px-6 pb-6 pt-0">
         <Link
           href={`/case-studies/${slug}`}
-          className="inline-flex items-center gap-2 text-sm font-medium text-[#0D9488] transition-colors hover:text-[#14B8A6]"
+          className="inline-flex items-center gap-2 text-sm font-medium text-[#2563EB] transition-colors hover:text-[#1D4ED8]"
         >
           <span>View case study</span>
           <ArrowUpRight className="h-4 w-4" />

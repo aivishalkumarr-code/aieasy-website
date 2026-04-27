@@ -64,7 +64,7 @@ export function HeroSlider() {
   return (
     <div className="rounded-[1.6rem] border border-[#E5E7EB] bg-white p-3 shadow-[0_25px_60px_-35px_rgba(15,23,42,0.28)] sm:p-5">
       <div className="relative overflow-hidden rounded-[1.35rem]">
-        <div className="absolute left-4 top-4 z-20 inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#0D9488] shadow-sm backdrop-blur sm:left-6 sm:top-6">
+        <div className="absolute left-4 top-4 z-20 inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#2563EB] shadow-sm backdrop-blur sm:left-6 sm:top-6">
           <Sparkles className="h-3.5 w-3.5" />
           Beautiful, conversion-focused website designs
         </div>
@@ -129,8 +129,8 @@ export function HeroSlider() {
             onClick={() => setCurrentIndex(index)}
             className={`group overflow-hidden rounded-2xl border text-left transition ${
               index === currentIndex
-                ? "border-[#0D9488] bg-[#ecfeff] shadow-sm"
-                : "border-[#E5E7EB] bg-white hover:border-[#0D9488]/30"
+                ? "border-[#2563EB] bg-[#EFF6FF] shadow-sm"
+                : "border-[#E5E7EB] bg-white hover:border-[#2563EB]/30"
             }`}
           >
             <div className="relative aspect-[4/3] overflow-hidden">

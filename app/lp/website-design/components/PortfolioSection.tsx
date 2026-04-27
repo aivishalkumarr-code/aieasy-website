@@ -64,7 +64,7 @@ export function PortfolioSection() {
     <section id="portfolio" className="scroll-mt-28 bg-white py-20 sm:py-24">
       <div className="container">
         <AnimatedSection className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#0D9488]">
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2563EB]">
             Portfolio
           </p>
           <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-[#1A1A1A] sm:text-4xl">
@@ -98,9 +98,9 @@ export function PortfolioSection() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/88 via-[#0f172a]/20 to-transparent" />
                       <div className="absolute inset-0 opacity-0 transition duration-300 hover:opacity-100">
-                        <div className="flex h-full items-center justify-center bg-[#0D9488]/82 p-6 backdrop-blur-sm">
+                        <div className="flex h-full items-center justify-center bg-[#2563EB]/82 p-6 backdrop-blur-sm">
                           <ScrollToLeadCta
-                            className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#0D9488] shadow-lg"
+                            className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#2563EB] shadow-lg"
                           >
                             <ExternalLink className="h-4 w-4" />
                             View Live
@@ -126,7 +126,7 @@ export function PortfolioSection() {
               <div className="rounded-[1.6rem] border border-[#E5E7EB] bg-white p-6 sm:p-8">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#0D9488]">
+                    <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#2563EB]">
                       Growth snapshot
                     </p>
                     <h3 className="mt-2 text-2xl font-semibold text-[#1A1A1A]">{activeItem.title}</h3>
@@ -140,7 +140,7 @@ export function PortfolioSection() {
                         )
                       }
                       aria-label="Previous portfolio item"
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] text-[#1A1A1A] transition hover:border-[#0D9488] hover:text-[#0D9488]"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] text-[#1A1A1A] transition hover:border-[#2563EB] hover:text-[#2563EB]"
                     >
                       <ChevronLeft className="h-5 w-5" />
                     </button>
@@ -148,7 +148,7 @@ export function PortfolioSection() {
                       type="button"
                       onClick={() => setCurrentIndex((prev) => (prev + 1) % portfolioItems.length)}
                       aria-label="Next portfolio item"
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] text-[#1A1A1A] transition hover:border-[#0D9488] hover:text-[#0D9488]"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] text-[#1A1A1A] transition hover:border-[#2563EB] hover:text-[#2563EB]"
                     >
                       <ChevronRight className="h-5 w-5" />
                     </button>
@@ -175,13 +175,13 @@ export function PortfolioSection() {
                       onClick={() => setCurrentIndex(index)}
                       className={`rounded-2xl border px-4 py-4 text-left transition ${
                         index === currentIndex
-                          ? "border-[#0D9488] bg-[#ecfeff]"
-                          : "border-[#E5E7EB] bg-white hover:border-[#0D9488]/20"
+                          ? "border-[#2563EB] bg-[#EFF6FF]"
+                          : "border-[#E5E7EB] bg-white hover:border-[#2563EB]/20"
                       }`}
                     >
                       <p className="text-sm font-semibold text-[#1A1A1A]">{item.title}</p>
                       <p className="mt-1 text-xs uppercase tracking-[0.2em] text-[#6B7280]">{item.businessType}</p>
-                      <p className="mt-2 text-sm text-[#0D9488]">{item.result}</p>
+                      <p className="mt-2 text-sm text-[#2563EB]">{item.result}</p>
                     </button>
                   ))}
                 </div>

@@ -55,7 +55,7 @@ export function DashboardHeader({ userEmail }: DashboardHeaderProps) {
   return (
     <header className="flex items-start justify-between gap-4 rounded-[2rem] border border-[#DDE7E3] bg-white px-5 py-4 shadow-card sm:px-6">
       <div>
-        <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0D9488]">
+        <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#2563EB]">
           Dashboard
         </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[#1A1A1A] sm:text-3xl">
@@ -68,7 +68,7 @@ export function DashboardHeader({ userEmail }: DashboardHeaderProps) {
 
       <div className="flex items-center gap-3">
         <div className="hidden rounded-2xl border border-[#DDE7E3] bg-[#FAFAF8] px-4 py-3 text-right sm:block">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#0D9488]">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#2563EB]">
             Signed in as
           </p>
           <p className="mt-1 text-sm font-medium text-[#1A1A1A]">{userEmail}</p>
