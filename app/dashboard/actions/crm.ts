@@ -33,7 +33,6 @@ export const getContacts = async (): Promise<Contact[]> => {
 export const createContact = async (payload: {
   name: string;
   email: string;
-  phone?: string;
   company?: string;
   status?: LeadStatus;
   notes?: string;
@@ -42,7 +41,6 @@ export const createContact = async (payload: {
     id: crypto.randomUUID(),
     name: payload.name.trim(),
     email: payload.email.trim().toLowerCase(),
-    phone: payload.phone?.trim() || null,
     company: payload.company?.trim() || null,
     status: payload.status ?? "New",
     notes: payload.notes?.trim() || null,

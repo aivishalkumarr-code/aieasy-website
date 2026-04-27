@@ -10,7 +10,6 @@ export const serviceLeadInputSchema = z.object({
   name: z.string().trim().min(2, "Enter your name."),
   email: z.string().trim().email("Enter a valid email."),
   company: z.string().trim().min(2, "Enter your company name."),
-  phone: z.string().trim().min(7, "Enter a valid phone number."),
   message: z.string().trim().min(20, "Share a bit more about the project."),
 });
 

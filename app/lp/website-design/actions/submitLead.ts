@@ -34,11 +34,9 @@ const escapeHtml = (value: string) =>
 export async function submitLead(formData: FormData): Promise<SubmitLeadResult> {
   const name = sanitize(formData.get("name"));
   const businessName = sanitize(formData.get("businessName"));
-  const phone = sanitize(formData.get("phone"));
   const email = sanitize(formData.get("email")).toLowerCase();
   const websiteType = sanitize(formData.get("websiteType"));
   const message = sanitize(formData.get("message"));
-  const phoneDigits = phone.replace(/\D/g, "");
 
   if (!name || name.length < 2) {
     return { success: false, message: "Please enter your name." };
@@ -48,11 +46,6 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     return { success: false, message: "Please enter your business name." };
   }
 
-  if (!phone || phoneDigits.length < 10) {
-    return { success: false, message: "Please enter a valid phone number." };
-  }
-
-  // Email is optional - if provided, validate it
   if (email && !emailPattern.test(email)) {
     return { success: false, message: "Please enter a valid email address." };
   }
@@ -87,7 +80,6 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     "Service Interest: Website Design",
     `Website Type: ${websiteTypeLabel}`,
     `Business Name: ${businessName}`,
-    `Phone: ${phone}`,
     `Email: ${email || "Not provided"}`,
     `What is your business about?: ${message || "Not provided"}`,
   ].join("\n\n");
@@ -96,7 +88,6 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
   const insertData: any = {
     name,
     email: email || null,
-    phone,
     company: businessName,
     status: "New",
     notes,
@@ -135,7 +126,6 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
       const safeName = escapeHtml(name);
       const safeBusinessName = escapeHtml(businessName);
       const safeEmail = escapeHtml(email);
-      const safePhone = escapeHtml(phone);
       const safeMessage = escapeHtml(message || "Not provided").replace(/\n/g, "<br />");
 
       const safeWebsiteType = escapeHtml(websiteTypeLabel);
@@ -157,7 +147,6 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
           html: buildAdminEmail({
             name: safeName,
             email: safeEmail,
-            phone: safePhone,
             businessName: safeBusinessName,
             websiteType: safeWebsiteType,
             message: safeMessage,
@@ -248,14 +237,12 @@ function buildCustomerEmail({
 function buildAdminEmail({
   name,
   email,
-  phone,
   businessName,
   websiteType,
   message,
 }: {
   name: string;
   email: string;
-  phone: string;
   businessName: string;
   websiteType: string;
   message: string;
@@ -286,10 +273,6 @@ function buildAdminEmail({
             <tr>
               <td style="padding:10px 0;color:#6B7280;">Email</td>
               <td style="padding:10px 0;color:#1A1A1A;">${email || "Not provided"}</td>
-            </tr>
-            <tr>
-              <td style="padding:10px 0;color:#6B7280;">Phone</td>
-              <td style="padding:10px 0;color:#1A1A1A;">${phone}</td>
             </tr>
             <tr>
               <td style="padding:10px 0;color:#6B7280;vertical-align:top;">Business details</td>

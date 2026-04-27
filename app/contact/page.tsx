@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Clock3, Mail, MapPin, Phone } from "lucide-react";
+import { Clock3, Mail, MapPin } from "lucide-react";
 
 import { AnimatedSection } from "@/app/components/AnimatedSection";
 import { Footer } from "@/app/components/Footer";
@@ -17,11 +17,6 @@ const contactItems = [
     label: "Email",
     value: "hello@aieasy.in",
     icon: Mail,
-  },
-  {
-    label: "Phone",
-    value: "+91 98XXX XXXXX",
-    icon: Phone,
   },
   {
     label: "Location",

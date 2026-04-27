@@ -48,7 +48,6 @@ export function ServiceLeadForm({
       name: "",
       email: "",
       company: "",
-      phone: "",
       message: "",
     },
   });
@@ -60,7 +59,6 @@ export function ServiceLeadForm({
       name: "",
       email: "",
       company: "",
-      phone: "",
       message: "",
     });
     setIsSubmitted(false);
@@ -216,24 +214,6 @@ export function ServiceLeadForm({
                   <FormControl>
                     <Input
                       placeholder="AIeasy"
-                      className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[#1A1A1A]">Phone</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="tel"
-                      placeholder="+91 98XXX XXXXX"
                       className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAF8]"
                       {...field}
                     />
