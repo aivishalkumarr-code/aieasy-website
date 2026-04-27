@@ -39,7 +39,6 @@ export function CRMClient({ initialContacts, initialDeals }: CRMClientProps) {
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
-    phone: "",
     company: "",
     status: "New" as LeadStatus,
     notes: "",
@@ -66,7 +65,6 @@ export function CRMClient({ initialContacts, initialDeals }: CRMClientProps) {
       const result = await createContact({
         name: contactForm.name,
         email: contactForm.email,
-        phone: contactForm.phone,
         company: contactForm.company,
         status: contactForm.status,
         notes: contactForm.notes,
@@ -85,7 +83,6 @@ export function CRMClient({ initialContacts, initialDeals }: CRMClientProps) {
       setContactForm({
         name: "",
         email: "",
-        phone: "",
         company: "",
         status: "New",
         notes: "",
@@ -156,12 +153,6 @@ export function CRMClient({ initialContacts, initialDeals }: CRMClientProps) {
               value={contactForm.email}
               onChange={(event) => setContactForm((current) => ({ ...current, email: event.target.value }))}
               placeholder="Email address"
-              className="h-11 rounded-xl border-[#DDE7E3] bg-[#FAFAF8]"
-            />
-            <Input
-              value={contactForm.phone}
-              onChange={(event) => setContactForm((current) => ({ ...current, phone: event.target.value }))}
-              placeholder="Phone"
               className="h-11 rounded-xl border-[#DDE7E3] bg-[#FAFAF8]"
             />
             <Input

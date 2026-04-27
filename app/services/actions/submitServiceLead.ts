@@ -49,7 +49,6 @@ ${data.message}`;
     name: data.name.trim(),
     email: data.email.trim().toLowerCase(),
     company: data.company.trim(),
-    phone: data.phone.trim(),
     status: "New" as const,
     notes,
     source,
@@ -214,10 +213,6 @@ function buildAdminEmail(
           <tr>
             <td style="padding: 8px 0; color: #6B7280;">Company:</td>
             <td style="padding: 8px 0; color: #1A1A1A;">${values.company}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 0; color: #6B7280;">Phone:</td>
-            <td style="padding: 8px 0; color: #1A1A1A;">${values.phone}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6B7280;">Service:</td>
