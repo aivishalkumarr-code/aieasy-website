@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
   FileText,
   Globe,
+  ImageIcon,
   LayoutDashboard,
   LogOut,
   Mail,
@@ -26,13 +26,15 @@ const navigation = [
   { href: "/dashboard/emails", label: "Emails", icon: Mail },
   { href: "/dashboard/seo", label: "SEO Tools", icon: Search },
   { href: "/dashboard/partners", label: "Partners", icon: Globe },
+  { href: "/dashboard/logo", label: "Logo", icon: ImageIcon },
 ];
 
 interface DashboardSidebarProps {
   className?: string;
+  logoUrl?: string;
 }
 
-export function DashboardSidebar({ className }: DashboardSidebarProps) {
+export function DashboardSidebar({ className, logoUrl = "/logo.png" }: DashboardSidebarProps) {
   const pathname = usePathname();
 
   const handleSignOut = async () => {
@@ -52,25 +54,18 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
           href="/dashboard"
           className="flex items-center gap-3 transition-opacity hover:opacity-80"
         >
-          <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-2xl bg-[#EFF6FF] ring-1 ring-[#2563EB]/10">
-            <Image
-              src="/logo.png"
+          <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-2xl bg-[#EFF6FF] p-2 ring-1 ring-[#2563EB]/10">
+            <img
+              src={logoUrl}
               alt="aicosy"
-              width={220}
-              height={56}
-              className="absolute left-1 top-1/2 h-8 w-[154px] max-w-none -translate-y-1/2 object-contain object-left"
-              sizes="44px"
-              priority
+              className="h-full w-full object-contain"
             />
           </div>
-          <div className="relative h-12 min-w-0 flex-1">
-            <Image
-              src="/logo.png"
+          <div className="flex h-12 min-w-0 flex-1 items-center">
+            <img
+              src={logoUrl}
               alt="aicosy | AI Made Easy"
-              fill
-              className="object-contain object-left"
-              sizes="180px"
-              priority
+              className="max-h-12 max-w-full object-contain object-left"
             />
           </div>
         </Link>
@@ -78,7 +73,10 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
         <nav className="mt-8 space-y-1">
           {navigation.map((item) => {
             const Icon = item.icon;
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const active =
+              item.href === "/dashboard"
+                ? pathname === item.href
+                : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return (
               <Link

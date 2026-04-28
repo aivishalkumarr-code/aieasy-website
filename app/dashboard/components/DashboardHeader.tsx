@@ -42,13 +42,18 @@ const pageMeta: Record<string, { title: string; description: string }> = {
     title: "Partners",
     description: "Manage deployment platform logos shown on the homepage.",
   },
+  "/dashboard/logo": {
+    title: "Logo management",
+    description: "Upload and preview website, dashboard, favicon, and social logo assets.",
+  },
 };
 
 interface DashboardHeaderProps {
   userEmail: string;
+  logoUrl?: string;
 }
 
-export function DashboardHeader({ userEmail }: DashboardHeaderProps) {
+export function DashboardHeader({ userEmail, logoUrl }: DashboardHeaderProps) {
   const pathname = usePathname();
   const current = pageMeta[pathname] ?? pageMeta["/dashboard"];
 
@@ -89,7 +94,7 @@ export function DashboardHeader({ userEmail }: DashboardHeaderProps) {
             <SheetHeader className="sr-only">
               <SheetTitle>Dashboard navigation</SheetTitle>
             </SheetHeader>
-            <DashboardSidebar className="h-full shadow-none" />
+            <DashboardSidebar className="h-full shadow-none" logoUrl={logoUrl} />
           </SheetContent>
         </Sheet>
       </div>
