@@ -7,6 +7,7 @@ export type DealStage =
   | "Won";
 export type QuoteStatus = "Draft" | "Sent" | "Accepted" | "Expired";
 export type EmailStatus = "queued" | "sent" | "failed";
+export type LogoType = "main" | "dark" | "favicon" | "og_image";
 export type EmailTemplateId =
   | "intro"
   | "proposal_followup"
@@ -103,6 +104,25 @@ export interface PartnerInput {
   image_url: string;
   url?: string | null;
   display_order: number;
+}
+
+export interface ManagedLogo {
+  id: string;
+  type: LogoType;
+  url: string;
+  width: number | null;
+  height: number | null;
+  file_size: number | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface LogoInput {
+  type: LogoType;
+  url: string;
+  width?: number | null;
+  height?: number | null;
+  file_size?: number | null;
 }
 
 export interface ServiceCatalogItem {
@@ -252,6 +272,7 @@ export const SEO_PAGE_OPTIONS = [
   "/dashboard/emails",
   "/dashboard/seo",
   "/dashboard/partners",
+  "/dashboard/logo",
 ] as const;
 
 export const formatCurrency = (value: number) =>
