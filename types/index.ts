@@ -7,7 +7,7 @@ export type DealStage =
   | "Won";
 export type QuoteStatus = "Draft" | "Sent" | "Accepted" | "Expired";
 export type EmailStatus = "queued" | "sent" | "failed";
-export type LogoType = "main" | "dark" | "favicon" | "og_image";
+export type LogoType = "main" | "favicon" | "og_image";
 export type EmailTemplateId =
   | "intro"
   | "proposal_followup"
