@@ -6,7 +6,7 @@ import {
   BarChart3,
   FileText,
   Globe,
-  ImageIcon,
+  Image,
   LayoutDashboard,
   LogOut,
   Mail,
@@ -26,7 +26,7 @@ const navigation = [
   { href: "/dashboard/emails", label: "Emails", icon: Mail },
   { href: "/dashboard/seo", label: "SEO Tools", icon: Search },
   { href: "/dashboard/partners", label: "Partners", icon: Globe },
-  { href: "/dashboard/logo", label: "Logo", icon: ImageIcon },
+  { href: "/dashboard/logo", label: "Logo", icon: Image },
 ];
 
 interface DashboardSidebarProps {

@@ -1,8 +1,8 @@
-import { getLogos } from "@/app/dashboard/actions/logo";
+import { getCurrentLogo } from "@/app/dashboard/actions/logo";
 import { LogoClient } from "@/app/dashboard/logo/LogoClient";
 
 export default async function LogoPage() {
-  const logos = await getLogos();
+  const currentLogo = await getCurrentLogo();
 
-  return <LogoClient initialLogos={logos} />;
+  return <LogoClient currentLogo={currentLogo} />;
 }
