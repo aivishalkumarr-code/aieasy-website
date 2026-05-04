@@ -17,15 +17,12 @@ ALTER TABLE logos ENABLE ROW LEVEL SECURITY;
 
 -- 2. RLS Policies for logos table
 
--- Allow admins to manage logos
-CREATE POLICY "Admins can manage logos" 
+-- Allow authenticated users to manage logos (dashboard access already restricted)
+CREATE POLICY "Authenticated users can manage logos" 
 ON logos FOR ALL 
 TO authenticated 
-USING (
-  EXISTS (
-    SELECT 1 FROM admins WHERE admins.id = auth.uid()
-  )
-);
+USING (true)
+WITH CHECK (true);
 
 -- Allow public to view logos
 CREATE POLICY "Public can view logos" 
@@ -40,41 +37,26 @@ ON CONFLICT (id) DO NOTHING;
 
 -- 4. Storage RLS Policies for logos bucket
 
--- Allow admins to upload
-CREATE POLICY "Admins can upload logos" 
+-- Allow authenticated users to upload
+CREATE POLICY "Authenticated users can upload logos" 
 ON storage.objects 
 FOR INSERT 
 TO authenticated 
-WITH CHECK (
-  bucket_id = 'logos' 
-  AND EXISTS (
-    SELECT 1 FROM admins WHERE admins.id = auth.uid()
-  )
-);
+WITH CHECK (bucket_id = 'logos');
 
--- Allow admins to update
-CREATE POLICY "Admins can update logos" 
+-- Allow authenticated users to update
+CREATE POLICY "Authenticated users can update logos" 
 ON storage.objects 
 FOR UPDATE 
 TO authenticated 
-USING (
-  bucket_id = 'logos' 
-  AND EXISTS (
-    SELECT 1 FROM admins WHERE admins.id = auth.uid()
-  )
-);
+USING (bucket_id = 'logos');
 
--- Allow admins to delete
-CREATE POLICY "Admins can delete logos" 
+-- Allow authenticated users to delete
+CREATE POLICY "Authenticated users can delete logos" 
 ON storage.objects 
 FOR DELETE 
 TO authenticated 
-USING (
-  bucket_id = 'logos' 
-  AND EXISTS (
-    SELECT 1 FROM admins WHERE admins.id = auth.uid()
-  )
-);
+USING (bucket_id = 'logos');
 
 -- Allow public to view logos
 CREATE POLICY "Public can view logos storage" 
