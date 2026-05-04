@@ -2,18 +2,25 @@ import type { Metadata } from "next";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
+  Check,
   CheckCircle2,
+  ChevronRight,
   Clock,
+  Gauge,
+  Ghost,
   HandHeart,
   Headphones,
   MessageSquare,
   Phone,
   Rocket,
   Search,
+  Shield,
   ShieldCheck,
   Sparkles,
   Smartphone,
   Target,
+  TrendingDown,
+  X,
   Zap,
 } from "lucide-react";
 
@@ -91,6 +98,45 @@ const heroTrustBadges: Array<{ title: string; description: string; icon: LucideI
     title: "Trusted by Businesses",
     description: "Helping businesses grow across Delhi NCR.",
     icon: HandHeart,
+  },
+] as const;
+
+const problemItems: Array<{ title: string; description: string; icon: LucideIcon }> = [
+  {
+    title: "Most Websites Don't Bring Leads",
+    description: "Pretty websites mean nothing if they don't generate inquiries or sales.",
+    icon: TrendingDown,
+  },
+  {
+    title: "Slow Loading = Lost Customers",
+    description:
+      "A slow website frustrates visitors and makes them leave — for your competitors.",
+    icon: Gauge,
+  },
+  {
+    title: "Developers Disappear After Payment",
+    description: "No support, no updates, no response — you're left on your own.",
+    icon: Ghost,
+  },
+] as const;
+
+const solutionItems: Array<{ title: string; description: string; icon: LucideIcon }> = [
+  {
+    title: "We Build Conversion-Focused Websites",
+    description:
+      "Every website we build is designed to attract, engage and convert visitors into customers.",
+    icon: Target,
+  },
+  {
+    title: "Fast, Mobile-First, SEO-Ready",
+    description:
+      "Lightning-fast websites that look perfect on every device and rank higher on Google.",
+    icon: Rocket,
+  },
+  {
+    title: "Pay Only When Website Goes Live",
+    description: "No upfront payment. You pay only when your website is ready and live.",
+    icon: ShieldCheck,
   },
 ] as const;
 
@@ -398,6 +444,110 @@ function CheckItem({ children }: { children: string }) {
   );
 }
 
+function ProblemSolutionSection() {
+  return (
+    <section className="bg-white py-16 lg:py-20">
+      <div className={containerClass}>
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">
+            THE PROBLEM (MOST BUSINESSES FACE)
+          </p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#0F172A] md:text-4xl lg:text-[44px]">
+            Struggling with Websites That <span className="text-[#2563EB]">Don&apos;t Deliver Results?</span>
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-[#475569] md:text-lg">
+            You&apos;re not alone. Most business owners face these same problems. We&apos;re here to change that.
+          </p>
+        </div>
+
+        <div className="mt-12 grid items-center gap-5 lg:grid-cols-[1fr_auto_1fr]">
+          <article className="h-full rounded-2xl border border-red-100 bg-red-50 p-6 shadow-[0_18px_45px_rgba(127,29,29,0.06)] sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+                <X className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-[#0F172A]">The Problems You Face</h3>
+                <div className="mt-2 h-1 w-20 rounded-full bg-red-400" />
+              </div>
+            </div>
+
+            <div className="mt-8 space-y-6">
+              {problemItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.title} className="flex gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-red-600 shadow-sm ring-1 ring-red-100">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-[#0F172A]">{item.title}</h4>
+                      <p className="mt-1.5 text-sm leading-6 text-[#64748B]">{item.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </article>
+
+          <div className="flex justify-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-[#2563EB] shadow-[0_16px_40px_rgba(15,23,42,0.14)] ring-1 ring-blue-100">
+              <ChevronRight className="h-7 w-7 rotate-90 lg:rotate-0" />
+            </div>
+          </div>
+
+          <article className="h-full rounded-2xl border border-green-100 bg-green-50 p-6 shadow-[0_18px_45px_rgba(20,83,45,0.06)] sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600">
+                <Check className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-[#0F172A]">Our Solution</h3>
+                <div className="mt-2 h-1 w-20 rounded-full bg-green-400" />
+              </div>
+            </div>
+
+            <div className="mt-8 space-y-6">
+              {solutionItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.title} className="flex gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-green-600 shadow-sm ring-1 ring-green-100">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-[#0F172A]">{item.title}</h4>
+                      <p className="mt-1.5 text-sm leading-6 text-[#64748B]">{item.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </article>
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-blue-50 p-5 shadow-[0_18px_45px_rgba(37,99,235,0.08)] sm:p-6">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+            <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-blue-200 bg-white text-[#2563EB] shadow-sm">
+              <Shield className="h-7 w-7" />
+              <span className="absolute bottom-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#2563EB] text-white">
+                <Check className="h-2.5 w-2.5" />
+              </span>
+            </div>
+            <div className="hidden h-14 w-px bg-blue-100 sm:block" />
+            <div>
+              <p className="text-lg font-bold leading-snug text-[#0F172A]">
+                We don&apos;t just build websites. We build growth engines for your business.
+              </p>
+              <p className="mt-1 text-sm font-semibold text-[#2563EB]">No risk. No stress. Just results.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function WebsiteDesignLandingPage() {
   return (
     <div className="min-h-screen bg-white text-[#0F172A]">
@@ -493,6 +643,8 @@ export default function WebsiteDesignLandingPage() {
             </div>
           </div>
         </section>
+
+        <ProblemSolutionSection />
 
         <section id="website-types" className="bg-[#F8FAFC] py-12 lg:py-24">
           <div className={containerClass}>
