@@ -7,6 +7,7 @@ import {
   FileText,
   Globe,
   Image,
+  ImageIcon,
   LayoutDashboard,
   LogOut,
   Mail,
@@ -26,6 +27,7 @@ const navigation = [
   { href: "/dashboard/emails", label: "Emails", icon: Mail },
   { href: "/dashboard/seo", label: "SEO Tools", icon: Search },
   { href: "/dashboard/partners", label: "Partners", icon: Globe },
+  { href: "/dashboard/images", label: "Images", icon: ImageIcon },
   { href: "/dashboard/logo", label: "Logo", icon: Image },
 ];
 

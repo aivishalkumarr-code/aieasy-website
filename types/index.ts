@@ -8,6 +8,7 @@ export type DealStage =
 export type QuoteStatus = "Draft" | "Sent" | "Accepted" | "Expired";
 export type EmailStatus = "queued" | "sent" | "failed";
 export type LogoType = "main" | "favicon" | "og_image";
+export type ImageCategory = "Landing Page" | "Hero" | "Portfolio" | "Services" | "Blog" | "General";
 export type EmailTemplateId =
   | "intro"
   | "proposal_followup"
@@ -123,6 +124,17 @@ export interface LogoInput {
   width?: number | null;
   height?: number | null;
   file_size?: number | null;
+}
+
+export interface ManagedImage {
+  id: string;
+  url: string;
+  filename: string;
+  category: ImageCategory | null;
+  width: number | null;
+  height: number | null;
+  file_size: number | null;
+  created_at?: string;
 }
 
 export interface ServiceCatalogItem {
@@ -272,6 +284,7 @@ export const SEO_PAGE_OPTIONS = [
   "/dashboard/emails",
   "/dashboard/seo",
   "/dashboard/partners",
+  "/dashboard/images",
   "/dashboard/logo",
 ] as const;
 
