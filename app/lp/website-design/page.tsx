@@ -2,17 +2,18 @@ import type { Metadata } from "next";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
-  Building2,
   CheckCircle2,
   Clock,
-  Globe2,
+  HandHeart,
+  Headphones,
   MessageSquare,
   Phone,
   Rocket,
   Search,
   ShieldCheck,
+  Sparkles,
   Smartphone,
-  User,
+  Target,
   Zap,
 } from "lucide-react";
 
@@ -46,11 +47,51 @@ export const metadata: Metadata = {
 
 const containerClass = "mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-8";
 
-const heroBenefits = [
-  "Starting at ₹9,999",
+const heroFeatureCards: Array<{ title: string; description: string; icon: LucideIcon }> = [
+  {
+    title: "Built for Google Ads & SEO",
+    description: "Rank higher. Get found.",
+    icon: Target,
+  },
+  {
+    title: "Mobile-First Design",
+    description: "Looks perfect on every device.",
+    icon: Smartphone,
+  },
+  {
+    title: "Lightning Fast",
+    description: "Better speed. Better results.",
+    icon: Zap,
+  },
+] as const;
+
+const heroPricingBenefits = [
   "Free Domain & Hosting for 1 Year",
   "SEO-Friendly + Mobile-Ready",
   "Pay Only When Website Goes Live",
+] as const;
+
+const heroTrustBadges: Array<{ title: string; description: string; icon: LucideIcon }> = [
+  {
+    title: "100% Satisfaction",
+    description: "We don't stop until you're happy.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Free Support",
+    description: "30 days free support after launch.",
+    icon: Headphones,
+  },
+  {
+    title: "On-Time Delivery",
+    description: "We respect your time and deadlines.",
+    icon: Clock,
+  },
+  {
+    title: "Trusted by Businesses",
+    description: "Helping businesses grow across Delhi NCR.",
+    icon: HandHeart,
+  },
 ] as const;
 
 const websiteTypes = [
@@ -365,52 +406,90 @@ export default function WebsiteDesignLandingPage() {
       <main className="overflow-x-clip pb-20 lg:pb-0">
         <section className="relative overflow-hidden bg-white pb-14 pt-10 lg:pb-20 lg:pt-16">
           <div className={containerClass}>
-            <div className="grid items-center gap-y-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(420px,0.98fr)] lg:gap-x-16">
-              <div className="max-w-[560px]">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">
-                  WEBSITE DESIGN COMPANY IN DELHI
-                </p>
-                <h1 className="mt-4 text-4xl font-bold leading-[1.04] tracking-tight text-[#0F172A] md:text-5xl lg:text-[56px]">
-                  Get a Website That Brings You More Business
+            <div className="grid items-start gap-y-10 lg:grid-cols-[minmax(0,0.55fr)_minmax(420px,0.45fr)] lg:gap-x-12">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3.5 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[#2563EB] shadow-sm">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  DELHI&apos;S TRUSTED WEBSITE DESIGN COMPANY
+                </div>
+                <h1 className="mt-5 max-w-[660px] text-4xl font-bold leading-[1.03] tracking-tight text-[#0F172A] md:text-5xl lg:text-[58px]">
+                  Get a Website That Brings You More <span className="block text-[#2563EB]">Business</span>
                 </h1>
-                <p className="mt-5 text-base leading-relaxed text-[#475569] md:text-lg">
-                  Get a custom, mobile-friendly and SEO-ready website starting at ₹9,999 — with free domain, hosting and support included.
-                </p>
-                <p className="mt-3 text-sm font-medium text-[#64748B]">
-                  Built for Google Ads, SEO, mobile users and fast loading speed.
+                <p className="mt-5 max-w-[610px] text-base leading-relaxed text-[#475569] md:text-xl">
+                  Custom, mobile-friendly, and SEO-ready websites that convert visitors into customers.
                 </p>
 
-                <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-                  <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#2563EB] px-7 text-base font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.22)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
-                    Get Free Website Consultation
+                <div className="mt-7 grid gap-3 sm:grid-cols-3">
+                  {heroFeatureCards.map((feature) => {
+                    const Icon = feature.icon;
+                    return (
+                      <article
+                        key={feature.title}
+                        className="rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-[0_12px_32px_rgba(15,23,42,0.06)]"
+                      >
+                        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-lg shadow-blue-600/20">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <h3 className="mt-4 text-sm font-bold leading-snug text-[#0F172A]">{feature.title}</h3>
+                        <p className="mt-1.5 text-sm leading-5 text-[#64748B]">{feature.description}</p>
+                      </article>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-7 grid gap-5 rounded-3xl border border-blue-100 bg-gradient-to-br from-white to-blue-50/60 p-5 shadow-[0_18px_45px_rgba(15,23,42,0.06)] sm:grid-cols-[0.9fr_1.1fr] sm:items-center sm:p-6">
+                  <div>
+                    <p className="text-sm font-semibold text-[#475569]">Complete Website Starting at</p>
+                    <p className="mt-1 text-4xl font-extrabold tracking-tight text-[#2563EB] md:text-[44px]">₹9,999*</p>
+                  </div>
+                  <div className="space-y-3">
+                    {heroPricingBenefits.map((benefit) => (
+                      <div key={benefit} className="flex items-start gap-2.5">
+                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#2563EB]" />
+                        <span className="text-sm font-semibold leading-6 text-[#334155]">{benefit}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+                  <ScrollToLeadCta className="inline-flex h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#2563EB] px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto lg:text-base">
+                    Get Free Website Consultation <ArrowRight className="h-4 w-4" />
                   </ScrollToLeadCta>
                   <a
                     href="#pricing"
-                    className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[#E2E8F0] bg-white px-7 text-base font-semibold text-[#0F172A] transition-all hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 sm:w-auto"
+                    className="inline-flex h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#CBD5E1] bg-white px-6 text-sm font-semibold text-[#0F172A] transition-all hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 sm:w-auto lg:text-base"
                   >
-                    View Website Packages
+                    View Website Packages <ArrowRight className="h-4 w-4" />
                   </a>
                 </div>
                 <p className="mt-3 text-sm text-[#64748B]">
                   No upfront payment. Get a clear website plan before you decide.
                 </p>
-
-                <div className="mt-8 grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-8">
-                  {heroBenefits.map((benefit) => (
-                    <div key={benefit} className="flex items-start gap-3">
-                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#2563EB]" />
-                      <span className="text-sm font-semibold leading-6 text-[#334155]">{benefit}</span>
-                    </div>
-                  ))}
-                </div>
               </div>
 
-              <div className="relative w-full max-w-[560px] justify-self-end self-start">
+              <div className="relative w-full max-w-[530px] justify-self-end self-start lg:pt-2">
                 <div className="absolute -inset-8 -z-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.20),rgba(236,253,245,0.45)_38%,rgba(255,255,255,0)_72%)] blur-2xl" />
                 <div className="relative z-10">
                   <LeadForm />
                 </div>
               </div>
+            </div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {heroTrustBadges.map((badge) => {
+                const Icon = badge.icon;
+                return (
+                  <article key={badge.title} className="rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB]">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <h3 className="text-sm font-bold leading-tight text-[#0F172A]">{badge.title}</h3>
+                    </div>
+                    <p className="mt-2 text-xs leading-5 text-[#64748B]">{badge.description}</p>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>
