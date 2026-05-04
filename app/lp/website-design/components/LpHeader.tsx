@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { ScrollToLeadCta } from "./ScrollToLeadCta";
+import { getMainLogoUrl } from "@/app/dashboard/actions/logo";
 
 const links = [
   { label: "Benefits", href: "#benefits" },
@@ -10,13 +11,15 @@ const links = [
   { label: "FAQ", href: "#faq" },
 ] as const;
 
-export function LpHeader() {
+export async function LpHeader() {
+  const logoUrl = await getMainLogoUrl();
+
   return (
     <header className="sticky top-0 z-50 border-b border-[#E2E8F0]/80 bg-white shadow-[0_1px_0_rgba(226,232,240,0.55)]">
       <div className="mx-auto flex h-20 max-w-[1180px] items-center justify-between gap-4 px-4 sm:px-6 lg:h-24 lg:px-8">
         <Link href="/" className="relative h-14 w-[220px] shrink-0 sm:w-[270px]" aria-label="aicosy home">
           <Image
-            src="/logo.png"
+            src={logoUrl}
             alt="aicosy | AI Made Easy"
             fill
             className="object-contain object-left"
