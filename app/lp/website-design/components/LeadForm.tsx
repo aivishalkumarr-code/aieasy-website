@@ -2,12 +2,13 @@
 
 import { useState, type FormEvent } from "react";
 import {
+  ArrowRight,
   Building2,
   CheckCircle2,
   Globe2,
   Loader2,
   Mail,
-  Send,
+  Rocket,
   User,
 } from "lucide-react";
 
@@ -71,7 +72,7 @@ function FieldError({ message }: { message?: string }) {
 }
 
 const inputClass =
-  "h-12 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3 text-base text-[#0F172A] outline-none transition placeholder:text-slate-400 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20";
+  "h-12 w-full rounded-2xl border border-slate-200 bg-white py-2.5 pl-10 pr-3 text-base text-[#0F172A] outline-none transition placeholder:text-slate-400 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20";
 
 export function LeadForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
@@ -133,31 +134,40 @@ export function LeadForm() {
 
   return (
     <div id="contact" className="scroll-mt-28">
-      <div className="w-full max-w-[560px] overflow-hidden rounded-[28px] border border-blue-100 bg-white shadow-[0_24px_70px_rgba(37,99,235,0.14)]">
-        <div className="bg-gradient-to-br from-blue-50 via-white to-white px-5 pb-5 pt-6 sm:px-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">
-            FREE WEBSITE CONSULTATION
-          </p>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight text-[#0F172A]">
-            Get Your Website Proposal in 60 Seconds
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#64748B]">
-            Tell us what you need and we&apos;ll suggest the right website plan, pricing direction and launch timeline.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2 max-[380px]:hidden">
+      <div className="w-full max-w-[560px] overflow-hidden rounded-[28px] border border-blue-100 bg-white shadow-[0_24px_70px_rgba(37,99,235,0.16)]">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] px-5 pb-6 pt-6 text-white sm:px-7">
+          <div className="absolute -right-10 -top-12 h-40 w-40 rounded-full bg-white/10" />
+          <div className="absolute -bottom-16 right-10 h-36 w-36 rounded-full bg-sky-300/20" />
+          <div className="relative grid gap-5 sm:grid-cols-[1fr_auto] sm:items-center">
+            <div>
+              <div className="inline-flex rounded-full bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#2563EB] shadow-sm">
+                FREE WEBSITE CONSULTATION
+              </div>
+              <h2 className="mt-4 text-2xl font-bold tracking-tight sm:text-[28px] sm:leading-tight">
+                Get Your Website Proposal in 60 Seconds
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-blue-50">
+                Tell us about your business and we&apos;ll suggest the right website plan, pricing and timeline.
+              </p>
+            </div>
+            <div className="hidden h-24 w-24 items-center justify-center rounded-[2rem] bg-white/15 text-white shadow-2xl ring-1 ring-white/25 sm:flex">
+              <Rocket className="h-12 w-12 -rotate-12" />
+            </div>
+          </div>
+          <div className="relative mt-5 flex flex-wrap gap-2 max-[380px]:hidden">
             {trustChips.map((chip) => (
               <div
                 key={chip}
-                className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-1.5 text-sm text-slate-700"
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/20 backdrop-blur"
               >
-                <CheckCircle2 className="h-3.5 w-3.5 text-[#2563EB]" />
+                <CheckCircle2 className="h-3.5 w-3.5" />
                 {chip}
               </div>
             ))}
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 px-5 pb-7 sm:px-7">
+        <form onSubmit={handleSubmit} className="space-y-4 bg-white px-5 pb-7 pt-6 sm:px-7">
           {error ? (
             <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-medium text-red-700">
               {error}
@@ -166,7 +176,7 @@ export function LeadForm() {
 
           <div>
             <label htmlFor="name" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
-              Name <span className="text-red-500">*</span>
+              Full Name <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -215,7 +225,7 @@ export function LeadForm() {
                 name="websiteType"
                 value={values.websiteType}
                 onChange={(event) => updateField("websiteType", event.target.value)}
-                className="h-12 w-full appearance-none rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-base text-[#0F172A] outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
+                className="h-12 w-full appearance-none rounded-2xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-base text-[#0F172A] outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
                 style={{
                   backgroundImage:
                     'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%2364748B\' stroke-width=\'2\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M19 9l-7 7-7-7\'/%3E%3C/svg%3E")',
@@ -236,7 +246,7 @@ export function LeadForm() {
 
           <div>
             <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
-              Email <span className="text-red-500">*</span>
+              Email Address <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -266,8 +276,7 @@ export function LeadForm() {
               </>
             ) : (
               <>
-                <Send className="h-4 w-4" />
-                Get My Free Website Proposal
+                Get My Free Website Proposal <ArrowRight className="h-4 w-4" />
               </>
             )}
           </button>
