@@ -1,8 +1,9 @@
 import { getImages } from "@/app/dashboard/actions/images";
+import { getPortfolioItems } from "@/app/dashboard/actions/portfolio";
 import { ImagesClient } from "@/app/dashboard/images/ImagesClient";
 
 export default async function ImagesPage() {
-  const images = await getImages();
+  const [images, portfolioItems] = await Promise.all([getImages(), getPortfolioItems()]);
 
-  return <ImagesClient initialImages={images} />;
+  return <ImagesClient initialImages={images} initialPortfolioItems={portfolioItems} />;
 }
