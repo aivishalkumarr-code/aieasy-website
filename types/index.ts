@@ -10,6 +10,7 @@ export type EmailStatus = "queued" | "sent" | "failed";
 export type LogoType = "main" | "favicon" | "og_image";
 export type ImageCategory = "Landing Page" | "Hero" | "Portfolio" | "Services" | "Blog" | "General";
 export type PortfolioCategory = "Business" | "Healthcare" | "E-commerce" | "Education" | "Real Estate" | "Hospitality";
+export type PortfolioVersion = "v1" | "v2";
 export type EmailTemplateId =
   | "intro"
   | "proposal_followup"

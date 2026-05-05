@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import type { ActionResult, PortfolioCategory, PortfolioItem } from "@/types";
+import type { ActionResult, PortfolioCategory, PortfolioItem, PortfolioVersion } from "@/types";
 
 const PORTFOLIO_CATEGORIES: PortfolioCategory[] = [
   "Business",
@@ -13,6 +13,7 @@ const PORTFOLIO_CATEGORIES: PortfolioCategory[] = [
   "Real Estate",
   "Hospitality",
 ];
+const PORTFOLIO_VERSIONS: PortfolioVersion[] = ["v1", "v2"];
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_MIME_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const ACCEPTED_EXTENSIONS = ["png", "jpg", "jpeg", "webp"];
@@ -146,6 +147,9 @@ const normalizeNumber = (value: FormDataEntryValue | null, fallback = 0) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
+const normalizePortfolioVersion = (value: unknown): PortfolioVersion =>
+  PORTFOLIO_VERSIONS.includes(value as PortfolioVersion) ? (value as PortfolioVersion) : "v1";
+
 const normalizePortfolioItem = (item: PortfolioItem): PortfolioItem => ({
   ...item,
   category: normalizeCategory(item.category),
@@ -239,6 +243,83 @@ const uploadPortfolioImage = async (file: File, category: PortfolioCategory) => 
 };
 
 export const getDefaultPortfolioItems = async () => sortPortfolioItems(defaultPortfolioItems);
+
+export async function getPortfolioVersion(): Promise<PortfolioVersion> {
+  if (!isSupabaseConfigured()) {
+    return "v1";
+  }
+
+  const supabase = await createClient();
+
+  if (!supabase) {
+    return "v1";
+  }
+
+  const { data, error } = await supabase
+    .from("settings")
+    .select("portfolio_version")
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) {
+    return "v1";
+  }
+
+  return normalizePortfolioVersion(data.portfolio_version);
+}
+
+export async function setPortfolioVersion(version: PortfolioVersion): Promise<ActionResult<PortfolioVersion>> {
+  const portfolioVersion = normalizePortfolioVersion(version);
+
+  if (!isSupabaseConfigured()) {
+    revalidatePortfolio();
+    return {
+      success: true,
+      data: portfolioVersion,
+      message: "Portfolio display style updated locally. Connect Supabase to persist changes.",
+    };
+  }
+
+  const supabase = await createClient();
+
+  if (!supabase) {
+    return { success: false, message: "Supabase client unavailable." };
+  }
+
+  const { data, error } = await supabase
+    .from("settings")
+    .update({ portfolio_version: portfolioVersion })
+    .neq("portfolio_version", "__never__")
+    .select("portfolio_version")
+    .limit(1)
+    .maybeSingle();
+
+  if (!error && data) {
+    revalidatePortfolio();
+    return { success: true, data: normalizePortfolioVersion(data.portfolio_version), message: "Portfolio display style saved." };
+  }
+
+  const { data: insertedData, error: insertError } = await supabase
+    .from("settings")
+    .insert({ portfolio_version: portfolioVersion })
+    .select("portfolio_version")
+    .single();
+
+  if (insertError || !insertedData) {
+    return {
+      success: false,
+      message: "Unable to save display style. Run lib/supabase/migrations/005_portfolio_version.sql in Supabase, then retry.",
+    };
+  }
+
+  revalidatePortfolio();
+
+  return {
+    success: true,
+    data: normalizePortfolioVersion(insertedData.portfolio_version),
+    message: "Portfolio display style saved.",
+  };
+}
 
 export async function getPortfolioItems(): Promise<PortfolioItem[]> {
   if (!isSupabaseConfigured()) {
