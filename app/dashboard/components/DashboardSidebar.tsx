@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  Briefcase,
   FileText,
   Globe,
   Image,
@@ -25,9 +26,10 @@ const navigation = [
   { href: "/dashboard/crm", label: "CRM", icon: BarChart3 },
   { href: "/dashboard/quotes", label: "Quotes", icon: FileText },
   { href: "/dashboard/emails", label: "Emails", icon: Mail },
-  { href: "/dashboard/seo", label: "SEO Tools", icon: Search },
   { href: "/dashboard/partners", label: "Partners", icon: Globe },
   { href: "/dashboard/images", label: "Images", icon: ImageIcon },
+  { href: "/dashboard/portfolio", label: "Portfolio", icon: Briefcase },
+  { href: "/dashboard/seo", label: "SEO Tools", icon: Search },
   { href: "/dashboard/logo", label: "Logo", icon: Image },
 ];
 

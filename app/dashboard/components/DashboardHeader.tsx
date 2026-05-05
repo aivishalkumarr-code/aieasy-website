@@ -42,6 +42,14 @@ const pageMeta: Record<string, { title: string; description: string }> = {
     title: "Partners",
     description: "Manage deployment platform logos shown on the homepage.",
   },
+  "/dashboard/images": {
+    title: "Images",
+    description: "Upload, organize, and replace reusable website image assets.",
+  },
+  "/dashboard/portfolio": {
+    title: "Portfolio",
+    description: "Manage work samples shown in the landing page portfolio section.",
+  },
   "/dashboard/logo": {
     title: "Logo management",
     description: "Upload and preview website, dashboard, favicon, and social logo assets.",

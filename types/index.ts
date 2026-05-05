@@ -9,6 +9,7 @@ export type QuoteStatus = "Draft" | "Sent" | "Accepted" | "Expired";
 export type EmailStatus = "queued" | "sent" | "failed";
 export type LogoType = "main" | "favicon" | "og_image";
 export type ImageCategory = "Landing Page" | "Hero" | "Portfolio" | "Services" | "Blog" | "General";
+export type PortfolioCategory = "Business" | "Healthcare" | "E-commerce" | "Education" | "Real Estate" | "Hospitality";
 export type EmailTemplateId =
   | "intro"
   | "proposal_followup"
@@ -105,6 +106,19 @@ export interface PartnerInput {
   image_url: string;
   url?: string | null;
   display_order: number;
+}
+
+export interface PortfolioItem {
+  id: string;
+  name: string;
+  category: PortfolioCategory;
+  image_url: string;
+  website_url: string | null;
+  description: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ManagedLogo {
@@ -285,6 +299,7 @@ export const SEO_PAGE_OPTIONS = [
   "/dashboard/seo",
   "/dashboard/partners",
   "/dashboard/images",
+  "/dashboard/portfolio",
   "/dashboard/logo",
 ] as const;
 
