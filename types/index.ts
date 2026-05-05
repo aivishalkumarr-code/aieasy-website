@@ -9,6 +9,7 @@ export type QuoteStatus = "Draft" | "Sent" | "Accepted" | "Expired";
 export type EmailStatus = "queued" | "sent" | "failed";
 export type LogoType = "main" | "favicon" | "og_image";
 export type ImageCategory = "Landing Page" | "Hero" | "Portfolio" | "Services" | "Blog" | "General";
+export type PortfolioCategory = "Business" | "Healthcare" | "E-commerce" | "Education" | "Real Estate" | "Hospitality";
 export type EmailTemplateId =
   | "intro"
   | "proposal_followup"
@@ -135,6 +136,29 @@ export interface ManagedImage {
   height: number | null;
   file_size: number | null;
   created_at?: string;
+}
+
+export interface PortfolioItem {
+  id: string;
+  name: string;
+  category: PortfolioCategory;
+  image_url: string;
+  website_url: string | null;
+  description: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface PortfolioInput {
+  name: string;
+  category: PortfolioCategory;
+  image_url: string;
+  website_url?: string | null;
+  description?: string | null;
+  display_order?: number;
+  is_active?: boolean;
 }
 
 export interface ServiceCatalogItem {
