@@ -53,15 +53,12 @@ function PortfolioSkeleton() {
       {skeletonCards.map((item) => (
         <div key={item} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
           <div className="aspect-[16/10] animate-pulse bg-slate-100" />
-          <div className="flex items-center justify-between gap-4 p-5">
-            <div className="flex items-center gap-3">
-              <div className="h-11 w-11 animate-pulse rounded-2xl bg-slate-100" />
-              <div className="space-y-2">
-                <div className="h-4 w-32 animate-pulse rounded-full bg-slate-100" />
-                <div className="h-3 w-20 animate-pulse rounded-full bg-slate-100" />
-              </div>
+          <div className="flex items-center gap-3 p-5">
+            <div className="h-11 w-11 animate-pulse rounded-2xl bg-slate-100" />
+            <div className="space-y-2">
+              <div className="h-4 w-32 animate-pulse rounded-full bg-slate-100" />
+              <div className="h-3 w-20 animate-pulse rounded-full bg-slate-100" />
             </div>
-            <div className="h-4 w-24 animate-pulse rounded-full bg-slate-100" />
           </div>
         </div>
       ))}
@@ -72,12 +69,6 @@ function PortfolioSkeleton() {
 function PortfolioCard({ item, priority = false }: { item: PortfolioItem; priority?: boolean }) {
   const meta = categoryMeta[item.category];
   const Icon = meta.icon;
-  const linkContent = (
-    <>
-      View Live Website <ArrowRight className="h-4 w-4" />
-    </>
-  );
-
   return (
     <article className="group h-full overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
@@ -96,31 +87,14 @@ function PortfolioCard({ item, priority = false }: { item: PortfolioItem; priori
         </div>
       </div>
 
-      <div className="flex items-start justify-between gap-4 p-5">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EFF6FF] text-[#2563EB]">
-            <Icon className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <h3 className="truncate text-base font-semibold text-[#0F172A]">{item.name}</h3>
-            <p className="mt-1 text-sm text-slate-500">{meta.label}</p>
-          </div>
+      <div className="flex min-w-0 items-center gap-3 p-5">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EFF6FF] text-[#2563EB]">
+          <Icon className="h-5 w-5" />
         </div>
-
-        {item.website_url ? (
-          <a
-            href={item.website_url}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-[#2563EB] transition hover:text-[#1D4ED8]"
-          >
-            {linkContent}
-          </a>
-        ) : (
-          <ScrollToLeadCta className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-[#2563EB] transition hover:text-[#1D4ED8]">
-            {linkContent}
-          </ScrollToLeadCta>
-        )}
+        <div className="min-w-0">
+          <h3 className="truncate text-base font-semibold text-[#0F172A]">{item.name}</h3>
+          <p className="mt-1 text-sm text-slate-500">{meta.label}</p>
+        </div>
       </div>
     </article>
   );
