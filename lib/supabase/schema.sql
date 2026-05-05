@@ -91,6 +91,16 @@ create table if not exists public.seo_settings (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.lp_settings (
+  key text primary key,
+  value text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint lp_settings_portfolio_version_check check (
+    key <> 'portfolio_version' or value in ('v1', 'v2')
+  )
+);
+
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -106,6 +116,11 @@ before update on public.seo_settings
 for each row
 execute function public.set_updated_at();
 
+create trigger set_lp_settings_updated_at
+before update on public.lp_settings
+for each row
+execute function public.set_updated_at();
+
 create index if not exists contacts_status_idx on public.contacts(status);
 create index if not exists deals_stage_idx on public.deals(stage);
 create index if not exists quotes_status_idx on public.quotes(status);
@@ -116,6 +131,7 @@ alter table public.deals enable row level security;
 alter table public.quotes enable row level security;
 alter table public.sent_emails enable row level security;
 alter table public.seo_settings enable row level security;
+alter table public.lp_settings enable row level security;
 
 create policy "public can insert contacts"
 on public.contacts
@@ -157,6 +173,21 @@ on public.seo_settings
 for all
 using (auth.role() = 'authenticated')
 with check (auth.role() = 'authenticated');
+
+create policy "authenticated can manage landing page settings"
+on public.lp_settings
+for all
+using (auth.role() = 'authenticated')
+with check (auth.role() = 'authenticated');
+
+create policy "public can view landing page settings"
+on public.lp_settings
+for select
+using (true);
+
+insert into public.lp_settings (key, value)
+values ('portfolio_version', 'v2')
+on conflict (key) do nothing;
 
 create table if not exists public.partner_logos (
   id uuid primary key default gen_random_uuid(),
