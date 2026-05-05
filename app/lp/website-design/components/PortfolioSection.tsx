@@ -1,192 +1,352 @@
 "use client";
 
-import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import { useState } from "react";
+import {
+  ArrowRight,
+  Briefcase,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+  GraduationCap,
+  Heart,
+  Home,
+  Rocket,
+  ShoppingCart,
+  UtensilsCrossed,
+  type LucideIcon,
+} from "lucide-react";
+import { useEffect, useMemo, useState, type TouchEvent } from "react";
+
+import { getActivePortfolioItems } from "@/app/dashboard/actions/portfolio";
+import { cn } from "@/lib/utils";
+import type { PortfolioCategory, PortfolioItem } from "@/types";
 
 import { AnimatedSection } from "./AnimatedSection";
 import { ScrollToLeadCta } from "./ScrollToLeadCta";
 
-const portfolioItems = [
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=1600&q=80",
-    title: "E-commerce Store",
-    businessType: "Fashion & apparel",
-    result: "40% increase in sales",
-    description: "Sharper product presentation, faster mobile browsing, and stronger add-to-cart flows.",
-  },
-  {
-    id: 2,
-    image:
-      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1600&q=80",
-    title: "Clinic Website",
-    businessType: "Healthcare",
-    result: "2x more appointment requests",
-    description: "Trust-first messaging with clear appointment paths and mobile-friendly service pages.",
-  },
-  {
-    id: 3,
-    image:
-      "https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=1600&q=80",
-    title: "Real Estate Funnel Site",
-    businessType: "Real estate",
-    result: "31 qualified buyer leads in 3 weeks",
-    description: "A lead capture flow built around location pages, property trust, and WhatsApp-first actions.",
-  },
-  {
-    id: 4,
-    image:
-      "https://images.unsplash.com/photo-1558655146-9f40138edfeb?auto=format&fit=crop&w=1600&q=80",
-    title: "Premium Brand Website",
-    businessType: "Boutique business",
-    result: "35% higher conversion rate",
-    description: "Premium visuals, social proof, and irresistible offers positioned above the fold.",
-  },
-  {
-    id: 5,
-    image:
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80",
-    title: "Service Business Lead Site",
-    businessType: "Professional services",
-    result: "12 leads in the first week",
-    description: "Cleaner positioning, stronger trust signals, and a form flow built to capture intent fast.",
-  },
-] as const;
+type FilterValue = "All Projects" | PortfolioCategory;
 
-export function PortfolioSection() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const activeItem = portfolioItems[currentIndex];
+const filters: Array<{ label: FilterValue; icon?: LucideIcon }> = [
+  { label: "All Projects" },
+  { label: "Business", icon: Building2 },
+  { label: "Healthcare", icon: Heart },
+  { label: "E-commerce", icon: ShoppingCart },
+  { label: "Education", icon: GraduationCap },
+  { label: "Real Estate", icon: Home },
+  { label: "Hospitality", icon: UtensilsCrossed },
+];
+
+const categoryMeta: Record<PortfolioCategory, { label: string; icon: LucideIcon; accent: string }> = {
+  Business: { label: "Finance / Taxation", icon: Briefcase, accent: "from-[#0F172A] to-[#1D4ED8]" },
+  Healthcare: { label: "Healthcare", icon: Heart, accent: "from-[#0F766E] to-[#2563EB]" },
+  "E-commerce": { label: "E-commerce", icon: ShoppingCart, accent: "from-[#7C3AED] to-[#2563EB]" },
+  Education: { label: "Education", icon: GraduationCap, accent: "from-[#B45309] to-[#2563EB]" },
+  "Real Estate": { label: "Real Estate", icon: Home, accent: "from-[#047857] to-[#2563EB]" },
+  Hospitality: { label: "Hospitality / Restaurant", icon: UtensilsCrossed, accent: "from-[#B91C1C] to-[#2563EB]" },
+};
+
+const skeletonCards = Array.from({ length: 3 }, (_, index) => index);
+
+function PortfolioSkeleton() {
+  return (
+    <div className="mt-12 grid gap-6 lg:grid-cols-3">
+      {skeletonCards.map((item) => (
+        <div key={item} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+          <div className="aspect-[16/10] animate-pulse bg-slate-100" />
+          <div className="flex items-center justify-between gap-4 p-5">
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 animate-pulse rounded-2xl bg-slate-100" />
+              <div className="space-y-2">
+                <div className="h-4 w-32 animate-pulse rounded-full bg-slate-100" />
+                <div className="h-3 w-20 animate-pulse rounded-full bg-slate-100" />
+              </div>
+            </div>
+            <div className="h-4 w-24 animate-pulse rounded-full bg-slate-100" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PortfolioCard({ item, priority = false }: { item: PortfolioItem; priority?: boolean }) {
+  const meta = categoryMeta[item.category];
+  const Icon = meta.icon;
+  const linkContent = (
+    <>
+      View Live Website <ArrowRight className="h-4 w-4" />
+    </>
+  );
 
   return (
-    <section id="portfolio" className="scroll-mt-28 bg-white py-20 sm:py-24">
-      <div className="container">
+    <article className="group h-full overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+        <img
+          src={item.image_url}
+          alt={`${item.name} website screenshot`}
+          loading={priority ? "eager" : "lazy"}
+          className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+        />
+        <div className={cn("absolute inset-0 bg-gradient-to-tr opacity-55 mix-blend-multiply", meta.accent)} />
+        <div className="absolute left-5 top-5 rounded-full border border-white/20 bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white shadow-sm backdrop-blur">
+          {item.category}
+        </div>
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent p-5 text-white">
+          <p className="max-w-[18rem] text-sm font-medium text-white/80">{item.description}</p>
+        </div>
+      </div>
+
+      <div className="flex items-start justify-between gap-4 p-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EFF6FF] text-[#2563EB]">
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="min-w-0">
+            <h3 className="truncate text-base font-semibold text-[#0F172A]">{item.name}</h3>
+            <p className="mt-1 text-sm text-slate-500">{meta.label}</p>
+          </div>
+        </div>
+
+        {item.website_url ? (
+          <a
+            href={item.website_url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-[#2563EB] transition hover:text-[#1D4ED8]"
+          >
+            {linkContent}
+          </a>
+        ) : (
+          <ScrollToLeadCta className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-[#2563EB] transition hover:text-[#1D4ED8]">
+            {linkContent}
+          </ScrollToLeadCta>
+        )}
+      </div>
+    </article>
+  );
+}
+
+export function PortfolioSection() {
+  const [items, setItems] = useState<PortfolioItem[]>([]);
+  const [activeFilter, setActiveFilter] = useState<FilterValue>("All Projects");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    getActivePortfolioItems()
+      .then((portfolioItems) => {
+        if (mounted) {
+          setItems(portfolioItems);
+        }
+      })
+      .finally(() => {
+        if (mounted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const filteredItems = useMemo(
+    () =>
+      activeFilter === "All Projects"
+        ? items
+        : items.filter((item) => item.category === activeFilter),
+    [activeFilter, items],
+  );
+
+  const activeItem = filteredItems[currentIndex] ?? filteredItems[0];
+
+  const changeFilter = (filter: FilterValue) => {
+    setActiveFilter(filter);
+    setCurrentIndex(0);
+  };
+
+  const goToPrevious = () => {
+    setCurrentIndex((current) => (current - 1 + filteredItems.length) % filteredItems.length);
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((current) => (current + 1) % filteredItems.length);
+  };
+
+  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    if (touchStart === null) {
+      return;
+    }
+
+    const distance = touchStart - event.changedTouches[0].clientX;
+
+    if (Math.abs(distance) > 40) {
+      if (distance > 0) {
+        goToNext();
+      } else {
+        goToPrevious();
+      }
+    }
+
+    setTouchStart(null);
+  };
+
+  return (
+    <section id="portfolio" className="scroll-mt-28 bg-white py-12 lg:py-24">
+      <div className="mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-8">
         <AnimatedSection className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2563EB]">
-            Portfolio
-          </p>
-          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-[#1A1A1A] sm:text-4xl">
-            Real Websites That Are Growing Real Businesses
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2563EB]">OUR WORK</p>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-[#0F172A] md:text-4xl">
+            Websites That Drive <span className="text-[#2563EB]">Real Results</span>
           </h2>
-          <p className="mt-4 text-lg leading-8 text-[#6B7280]">
-            These layouts are built around customer trust, faster decisions, and stronger conversion paths, not vanity design.
+          <p className="mt-4 text-base leading-relaxed text-[#475569] md:text-lg">
+            A glimpse of the websites we&apos;ve built that help businesses grow, get leads and increase revenue.
           </p>
         </AnimatedSection>
 
-        <AnimatedSection className="mt-12">
-          <div className="overflow-hidden rounded-[2rem] border border-[#E5E7EB] bg-[#fafaf8] p-4 shadow-sm sm:p-6">
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:items-stretch">
-              <div className="relative overflow-hidden rounded-[1.6rem] bg-[#E5E7EB]">
-                <div className="relative aspect-[16/10]">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeItem.id}
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -30 }}
-                      transition={{ duration: 0.35, ease: "easeInOut" }}
-                      className="absolute inset-0"
-                    >
-                      <Image
-                        src={activeItem.image}
-                        alt={`${activeItem.title} website screenshot`}
-                        fill
-                        sizes="(max-width: 1024px) 100vw, 900px"
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/88 via-[#0f172a]/20 to-transparent" />
-                      <div className="absolute inset-0 opacity-0 transition duration-300 hover:opacity-100">
-                        <div className="flex h-full items-center justify-center bg-[#2563EB]/82 p-6 backdrop-blur-sm">
-                          <ScrollToLeadCta
-                            className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#2563EB] shadow-lg"
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                            View Live
-                          </ScrollToLeadCta>
-                        </div>
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
-                        <p className="text-xs font-semibold uppercase tracking-[0.26em] text-white/75">
-                          {activeItem.businessType}
-                        </p>
-                        <h3 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">
-                          {activeItem.title}
-                        </h3>
-                        <p className="mt-2 text-base font-medium text-[#99f6e4]">
-                          {activeItem.result}
-                        </p>
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </div>
+        <AnimatedSection className="relative mt-8">
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-white to-transparent md:hidden" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-white to-transparent md:hidden" />
+          <div className="flex gap-3 overflow-x-auto px-1 py-2 [scrollbar-width:none] md:flex-wrap md:justify-center [&::-webkit-scrollbar]:hidden">
+            {filters.map((filter) => {
+              const Icon = filter.icon;
+              const active = activeFilter === filter.label;
 
-              <div className="rounded-[1.6rem] border border-[#E5E7EB] bg-white p-6 sm:p-8">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#2563EB]">
-                      Growth snapshot
-                    </p>
-                    <h3 className="mt-2 text-2xl font-semibold text-[#1A1A1A]">{activeItem.title}</h3>
-                  </div>
-                  <div className="flex gap-2">
+              return (
+                <button
+                  key={filter.label}
+                  type="button"
+                  onClick={() => changeFilter(filter.label)}
+                  className={cn(
+                    "inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition",
+                    active
+                      ? "bg-[#2563EB] text-white shadow-lg shadow-blue-600/20"
+                      : "border border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-[#2563EB]",
+                  )}
+                >
+                  {Icon ? <Icon className="h-4 w-4" /> : null}
+                  {filter.label}
+                </button>
+              );
+            })}
+          </div>
+        </AnimatedSection>
+
+        {isLoading ? <PortfolioSkeleton /> : null}
+
+        {!isLoading && filteredItems.length ? (
+          <>
+            <div className="mt-12 hidden grid-cols-3 gap-6 lg:grid">
+              {filteredItems.map((item, index) => (
+                <AnimatedSection key={item.id} delay={index * 0.05}>
+                  <PortfolioCard item={item} priority={index < 3} />
+                </AnimatedSection>
+              ))}
+            </div>
+
+            <div className="mt-10 lg:hidden">
+              <div
+                className="relative"
+                onTouchStart={(event) => setTouchStart(event.touches[0].clientX)}
+                onTouchEnd={handleTouchEnd}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {activeItem ? (
+                    <motion.div
+                      key={`${activeItem.id}-${activeFilter}`}
+                      initial={{ opacity: 0, x: 36 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -36 }}
+                      transition={{ duration: 0.32, ease: "easeInOut" }}
+                    >
+                      <PortfolioCard item={activeItem} priority />
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+
+                {filteredItems.length > 1 ? (
+                  <>
                     <button
                       type="button"
-                      onClick={() =>
-                        setCurrentIndex(
-                          (prev) => (prev - 1 + portfolioItems.length) % portfolioItems.length,
-                        )
-                      }
+                      onClick={goToPrevious}
                       aria-label="Previous portfolio item"
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] text-[#1A1A1A] transition hover:border-[#2563EB] hover:text-[#2563EB]"
+                      className="absolute -left-2 top-1/2 z-20 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-lg transition hover:border-[#2563EB] hover:text-[#2563EB]"
                     >
                       <ChevronLeft className="h-5 w-5" />
                     </button>
                     <button
                       type="button"
-                      onClick={() => setCurrentIndex((prev) => (prev + 1) % portfolioItems.length)}
+                      onClick={goToNext}
                       aria-label="Next portfolio item"
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] text-[#1A1A1A] transition hover:border-[#2563EB] hover:text-[#2563EB]"
+                      className="absolute -right-2 top-1/2 z-20 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-lg transition hover:border-[#2563EB] hover:text-[#2563EB]"
                     >
                       <ChevronRight className="h-5 w-5" />
                     </button>
-                  </div>
-                </div>
+                  </>
+                ) : null}
+              </div>
 
-                <p className="mt-5 text-base leading-8 text-[#6B7280]">{activeItem.description}</p>
-
-                <div className="mt-6 rounded-[1.4rem] bg-[#f8fafc] p-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#6B7280]">
-                    Result highlight
-                  </p>
-                  <p className="mt-3 text-2xl font-semibold text-[#1A1A1A]">{activeItem.result}</p>
-                  <p className="mt-2 text-sm leading-6 text-[#6B7280]">
-                    Designed to make the offer clearer, remove hesitation, and get visitors to act faster.
-                  </p>
-                </div>
-
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {portfolioItems.map((item, index) => (
+              {filteredItems.length > 1 ? (
+                <div className="mt-6 flex justify-center gap-2">
+                  {filteredItems.map((item, index) => (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => setCurrentIndex(index)}
-                      className={`rounded-2xl border px-4 py-4 text-left transition ${
-                        index === currentIndex
-                          ? "border-[#2563EB] bg-[#EFF6FF]"
-                          : "border-[#E5E7EB] bg-white hover:border-[#2563EB]/20"
-                      }`}
-                    >
-                      <p className="text-sm font-semibold text-[#1A1A1A]">{item.title}</p>
-                      <p className="mt-1 text-xs uppercase tracking-[0.2em] text-[#6B7280]">{item.businessType}</p>
-                      <p className="mt-2 text-sm text-[#2563EB]">{item.result}</p>
-                    </button>
+                      aria-label={`Show ${item.name}`}
+                      className={cn(
+                        "h-2.5 rounded-full transition-all",
+                        index === currentIndex ? "w-8 bg-[#2563EB]" : "w-2.5 bg-slate-300",
+                      )}
+                    />
                   ))}
+                </div>
+              ) : null}
+            </div>
+          </>
+        ) : null}
+
+        {!isLoading && !filteredItems.length ? (
+          <div className="mt-12 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500">
+            No portfolio items found for this category.
+          </div>
+        ) : null}
+
+        <AnimatedSection className="mt-12">
+          <div className="flex flex-col gap-6 rounded-2xl bg-blue-50 p-6 shadow-sm sm:p-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-lg shadow-blue-600/20">
+                <Rocket className="h-7 w-7" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-[#0F172A]">Want a website like these for your business?</h3>
+                <p className="mt-2 text-sm leading-6 text-[#475569]">
+                  Let&apos;s build a high-converting website that brings real customers.
+                </p>
+                <div className="mt-4 flex items-center gap-3">
+                  <div className="flex -space-x-3">
+                    {["A", "I", "E"].map((avatar, index) => (
+                      <div
+                        key={avatar}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-blue-50 bg-white text-xs font-bold text-[#2563EB] shadow-sm"
+                        style={{ zIndex: 3 - index }}
+                      >
+                        {avatar}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-sm font-semibold text-[#0F172A]">100+ Businesses Already Trust Us</p>
                 </div>
               </div>
             </div>
+
+            <ScrollToLeadCta className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2563EB] px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8]">
+              Get Free Consultation
+              <ArrowRight className="h-4 w-4" />
+            </ScrollToLeadCta>
           </div>
         </AnimatedSection>
       </div>

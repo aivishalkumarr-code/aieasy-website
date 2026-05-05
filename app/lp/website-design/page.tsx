@@ -29,6 +29,7 @@ import { LeadForm } from "./components/LeadForm";
 import { LpFooter } from "./components/LpFooter";
 import { LpHeader } from "./components/LpHeader";
 import { MobileStickyCta } from "./components/MobileStickyCta";
+import { PortfolioSection } from "./components/PortfolioSection";
 import { ScrollToLeadCta } from "./components/ScrollToLeadCta";
 
 export const metadata: Metadata = {
@@ -264,33 +265,6 @@ const includedItems = [
   "Speed optimization",
   "Google Analytics setup",
   "1-year support",
-] as const;
-
-const portfolioExamples = [
-  {
-    title: "Real Estate Website",
-    type: "Project showcase website",
-    for: "Property consultants and real estate agencies",
-    goal: "Capture buyer enquiries with project pages, location highlights and call CTAs.",
-  },
-  {
-    title: "Ecommerce Website",
-    type: "Online store layout",
-    for: "Product businesses and D2C brands",
-    goal: "Guide shoppers through categories, product details, cart and checkout setup.",
-  },
-  {
-    title: "Clinic Website",
-    type: "Appointment-focused website",
-    for: "Clinics, salons and appointment-based services",
-    goal: "Make services, timings, location and booking actions easy to find on mobile.",
-  },
-  {
-    title: "Service Business Website",
-    type: "Lead generation website",
-    for: "Consultants, agencies and local service companies",
-    goal: "Explain services clearly and turn visitors into calls, WhatsApp chats and form leads.",
-  },
 ] as const;
 
 const pricingPlans = [
@@ -842,33 +816,7 @@ export default function WebsiteDesignLandingPage() {
           </div>
         </section>
 
-        <section id="portfolio" className="bg-white py-12 lg:py-24">
-          <div className={containerClass}>
-            <SectionIntro
-              eyebrow="WEBSITE EXAMPLES"
-              title="Website Layouts Designed for Real Business Goals"
-              description="Explore website styles for service businesses, ecommerce stores, consultants, clinics and local companies."
-            />
-            <div className="mt-12 grid gap-6 md:grid-cols-2">
-              {portfolioExamples.map((item) => (
-                <article key={item.title} className="rounded-3xl border border-[#E2E8F0] bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)]">
-                  <BrowserMockup title={item.title} />
-                  <div className="mt-6">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">{item.type}</p>
-                    <h3 className="mt-2 text-xl font-bold text-[#0F172A]">{item.title}</h3>
-                    <div className="mt-4 space-y-3 text-sm leading-6 text-[#475569]">
-                      <p><span className="font-semibold text-[#0F172A]">Who it is for:</span> {item.for}</p>
-                      <p><span className="font-semibold text-[#0F172A]">Main conversion goal:</span> {item.goal}</p>
-                    </div>
-                    <ScrollToLeadCta className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#2563EB] transition hover:text-[#1D4ED8]">
-                      View Example <ArrowRight className="h-4 w-4" />
-                    </ScrollToLeadCta>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        <PortfolioSection />
 
         <section id="pricing" className="scroll-mt-24 bg-[#F8FAFC] py-12 lg:py-24">
           <div className={containerClass}>
