@@ -185,7 +185,7 @@ const getDisplayItem = (item: PortfolioItem) => {
     id: item.id,
     brand: item.title || copy.brand,
     category: item.category,
-    image: item.image_url || copy.image,
+    image: item.image_url?.trim() || copy.image,
     headline: item.description?.trim() || copy.headline,
     stats: item.stats?.length ? item.stats : copy.stats,
     features: item.features?.length ? item.features : defaultFeatures,

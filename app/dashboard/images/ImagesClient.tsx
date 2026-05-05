@@ -17,6 +17,7 @@ import {
   XCircle,
 } from "lucide-react";
 
+import { assignPortfolioImage } from "@/app/dashboard/actions/portfolio";
 import {
   deleteManagedImage,
   updateImage,
@@ -26,10 +27,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { ImageCategory, ManagedImage } from "@/types";
+import type { ImageCategory, ManagedImage, PortfolioItem } from "@/types";
 
 interface ImagesClientProps {
   initialImages: ManagedImage[];
+  initialPortfolioItems: PortfolioItem[];
 }
 
 interface Feedback {
@@ -75,10 +77,13 @@ const readImageSize = (file: File): Promise<{ width: number | null; height: numb
 
 const isCategory = (value: string): value is ImageCategory => categories.includes(value as ImageCategory);
 
-export function ImagesClient({ initialImages }: ImagesClientProps) {
+export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesClientProps) {
   const [images, setImages] = useState(initialImages);
+  const [portfolioItems, setPortfolioItems] = useState(initialPortfolioItems);
+  const [activeView, setActiveView] = useState<"all" | "portfolio">("all");
   const [selectedCategory, setSelectedCategory] = useState<ImageCategory>("General");
   const [activeFilter, setActiveFilter] = useState<ImageCategory | "All">("All");
+  const [selectedPortfolioItemId, setSelectedPortfolioItemId] = useState(initialPortfolioItems[0]?.id ?? "");
   const [dragActive, setDragActive] = useState(false);
   const [replaceDragActive, setReplaceDragActive] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -100,6 +105,21 @@ export function ImagesClient({ initialImages }: ImagesClientProps) {
         ? images
         : images.filter((image) => (image.category ?? "General") === activeFilter),
     [activeFilter, images],
+  );
+
+  const portfolioImages = useMemo(
+    () => images.filter((image) => (image.category ?? "General") === "Portfolio"),
+    [images],
+  );
+
+  const selectedPortfolioItem = useMemo(
+    () => portfolioItems.find((item) => item.id === selectedPortfolioItemId) ?? portfolioItems[0] ?? null,
+    [portfolioItems, selectedPortfolioItemId],
+  );
+
+  const portfolioItemsNeedingImages = useMemo(
+    () => portfolioItems.filter((item) => !item.image_id),
+    [portfolioItems],
   );
 
   const validateFile = (file: File) => {
@@ -237,6 +257,26 @@ export function ImagesClient({ initialImages }: ImagesClientProps) {
       setPreviewImage((current) => (current?.id === image.id ? result.data! : current));
       setReplaceTarget((current) => (current?.id === image.id ? result.data! : current));
       setFeedback({ type: "success", message: result.message ?? "Image category updated." });
+    });
+  };
+
+  const handleAssignToPortfolio = (image: ManagedImage, portfolioItemId = selectedPortfolioItem?.id ?? "") => {
+    if (!portfolioItemId) {
+      setFeedback({ type: "error", message: "Choose a portfolio item before assigning an image." });
+      return;
+    }
+
+    startTransition(async () => {
+      const result = await assignPortfolioImage(portfolioItemId, image.id);
+
+      if (!result.success || !result.data) {
+        setFeedback({ type: "error", message: result.message ?? "Unable to assign portfolio image." });
+        return;
+      }
+
+      setPortfolioItems((current) => current.map((item) => (item.id === result.data!.id ? result.data! : item)));
+      setImages((current) => current.map((entry) => (entry.id === image.id ? { ...entry, category: "Portfolio" } : entry)));
+      setFeedback({ type: "success", message: result.message ?? `Assigned image to ${result.data.title}.` });
     });
   };
 
@@ -421,6 +461,28 @@ export function ImagesClient({ initialImages }: ImagesClientProps) {
         </div>
       </section>
 
+      <div className="flex flex-wrap gap-2 rounded-[1.5rem] border border-[#DDE7E3] bg-white p-2 shadow-card">
+        {[
+          { id: "all" as const, label: "All Images", count: images.length },
+          { id: "portfolio" as const, label: "Portfolio Images", count: portfolioImages.length },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveView(tab.id)}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-[1rem] px-4 py-2 text-sm font-semibold transition-colors",
+              activeView === tab.id
+                ? "bg-[#2563EB] text-white shadow-lg shadow-blue-600/20"
+                : "text-[#4B5563] hover:bg-[#EFF6FF] hover:text-[#2563EB]",
+            )}
+          >
+            {tab.label}
+            <span className={cn("rounded-full px-2 py-0.5 text-xs", activeView === tab.id ? "bg-white/20 text-white" : "bg-[#EFF6FF] text-[#2563EB]")}>{tab.count}</span>
+          </button>
+        ))}
+      </div>
+
       <section className="grid gap-4 xl:grid-cols-[0.86fr_1.14fr]">
         <div className="rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -550,8 +612,9 @@ export function ImagesClient({ initialImages }: ImagesClientProps) {
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">
-        {filteredImages.length ? (
+      {activeView === "all" ? (
+        <section className="rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">
+          {filteredImages.length ? (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {filteredImages.map((image) => {
               const isSelected = selectedImageIds.has(image.id);
@@ -663,7 +726,150 @@ export function ImagesClient({ initialImages }: ImagesClientProps) {
             </p>
           </div>
         )}
-      </section>
+        </section>
+      ) : (
+        <section className="space-y-4 rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-[#1A1A1A]">Portfolio Images</h3>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-[#6B7280]">
+                Select a portfolio item, then assign any image tagged with the Portfolio category.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-sm">
+              <span className="rounded-full bg-[#EFF6FF] px-3 py-1 font-medium text-[#2563EB]">
+                {portfolioImages.length} portfolio images
+              </span>
+              <span className="rounded-full bg-[#F4F6F2] px-3 py-1 font-medium text-[#4B5563]">
+                {portfolioItemsNeedingImages.length} need images
+              </span>
+            </div>
+          </div>
+
+          <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-[#64748B]">Portfolio items</h4>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedCategory("Portfolio");
+                    fileInputRef.current?.click();
+                  }}
+                  className="rounded-xl border-[#DDE7E3] bg-white text-[#2563EB] hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
+                >
+                  <UploadCloud className="h-4 w-4" />
+                  Upload Portfolio Image
+                </Button>
+              </div>
+
+              <div className="grid gap-3">
+                {portfolioItems.map((item) => {
+                  const active = selectedPortfolioItem?.id === item.id;
+
+                  return (
+                    <article
+                      key={item.id}
+                      className={cn(
+                        "grid gap-4 rounded-[1.25rem] border p-3 transition-colors sm:grid-cols-[112px_minmax(0,1fr)]",
+                        active ? "border-[#2563EB] bg-[#EFF6FF]" : "border-[#E5E7EB] bg-white hover:border-[#2563EB]/50",
+                      )}
+                    >
+                      <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-[#F4F6F2]">
+                        {item.image_url ? (
+                          <img src={item.image_url} alt={item.title} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-[#2563EB]">
+                            <ImageIcon className="h-6 w-6" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0 space-y-3">
+                        <div>
+                          <p className="truncate text-sm font-semibold text-[#1A1A1A]">{item.title}</p>
+                          <p className="mt-1 text-xs text-[#6B7280]">{item.category} · {item.image_id ? "Custom image assigned" : "Using default image"}</p>
+                        </div>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={active ? "default" : "outline"}
+                          onClick={() => {
+                            setSelectedPortfolioItemId(item.id);
+                            setSelectedCategory("Portfolio");
+                          }}
+                          className={cn(
+                            "rounded-xl",
+                            active
+                              ? "bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
+                              : "border-[#DDE7E3] bg-white text-[#2563EB] hover:bg-[#EFF6FF] hover:text-[#1D4ED8]",
+                          )}
+                        >
+                          Upload/Assign Image
+                        </Button>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-[#64748B]">
+                Assign to {selectedPortfolioItem?.title ?? "portfolio item"}
+              </h4>
+
+              {portfolioImages.length ? (
+                <div className="grid gap-3 md:grid-cols-2">
+                  {portfolioImages.map((image) => {
+                    const assignedHere = selectedPortfolioItem?.image_id === image.id;
+
+                    return (
+                      <article key={image.id} className="overflow-hidden rounded-[1.25rem] border border-[#E5E7EB] bg-white shadow-sm">
+                        <button type="button" onClick={() => setPreviewImage(image)} className="group block aspect-[4/3] w-full overflow-hidden bg-[#F4F6F2] text-left">
+                          <img src={image.url} alt={image.filename} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+                        </button>
+                        <div className="space-y-3 p-3">
+                          <div>
+                            <p className="truncate text-sm font-semibold text-[#1A1A1A]" title={image.filename}>{image.filename}</p>
+                            <p className="mt-1 text-xs text-[#6B7280]">{image.width && image.height ? `${image.width}×${image.height}px` : "Dimensions unavailable"}</p>
+                          </div>
+                          <div className="grid gap-2 sm:grid-cols-2">
+                            <Button
+                              type="button"
+                              size="sm"
+                              disabled={isPending || !selectedPortfolioItem || assignedHere}
+                              onClick={() => handleAssignToPortfolio(image)}
+                              className="rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
+                            >
+                              {assignedHere ? "Assigned" : `Assign to ${selectedPortfolioItem?.title ?? "Portfolio"}`}
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" onClick={() => void handleCopy(image.url)} className="rounded-xl border-[#DDE7E3] bg-white">
+                              <Copy className="h-4 w-4" />
+                              Copy URL
+                            </Button>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="flex min-h-80 flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-[#DDE7E3] bg-[#FAFAF8] p-8 text-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#EFF6FF] text-[#2563EB]">
+                    <ImageIcon className="h-7 w-7" />
+                  </div>
+                  <h3 className="mt-4 text-base font-semibold text-[#1A1A1A]">No portfolio images yet</h3>
+                  <p className="mt-2 max-w-md text-sm leading-6 text-[#6B7280]">
+                    Upload an image with the Portfolio category, then assign it to a portfolio item.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {previewImage ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F172A]/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true">
