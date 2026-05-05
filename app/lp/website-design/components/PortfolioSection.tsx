@@ -48,11 +48,12 @@ const categoryMeta: Record<PortfolioCategory, { label: string; icon: LucideIcon;
 function PortfolioCard({ item, priority = false }: { item: PortfolioItem; priority?: boolean }) {
   const meta = categoryMeta[item.category];
   const Icon = meta.icon;
+  const imageUrl = item.image_url;
   return (
     <article className="group h-full overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
         <img
-          src={item.image_url}
+          src={imageUrl}
           alt={`${item.name} website screenshot`}
           loading={priority ? "eager" : "lazy"}
           className="h-full w-full object-cover transition duration-700 group-hover:scale-105"

@@ -146,7 +146,7 @@ export interface PortfolioItem {
   name: string;
   category: PortfolioCategory;
   image_url: string;
-  image_id: string | null;
+  image_id?: string | null;
   website_url: string | null;
   live_url: string | null;
   description: string | null;
