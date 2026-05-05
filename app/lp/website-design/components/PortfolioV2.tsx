@@ -171,7 +171,7 @@ const getDisplayItem = (item: PortfolioItem) => {
     id: item.id,
     brand: item.name || copy.brand,
     category: item.category,
-    image: item.image_url || copy.image,
+    image: item.image_url?.trim() || copy.image,
     headline: item.description?.trim() || copy.headline,
     websiteUrl: item.website_url,
   };

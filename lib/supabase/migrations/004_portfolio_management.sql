@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS public.portfolio_items (
   name TEXT NOT NULL,
   category TEXT NOT NULL CHECK (category IN ('Business', 'Healthcare', 'E-commerce', 'Education', 'Real Estate', 'Hospitality')),
   image_url TEXT NOT NULL,
+  image_id UUID REFERENCES public.images(id) ON DELETE SET NULL,
   website_url TEXT,
   description TEXT,
   display_order INTEGER DEFAULT 0,
@@ -15,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.portfolio_items (
 );
 
 CREATE INDEX IF NOT EXISTS portfolio_items_category_idx ON public.portfolio_items(category);
+CREATE INDEX IF NOT EXISTS portfolio_items_image_id_idx ON public.portfolio_items(image_id);
 CREATE INDEX IF NOT EXISTS portfolio_items_display_order_idx ON public.portfolio_items(display_order);
 CREATE INDEX IF NOT EXISTS portfolio_items_active_idx ON public.portfolio_items(is_active);
 

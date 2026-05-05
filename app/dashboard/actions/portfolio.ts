@@ -14,6 +14,8 @@ const PORTFOLIO_CATEGORIES: PortfolioCategory[] = [
   "Hospitality",
 ];
 const PORTFOLIO_VERSIONS: PortfolioVersion[] = ["v1", "v2"];
+const PORTFOLIO_SELECT_FIELDS = "id,name,category,image_url,image_id,website_url,description,display_order,is_active,created_at,updated_at";
+const LEGACY_PORTFOLIO_SELECT_FIELDS = "id,name,category,image_url,website_url,description,display_order,is_active,created_at,updated_at";
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_MIME_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const ACCEPTED_EXTENSIONS = ["png", "jpg", "jpeg", "webp"];
@@ -153,6 +155,7 @@ const normalizePortfolioVersion = (value: unknown): PortfolioVersion =>
 const normalizePortfolioItem = (item: PortfolioItem): PortfolioItem => ({
   ...item,
   category: normalizeCategory(item.category),
+  image_id: item.image_id ?? null,
   website_url: item.website_url?.trim() || null,
   description: item.description?.trim() || categoryLabels[normalizeCategory(item.category)],
   display_order: item.display_order ?? 0,
@@ -167,6 +170,40 @@ const sortPortfolioItems = (items: PortfolioItem[]) =>
 
     return a.name.localeCompare(b.name);
   });
+
+const applyAssignedPortfolioImages = async (
+  supabase: NonNullable<Awaited<ReturnType<typeof createClient>>>,
+  items: PortfolioItem[],
+) => {
+  const assignedImageIds = [...new Set(items.map((item) => item.image_id).filter(Boolean))] as string[];
+
+  if (!assignedImageIds.length) {
+    return items;
+  }
+
+  const { data, error } = await supabase
+    .from("images")
+    .select("id,url,category")
+    .in("id", assignedImageIds)
+    .eq("category", "Portfolio");
+
+  if (error || !data) {
+    return items;
+  }
+
+  const imageUrlById = new Map((data as Array<{ id: string; url: string }>).map((image) => [image.id, image.url]));
+
+  return items.map((item) => {
+    if (!item.image_id) {
+      return item;
+    }
+
+    return {
+      ...item,
+      image_url: imageUrlById.get(item.image_id) ?? defaultImageByCategory(item.category),
+    };
+  });
+};
 
 const validateFile = (file: File) => {
   const extension = getFileExtension(file);
@@ -203,6 +240,7 @@ const getStoragePathFromUrl = (url: string) => {
 const revalidatePortfolio = () => {
   revalidatePath("/lp/website-design");
   revalidatePath("/dashboard/portfolio");
+  revalidatePath("/dashboard/images");
 };
 
 const uploadPortfolioImage = async (file: File, category: PortfolioCategory) => {
@@ -334,15 +372,27 @@ export async function getPortfolioItems(): Promise<PortfolioItem[]> {
 
   const { data, error } = await supabase
     .from("portfolio_items")
-    .select("id,name,category,image_url,website_url,description,display_order,is_active,created_at,updated_at")
+    .select(PORTFOLIO_SELECT_FIELDS)
     .order("display_order", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (error || !data) {
+    const { data: legacyData, error: legacyError } = await supabase
+      .from("portfolio_items")
+      .select(LEGACY_PORTFOLIO_SELECT_FIELDS)
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    if (!legacyError && legacyData) {
+      const legacyItems = sortPortfolioItems((legacyData as PortfolioItem[]).map(normalizePortfolioItem));
+      return applyAssignedPortfolioImages(supabase, legacyItems);
+    }
+
     return sortPortfolioItems(defaultPortfolioItems);
   }
 
-  return sortPortfolioItems((data as PortfolioItem[]).map(normalizePortfolioItem));
+  const items = sortPortfolioItems((data as PortfolioItem[]).map(normalizePortfolioItem));
+  return applyAssignedPortfolioImages(supabase, items);
 }
 
 export async function getActivePortfolioItems(): Promise<PortfolioItem[]> {
@@ -542,6 +592,73 @@ export async function updatePortfolioItem(formData: FormData): Promise<ActionRes
   revalidatePortfolio();
 
   return { success: true, data: normalizePortfolioItem(data as PortfolioItem), message: "Portfolio item updated." };
+}
+
+export async function assignPortfolioImage(portfolioItemId: string, imageId: string | null): Promise<ActionResult<PortfolioItem>> {
+  const id = portfolioItemId.trim();
+
+  if (!id) {
+    return { success: false, message: "Portfolio item ID is required." };
+  }
+
+  if (!isSupabaseConfigured()) {
+    return { success: false, message: "Supabase is not configured. Connect Supabase to assign portfolio images." };
+  }
+
+  const supabase = await createClient();
+
+  if (!supabase) {
+    return { success: false, message: "Supabase client unavailable." };
+  }
+
+  const { data: existingData, error: existingError } = await supabase
+    .from("portfolio_items")
+    .select(PORTFOLIO_SELECT_FIELDS)
+    .eq("id", id)
+    .single();
+
+  if (existingError || !existingData) {
+    return { success: false, message: "Portfolio item not found. Run lib/supabase/migrations/006_portfolio_image_assignments.sql in Supabase, then retry." };
+  }
+
+  const existing = normalizePortfolioItem(existingData as PortfolioItem);
+  let nextImageUrl = defaultImageByCategory(existing.category);
+  let nextImageId: string | null = null;
+
+  if (imageId) {
+    const { data: imageData, error: imageError } = await supabase
+      .from("images")
+      .select("id,url,category")
+      .eq("id", imageId)
+      .eq("category", "Portfolio")
+      .single();
+
+    if (imageError || !imageData) {
+      return { success: false, message: "Choose an image tagged as Portfolio." };
+    }
+
+    nextImageUrl = imageData.url;
+    nextImageId = imageData.id;
+  }
+
+  const { data, error } = await supabase
+    .from("portfolio_items")
+    .update({ image_id: nextImageId, image_url: nextImageUrl })
+    .eq("id", id)
+    .select(PORTFOLIO_SELECT_FIELDS)
+    .single();
+
+  if (error || !data) {
+    return { success: false, message: "Unable to assign portfolio image. Run lib/supabase/migrations/006_portfolio_image_assignments.sql in Supabase, then retry." };
+  }
+
+  revalidatePortfolio();
+
+  return {
+    success: true,
+    data: normalizePortfolioItem(data as PortfolioItem),
+    message: imageId ? "Portfolio image assigned." : "Portfolio image reset to default.",
+  };
 }
 
 export async function deletePortfolioItem(item: PortfolioItem): Promise<ActionResult<string>> {

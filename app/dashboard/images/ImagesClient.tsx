@@ -23,13 +23,15 @@ import {
   updateImageCategory,
   uploadManagedImage,
 } from "@/app/dashboard/actions/images";
+import { assignPortfolioImage } from "@/app/dashboard/actions/portfolio";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { ImageCategory, ManagedImage } from "@/types";
+import type { ImageCategory, ManagedImage, PortfolioItem } from "@/types";
 
 interface ImagesClientProps {
   initialImages: ManagedImage[];
+  initialPortfolioItems: PortfolioItem[];
 }
 
 interface Feedback {
@@ -75,8 +77,9 @@ const readImageSize = (file: File): Promise<{ width: number | null; height: numb
 
 const isCategory = (value: string): value is ImageCategory => categories.includes(value as ImageCategory);
 
-export function ImagesClient({ initialImages }: ImagesClientProps) {
+export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesClientProps) {
   const [images, setImages] = useState(initialImages);
+  const [portfolioItems, setPortfolioItems] = useState(initialPortfolioItems);
   const [selectedCategory, setSelectedCategory] = useState<ImageCategory>("General");
   const [activeFilter, setActiveFilter] = useState<ImageCategory | "All">("All");
   const [dragActive, setDragActive] = useState(false);
@@ -100,6 +103,11 @@ export function ImagesClient({ initialImages }: ImagesClientProps) {
         ? images
         : images.filter((image) => (image.category ?? "General") === activeFilter),
     [activeFilter, images],
+  );
+
+  const portfolioImages = useMemo(
+    () => images.filter((image) => (image.category ?? "General") === "Portfolio"),
+    [images],
   );
 
   const validateFile = (file: File) => {
@@ -237,6 +245,22 @@ export function ImagesClient({ initialImages }: ImagesClientProps) {
       setPreviewImage((current) => (current?.id === image.id ? result.data! : current));
       setReplaceTarget((current) => (current?.id === image.id ? result.data! : current));
       setFeedback({ type: "success", message: result.message ?? "Image category updated." });
+    });
+  };
+
+  const handlePortfolioAssignment = (item: PortfolioItem, imageId: string) => {
+    const nextImageId = imageId || null;
+
+    startTransition(async () => {
+      const result = await assignPortfolioImage(item.id, nextImageId);
+
+      if (!result.success || !result.data) {
+        setFeedback({ type: "error", message: result.message ?? "Unable to assign portfolio image." });
+        return;
+      }
+
+      setPortfolioItems((current) => current.map((entry) => (entry.id === item.id ? result.data! : entry)));
+      setFeedback({ type: "success", message: result.message ?? "Portfolio image assigned." });
     });
   };
 
@@ -548,6 +572,82 @@ export function ImagesClient({ initialImages }: ImagesClientProps) {
             </div>
           ) : null}
         </div>
+      </section>
+
+      <section className="rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-[#1A1A1A]">Portfolio Images</h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-[#6B7280]">
+              Upload images with the Portfolio category, then assign each one to a landing page portfolio item.
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setSelectedCategory("Portfolio");
+              setActiveFilter("Portfolio");
+            }}
+            className="rounded-xl border-[#DDE7E3] bg-white text-[#2563EB] hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
+          >
+            Show Portfolio uploads
+          </Button>
+        </div>
+
+        {portfolioItems.length ? (
+          <div className="mt-5 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+            {portfolioItems.map((item) => {
+              const assignedImage =
+                portfolioImages.find((image) => image.id === item.image_id) ??
+                portfolioImages.find((image) => image.url === item.image_url) ??
+                null;
+              const assignedImageId = assignedImage?.id ?? "";
+
+              return (
+                <article key={item.id} className="overflow-hidden rounded-[1.5rem] border border-[#E5E7EB] bg-white shadow-sm">
+                  <div className="relative aspect-[16/10] bg-[#F4F6F2]">
+                    <img src={assignedImage?.url ?? item.image_url} alt={item.name} className="h-full w-full object-cover" />
+                    <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#2563EB] shadow-sm">
+                      {item.category}
+                    </span>
+                  </div>
+                  <div className="space-y-3 p-4">
+                    <div>
+                      <h4 className="truncate text-sm font-semibold text-[#1A1A1A]">{item.name}</h4>
+                      <p className="mt-1 text-xs text-[#6B7280]">
+                        {assignedImage ? `Assigned: ${assignedImage.filename}` : "Using default portfolio image"}
+                      </p>
+                    </div>
+                    <select
+                      value={assignedImageId}
+                      disabled={isPending}
+                      onChange={(event) => handlePortfolioAssignment(item, event.target.value)}
+                      className="h-10 w-full rounded-xl border border-[#DDE7E3] bg-[#FAFAF8] px-3 text-sm text-[#1A1A1A] outline-none focus:border-[#2563EB] disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <option value="">Use default image</option>
+                      {portfolioImages.map((image) => (
+                        <option key={image.id} value={image.id}>
+                          {image.filename}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="mt-5 rounded-2xl border border-dashed border-[#DDE7E3] bg-[#FAFAF8] p-6 text-center text-sm text-[#6B7280]">
+            Portfolio items will appear here after they are added in Dashboard → Portfolio.
+          </div>
+        )}
+
+        {!portfolioImages.length ? (
+          <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-[#1D4ED8]">
+            No Portfolio uploads yet. Choose Portfolio in the upload category and add the real estate, education, or restaurant image.
+          </div>
+        ) : null}
       </section>
 
       <section className="rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">

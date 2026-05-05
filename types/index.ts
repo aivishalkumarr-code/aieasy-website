@@ -144,6 +144,7 @@ export interface PortfolioItem {
   name: string;
   category: PortfolioCategory;
   image_url: string;
+  image_id?: string | null;
   website_url: string | null;
   description: string | null;
   display_order: number;
@@ -156,6 +157,7 @@ export interface PortfolioInput {
   name: string;
   category: PortfolioCategory;
   image_url: string;
+  image_id?: string | null;
   website_url?: string | null;
   description?: string | null;
   display_order?: number;
