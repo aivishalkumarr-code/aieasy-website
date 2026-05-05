@@ -187,34 +187,6 @@ const businessTypeCards = [
   },
 ] as const;
 
-const websiteTypes = [
-  {
-    title: "Business Website",
-    description:
-      "For service providers, consultants and local companies that need a professional online presence.",
-  },
-  {
-    title: "Ecommerce Website",
-    description:
-      "For businesses that want to sell products online with clear categories, product pages and checkout flow.",
-  },
-  {
-    title: "Landing Page",
-    description:
-      "For Google Ads, lead generation campaigns and focused service offers.",
-  },
-  {
-    title: "Real Estate Website",
-    description:
-      "For property consultants who need to showcase projects and capture buyer enquiries.",
-  },
-  {
-    title: "Clinic / Service Website",
-    description:
-      "For clinics, salons, repair services, home services and appointment-based businesses.",
-  },
-] as const;
-
 const benefits: Array<{ title: string; description: string; icon: LucideIcon }> = [
   {
     title: "Clear Business Positioning",
@@ -414,43 +386,6 @@ function SectionIntro({
         {title}
       </h2>
       <p className="mt-4 text-base leading-relaxed text-[#475569] md:text-lg">{description}</p>
-    </div>
-  );
-}
-
-function BrowserMockup({ title, compact = false }: { title: string; compact?: boolean }) {
-  return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex h-8 items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-3">
-        <span className="h-2.5 w-2.5 rounded-full bg-red-300" />
-        <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
-        <span className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
-        <span className="ml-2 h-3 flex-1 rounded-full bg-white" />
-      </div>
-      <div className={compact ? "space-y-3 p-4" : "space-y-4 p-4"}>
-        <div className="grid grid-cols-[1.2fr_0.8fr] gap-3">
-          <div className="space-y-2">
-            <div className="h-3 w-16 rounded-full bg-blue-100" />
-            <div className="h-4 w-4/5 rounded-full bg-slate-800" />
-            <div className="h-4 w-2/3 rounded-full bg-slate-800" />
-            <div className="h-2.5 w-full rounded-full bg-slate-200" />
-            <div className="h-2.5 w-4/5 rounded-full bg-slate-200" />
-          </div>
-          <div className="rounded-xl bg-gradient-to-br from-blue-100 to-slate-100 p-3">
-            <div className="h-full min-h-20 rounded-lg border border-white/70 bg-white/70" />
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          <div className="h-10 rounded-xl bg-slate-100" />
-          <div className="h-10 rounded-xl bg-blue-50" />
-          <div className="h-10 rounded-xl bg-slate-100" />
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <div className="h-3 w-28 rounded-full bg-slate-200" />
-          <div className="h-8 w-24 rounded-full bg-[#2563EB]" />
-        </div>
-        <span className="sr-only">{title} browser mockup</span>
-      </div>
     </div>
   );
 }
@@ -736,33 +671,6 @@ export default function WebsiteDesignLandingPage() {
         <ProblemSolutionSection />
 
         <BusinessTypeSection />
-
-        <section id="website-types" className="bg-[#F8FAFC] py-12 lg:py-24">
-          <div className={containerClass}>
-            <SectionIntro
-              eyebrow="WEBSITE TYPES"
-              title="Website Designs Built for Delhi Businesses"
-              description="Whether you run a clinic, coaching business, real estate service, ecommerce store or local company, we design websites that make your business look trustworthy and easy to contact."
-            />
-            <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-6">
-              {websiteTypes.map((item, index) => (
-                <article
-                  key={item.title}
-                  className="group rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)] lg:col-span-2 [&:nth-child(4)]:lg:col-start-2"
-                >
-                  <BrowserMockup title={item.title} compact />
-                  <div className="mt-5 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#EFF6FF] text-sm font-bold text-[#2563EB]">
-                      0{index + 1}
-                    </div>
-                    <h3 className="text-lg font-semibold text-[#0F172A]">{item.title}</h3>
-                  </div>
-                  <p className="mt-3 text-sm leading-6 text-[#475569]">{item.description}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
 
         <section id="benefits" className="bg-white py-12 lg:py-24">
           <div className={containerClass}>
