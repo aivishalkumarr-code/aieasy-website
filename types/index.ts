@@ -11,6 +11,13 @@ export type LogoType = "main" | "favicon" | "og_image";
 export type ImageCategory = "Landing Page" | "Hero" | "Portfolio" | "Services" | "Blog" | "General";
 export type PortfolioCategory = "Business" | "Healthcare" | "E-commerce" | "Education" | "Real Estate" | "Hospitality";
 export type PortfolioVersion = "v1" | "v2";
+export type LpSettingKey = "portfolio_version";
+export interface LpSetting {
+  key: LpSettingKey;
+  value: PortfolioVersion;
+  created_at?: string;
+  updated_at?: string;
+}
 export type EmailTemplateId =
   | "intro"
   | "proposal_followup"

@@ -3,6 +3,9 @@
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import {
   ArrowRight,
+  Award,
+  BadgeCheck,
+  BarChart3,
   Building2,
   ChevronLeft,
   ChevronRight,
@@ -16,6 +19,7 @@ import {
   SearchCheck,
   ShoppingBag,
   Smartphone,
+  TrendingUp,
   UtensilsCrossed,
   Zap,
   type LucideIcon,
@@ -54,12 +58,12 @@ const portfolioCopies: PortfolioCopy[] = [
   {
     brand: "Elite Taxation",
     category: "Business",
-    industry: "Finance",
+    industry: "Finance / Taxation",
     headline: "Maximize Refunds. Minimize Stress.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1000&h=680&fit=crop",
     stats: [
-      { value: "8,500+", label: "Returns" },
-      { value: "98%", label: "Satisfaction" },
+      { value: "8,500+", label: "Returns Filed" },
+      { value: "98%", label: "Client Satisfaction" },
       { value: "$2M+", label: "Refunds" },
       { value: "7+", label: "Years" },
     ],
@@ -119,7 +123,7 @@ const portfolioCopies: PortfolioCopy[] = [
   {
     brand: "Taste Heaven",
     category: "Hospitality",
-    industry: "Hospitality",
+    industry: "Hospitality / Restaurant",
     headline: "Delicious Food Great Experience",
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1000&h=680&fit=crop",
     stats: [
@@ -147,6 +151,8 @@ const categoryIcons: Record<PortfolioCategory, LucideIcon> = {
   "Real Estate": Home,
   Hospitality: UtensilsCrossed,
 };
+
+const statIcons = [BarChart3, BadgeCheck, TrendingUp, Award] as const;
 
 const getCopyKey = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
@@ -259,7 +265,7 @@ export function PortfolioV2() {
             Websites That Actually Bring <span className="text-[#2563EB]">Results</span>
           </h2>
           <p className="mt-4 text-base leading-relaxed text-[#475569] md:text-lg">
-            Explore conversion-focused websites built for real businesses, clear positioning, and measurable growth.
+            Real designs built for real businesses like yours.
           </p>
         </AnimatedSection>
 
@@ -301,11 +307,11 @@ export function PortfolioV2() {
                     <motion.article
                       key={`${item.id}-${offset}-${activeFilter}`}
                       className={cn(
-                        "absolute top-10 hidden w-[30%] overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-xl lg:block",
-                        offset < 0 ? "left-0" : "right-0",
+                        "absolute top-10 hidden w-[34%] transform-gpu overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.15)] lg:block",
+                        offset < 0 ? "-left-8" : "-right-8",
                       )}
-                      initial={{ opacity: 0, x: offset * 60, scale: 0.86 }}
-                      animate={{ opacity: 0.55, x: 0, scale: 0.88 }}
+                      initial={{ opacity: 0, x: offset * 70, scale: 0.82, rotateY: offset * -12 }}
+                      animate={{ opacity: 0.5, x: 0, scale: 0.86, rotateY: offset * -10 }}
                       transition={{ duration: 0.35 }}
                     >
                       <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
@@ -335,7 +341,7 @@ export function PortfolioV2() {
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: direction * -80, scale: 0.96 }}
                     transition={{ duration: 0.38, ease: "easeInOut" }}
-                    className="relative z-10 mx-auto max-w-[760px] cursor-grab overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-[0_30px_90px_rgba(15,23,42,0.16)] active:cursor-grabbing"
+                    className="relative z-10 mx-auto max-w-[760px] touch-pan-y cursor-grab overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.15)] active:cursor-grabbing"
                   >
                     <div className="relative aspect-[16/11] overflow-hidden bg-slate-100 sm:aspect-[16/9]">
                       <img
@@ -351,12 +357,21 @@ export function PortfolioV2() {
                         <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-100">{activeItem.brand}</p>
                         <h3 className="mt-3 max-w-xl text-3xl font-bold tracking-tight sm:text-5xl">{activeItem.headline}</h3>
                         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                          {activeItem.stats.map((stat) => (
-                            <div key={`${stat.value}-${stat.label}`} className="rounded-2xl border border-white/15 bg-white/12 p-3 backdrop-blur">
-                              <p className="text-lg font-bold sm:text-2xl">{stat.value}</p>
-                              <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-white/70">{stat.label}</p>
-                            </div>
-                          ))}
+                          {activeItem.stats.map((stat, index) => {
+                            const StatIcon = statIcons[index % statIcons.length];
+
+                            return (
+                              <div key={`${stat.value}-${stat.label}`} className="rounded-xl bg-white p-3 text-[#0F172A] shadow-lg shadow-slate-950/10">
+                                <div className="flex items-center gap-2">
+                                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#2563EB]">
+                                    <StatIcon className="h-3.5 w-3.5" />
+                                  </span>
+                                  <p className="text-lg font-bold sm:text-2xl">{stat.value}</p>
+                                </div>
+                                <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">{stat.label}</p>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
@@ -367,17 +382,50 @@ export function PortfolioV2() {
                           <Clock3 className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-[#0F172A]">Built for speed, trust, and conversion</p>
-                          <p className="mt-1 text-sm text-slate-500">Responsive website design with conversion-focused sections.</p>
+                          <p className="text-sm font-bold text-[#0F172A]">{activeItem.brand}</p>
+                          <p className="mt-1 text-sm text-slate-500">{activeItem.industry} website built for speed, trust, and conversion.</p>
                         </div>
                       </div>
-                      <ScrollToLeadCta className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2563EB] px-5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8]">
-                        Get Similar Website
-                        <ArrowRight className="h-4 w-4" />
-                      </ScrollToLeadCta>
+                      {activeItem.websiteUrl ? (
+                        <a
+                          href={activeItem.websiteUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2563EB] px-5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8]"
+                        >
+                          View Live Website
+                          <ArrowRight className="h-4 w-4" />
+                        </a>
+                      ) : (
+                        <ScrollToLeadCta className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2563EB] px-5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8]">
+                          View Live Website
+                          <ArrowRight className="h-4 w-4" />
+                        </ScrollToLeadCta>
+                      )}
                     </div>
                   </motion.article>
                 </AnimatePresence>
+
+                {displayItems.length > 1 ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={goToPrevious}
+                      aria-label="Previous portfolio item"
+                      className="absolute left-2 top-[38%] z-20 hidden h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-700 shadow-lg backdrop-blur transition hover:border-[#2563EB] hover:text-[#2563EB] md:flex lg:-left-2"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goToNext}
+                      aria-label="Next portfolio item"
+                      className="absolute right-2 top-[38%] z-20 hidden h-12 w-12 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-lg shadow-blue-600/20 transition hover:bg-[#1D4ED8] md:flex lg:-right-2"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  </>
+                ) : null}
               </div>
 
               {displayItems.length > 1 ? (

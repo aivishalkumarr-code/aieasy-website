@@ -148,7 +148,7 @@ const normalizeNumber = (value: FormDataEntryValue | null, fallback = 0) => {
 };
 
 const normalizePortfolioVersion = (value: unknown): PortfolioVersion =>
-  PORTFOLIO_VERSIONS.includes(value as PortfolioVersion) ? (value as PortfolioVersion) : "v1";
+  PORTFOLIO_VERSIONS.includes(value as PortfolioVersion) ? (value as PortfolioVersion) : "v2";
 
 const normalizePortfolioItem = (item: PortfolioItem): PortfolioItem => ({
   ...item,
@@ -246,26 +246,26 @@ export const getDefaultPortfolioItems = async () => sortPortfolioItems(defaultPo
 
 export async function getPortfolioVersion(): Promise<PortfolioVersion> {
   if (!isSupabaseConfigured()) {
-    return "v1";
+    return "v2";
   }
 
   const supabase = await createClient();
 
   if (!supabase) {
-    return "v1";
+    return "v2";
   }
 
   const { data, error } = await supabase
-    .from("settings")
-    .select("portfolio_version")
-    .limit(1)
+    .from("lp_settings")
+    .select("value")
+    .eq("key", "portfolio_version")
     .maybeSingle();
 
   if (error || !data) {
-    return "v1";
+    return "v2";
   }
 
-  return normalizePortfolioVersion(data.portfolio_version);
+  return normalizePortfolioVersion(data.value);
 }
 
 export async function setPortfolioVersion(version: PortfolioVersion): Promise<ActionResult<PortfolioVersion>> {
@@ -287,25 +287,15 @@ export async function setPortfolioVersion(version: PortfolioVersion): Promise<Ac
   }
 
   const { data, error } = await supabase
-    .from("settings")
-    .update({ portfolio_version: portfolioVersion })
-    .neq("portfolio_version", "__never__")
-    .select("portfolio_version")
-    .limit(1)
-    .maybeSingle();
-
-  if (!error && data) {
-    revalidatePortfolio();
-    return { success: true, data: normalizePortfolioVersion(data.portfolio_version), message: "Portfolio display style saved." };
-  }
-
-  const { data: insertedData, error: insertError } = await supabase
-    .from("settings")
-    .insert({ portfolio_version: portfolioVersion })
-    .select("portfolio_version")
+    .from("lp_settings")
+    .upsert(
+      { key: "portfolio_version", value: portfolioVersion },
+      { onConflict: "key" },
+    )
+    .select("value")
     .single();
 
-  if (insertError || !insertedData) {
+  if (error || !data) {
     return {
       success: false,
       message: "Unable to save display style. Run lib/supabase/migrations/005_portfolio_version.sql in Supabase, then retry.",
@@ -316,7 +306,7 @@ export async function setPortfolioVersion(version: PortfolioVersion): Promise<Ac
 
   return {
     success: true,
-    data: normalizePortfolioVersion(insertedData.portfolio_version),
+    data: normalizePortfolioVersion(data.value),
     message: "Portfolio display style saved.",
   };
 }

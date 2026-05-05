@@ -13,6 +13,7 @@ import {
   LogOut,
   Mail,
   Search,
+  SlidersHorizontal,
   Users,
 } from "lucide-react";
 
@@ -29,6 +30,7 @@ const navigation = [
   { href: "/dashboard/partners", label: "Partners", icon: Globe },
   { href: "/dashboard/images", label: "Images", icon: ImageIcon },
   { href: "/dashboard/portfolio", label: "Portfolio", icon: Briefcase },
+  { href: "/dashboard/portfolio#portfolio-version", label: "Portfolio Version", icon: SlidersHorizontal, child: true },
   { href: "/dashboard/seo", label: "SEO Tools", icon: Search },
   { href: "/dashboard/logo", label: "Logo", icon: Image },
 ];
@@ -77,10 +79,12 @@ export function DashboardSidebar({ className, logoUrl = "/logo.png" }: Dashboard
         <nav className="mt-8 space-y-1">
           {navigation.map((item) => {
             const Icon = item.icon;
+            const itemPath = item.href.split("#")[0];
             const active =
-              item.href === "/dashboard"
-                ? pathname === item.href
-                : pathname === item.href || pathname.startsWith(`${item.href}/`);
+              !item.child &&
+              (itemPath === "/dashboard"
+                ? pathname === itemPath
+                : pathname === itemPath || pathname.startsWith(`${itemPath}/`));
 
             return (
               <Link
@@ -89,6 +93,7 @@ export function DashboardSidebar({ className, logoUrl = "/logo.png" }: Dashboard
                 prefetch={true}
                 className={cn(
                   "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-150",
+                  item.child ? "ml-7 py-2 text-xs" : "",
                   active
                     ? "bg-[#2563EB] text-white shadow-sm"
                     : "text-[#4B5563] hover:bg-[#F4F6F2] hover:text-[#1A1A1A]",

@@ -301,12 +301,12 @@ export function PortfolioClient({ initialItems, initialVersion }: PortfolioClien
 
   return (
     <div className="space-y-4">
-      <section className="rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">
+      <section id="portfolio-version" className="scroll-mt-8 rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-[#1A1A1A]">Portfolio Display Style</h2>
+            <h2 className="text-xl font-semibold text-[#1A1A1A]">Portfolio Version</h2>
             <p className="mt-1 text-sm text-[#6B7280]">
-              Choose how portfolio work appears on the website design landing page.
+              Choose Portfolio Version: V1 (Grid) or V2 (Slider) for the website design landing page.
             </p>
           </div>
           <Button
@@ -316,7 +316,7 @@ export function PortfolioClient({ initialItems, initialVersion }: PortfolioClien
             className="h-11 rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8] disabled:opacity-60"
           >
             {isVersionPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
-            Save Display Style
+            Save Version
           </Button>
         </div>
 
@@ -324,13 +324,13 @@ export function PortfolioClient({ initialItems, initialVersion }: PortfolioClien
           {[
             {
               value: "v1" as PortfolioVersion,
-              title: "V1 Grid",
+              title: "V1 (Grid)",
               description: "Classic responsive card grid with category filters.",
             },
             {
               value: "v2" as PortfolioVersion,
-              title: "V2 Slider",
-              description: "Center-focused carousel with peek cards, stats, and CTA banner.",
+              title: "V2 (Slider)",
+              description: "Center-focused carousel with peek cards, stats overlays, and slider controls.",
             },
           ].map((option) => {
             const active = displayVersion === option.value;
