@@ -25,14 +25,13 @@ import {
   Zap,
 } from "lucide-react";
 
-import { getPortfolioVersion } from "@/app/dashboard/actions/portfolio";
+import { getActivePortfolioItems, getPortfolioVersion } from "@/app/dashboard/actions/portfolio";
 
 import { LeadForm } from "./components/LeadForm";
 import { LpFooter } from "./components/LpFooter";
 import { LpHeader } from "./components/LpHeader";
 import { MobileStickyCta } from "./components/MobileStickyCta";
 import { PortfolioSection } from "./components/PortfolioSection";
-import { PortfolioV2 } from "./components/PortfolioV2";
 import { ScrollToLeadCta } from "./components/ScrollToLeadCta";
 
 export const metadata: Metadata = {
@@ -576,7 +575,7 @@ function BusinessTypeSection() {
 }
 
 export default async function WebsiteDesignLandingPage() {
-  const portfolioVersion = await getPortfolioVersion();
+  const [portfolioVersion, portfolioItems] = await Promise.all([getPortfolioVersion(), getActivePortfolioItems()]);
 
   return (
     <div className="min-h-screen bg-white text-[#0F172A]">
@@ -729,7 +728,7 @@ export default async function WebsiteDesignLandingPage() {
           </div>
         </section>
 
-        {portfolioVersion === "v2" ? <PortfolioV2 /> : <PortfolioSection />}
+        <PortfolioSection items={portfolioItems} version={portfolioVersion} />
 
         <section id="pricing" className="scroll-mt-24 bg-[#F8FAFC] py-12 lg:py-24">
           <div className={containerClass}>

@@ -1,8 +1,15 @@
+import { getImages } from "@/app/dashboard/actions/images";
 import { getPortfolioItems, getPortfolioVersion } from "@/app/dashboard/actions/portfolio";
-import { PortfolioClient } from "@/app/dashboard/portfolio/PortfolioClient";
+import { PortfolioItemsClient } from "@/app/dashboard/portfolio/PortfolioItemsClient";
+import { PortfolioSettings } from "@/app/dashboard/portfolio/PortfolioSettings";
 
 export default async function PortfolioPage() {
-  const [items, version] = await Promise.all([getPortfolioItems(), getPortfolioVersion()]);
+  const [items, version, images] = await Promise.all([getPortfolioItems(), getPortfolioVersion(), getImages()]);
 
-  return <PortfolioClient initialItems={items} initialVersion={version} />;
+  return (
+    <div className="space-y-4">
+      <PortfolioSettings initialVersion={version} />
+      <PortfolioItemsClient initialItems={items} images={images} />
+    </div>
+  );
 }
