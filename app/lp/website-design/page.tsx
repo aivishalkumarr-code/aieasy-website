@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
+  Calendar,
   Check,
   CheckCircle2,
   ChevronRight,
@@ -10,7 +11,6 @@ import {
   Ghost,
   HandHeart,
   Headphones,
-  HelpCircle,
   MessageSquare,
   Phone,
   Rocket,
@@ -147,42 +147,42 @@ const businessTypeCards = [
     description: "Generate more leads and inquiries for your business.",
     cta: "Get More Leads",
     image:
-      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1560472354-b33ef0cb7d21?w=600&h=400&fit=crop",
   },
   {
     title: "Healthcare & Clinics",
     description: "Build trust and increase patient bookings online.",
     cta: "Increase Bookings",
     image:
-      "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=400&fit=crop",
   },
   {
     title: "E-commerce Stores",
     description: "Sell more with fast, secure and mobile-first stores.",
     cta: "Start Selling Online",
     image:
-      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop",
   },
   {
     title: "Education & Coaching",
     description: "Get more student inquiries and grow your enrollments.",
     cta: "Get More Students",
     image:
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop",
   },
   {
     title: "Real Estate",
     description: "Showcase listings beautifully and capture quality leads.",
     cta: "Get More Property Leads",
     image:
-      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
   },
   {
     title: "Hospitality & Food Businesses",
     description: "Get more bookings and online orders with ease.",
     cta: "Get More Bookings",
     image:
-      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop",
   },
 ] as const;
 
@@ -596,7 +596,7 @@ function ProblemSolutionSection() {
 
 function BusinessTypeSection() {
   return (
-    <section id="business-types" className="bg-[#F8FAFC] py-12 lg:py-24">
+    <section id="business-types" className="bg-[#F8FAFC] py-16 lg:py-24">
       <div className={containerClass}>
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">CATEGORIES</p>
@@ -612,17 +612,16 @@ function BusinessTypeSection() {
           {businessTypeCards.map((card) => (
             <article
               key={card.title}
-              className="group flex h-full min-h-[430px] flex-col overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg"
+              className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
-              <div className="relative h-64 overflow-hidden rounded-t-2xl bg-slate-100">
+              <div className="aspect-[3/2] overflow-hidden bg-slate-100">
                 <img
                   src={card.image}
                   alt={card.title}
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
-              <div className="flex flex-1 flex-col p-6">
+              <div className="flex flex-1 flex-col p-5">
                 <h3 className="text-xl font-bold text-[#0F172A]">{card.title}</h3>
                 <p className="mt-3 flex-1 text-sm leading-6 text-[#475569]">{card.description}</p>
                 <ScrollToLeadCta className="mt-6 inline-flex items-center gap-2 self-start text-sm font-semibold text-[#2563EB] transition-all hover:gap-3 hover:text-[#1D4ED8]">
@@ -633,23 +632,30 @@ function BusinessTypeSection() {
           ))}
         </div>
 
-        <div className="mt-10 rounded-3xl border border-blue-100 bg-white p-5 shadow-sm sm:p-6">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mt-10 rounded-2xl border border-blue-100 bg-blue-50 p-5 sm:p-6">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB]">
-                <HelpCircle className="h-7 w-7" />
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-blue-200 bg-white text-[#2563EB] shadow-sm">
+                <MessageSquare className="h-7 w-7" />
               </div>
               <div>
                 <p className="text-lg font-bold leading-snug text-[#0F172A]">
-                  Not sure what you need? Let us suggest the perfect website for your business.
+                  Not sure what you need?
                 </p>
-                <p className="mt-1 text-sm text-[#64748B]">No spam. No pressure. 100% Free.</p>
+                <p className="mt-1 text-sm leading-6 text-[#475569]">Let us suggest the perfect website for your business.</p>
               </div>
             </div>
-            <ScrollToLeadCta className="inline-flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-[#2563EB] px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
-              <MessageSquare className="h-4 w-4" />
-              Get Free Consultation
-            </ScrollToLeadCta>
+            <div className="hidden h-16 w-px bg-blue-200 lg:block" />
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center lg:flex-col lg:items-start xl:flex-row xl:items-center">
+              <ScrollToLeadCta className="inline-flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-[#2563EB] px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8] sm:w-auto">
+                <Calendar className="h-4 w-4" />
+                Get Free Consultation
+              </ScrollToLeadCta>
+              <p className="inline-flex items-center gap-2 text-sm font-medium text-[#475569]">
+                <ShieldCheck className="h-4 w-4 text-[#2563EB]" />
+                No spam. No pressure. 100% Free.
+              </p>
+            </div>
           </div>
         </div>
       </div>
