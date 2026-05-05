@@ -141,24 +141,38 @@ export interface ManagedImage {
 
 export interface PortfolioItem {
   id: string;
+  title: string;
+  client_name: string | null;
   name: string;
   category: PortfolioCategory;
   image_url: string;
+  image_id: string | null;
   website_url: string | null;
+  live_url: string | null;
   description: string | null;
+  stats: Array<{ label: string; value: string }>;
+  features: string[];
   display_order: number;
+  order_index: number;
   is_active: boolean;
   created_at?: string;
   updated_at?: string;
 }
 
 export interface PortfolioInput {
+  title: string;
   name: string;
   category: PortfolioCategory;
   image_url: string;
+  image_id?: string | null;
   website_url?: string | null;
+  live_url?: string | null;
   description?: string | null;
+  client_name?: string | null;
+  stats?: Array<{ label: string; value: string }>;
+  features?: string[];
   display_order?: number;
+  order_index?: number;
   is_active?: boolean;
 }
 

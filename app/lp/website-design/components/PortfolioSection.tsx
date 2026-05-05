@@ -17,11 +17,11 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState, type TouchEvent } from "react";
 
-import { getActivePortfolioItems } from "@/app/dashboard/actions/portfolio";
 import { cn } from "@/lib/utils";
-import type { PortfolioCategory, PortfolioItem } from "@/types";
+import type { PortfolioCategory, PortfolioItem, PortfolioVersion } from "@/types";
 
 import { AnimatedSection } from "./AnimatedSection";
+import { PortfolioV2 } from "./PortfolioV2";
 import { ScrollToLeadCta } from "./ScrollToLeadCta";
 
 type FilterValue = "All Projects" | PortfolioCategory;
@@ -44,27 +44,6 @@ const categoryMeta: Record<PortfolioCategory, { label: string; icon: LucideIcon;
   "Real Estate": { label: "Real Estate", icon: Home, accent: "from-[#047857] to-[#2563EB]" },
   Hospitality: { label: "Hospitality / Restaurant", icon: UtensilsCrossed, accent: "from-[#B91C1C] to-[#2563EB]" },
 };
-
-const skeletonCards = Array.from({ length: 3 }, (_, index) => index);
-
-function PortfolioSkeleton() {
-  return (
-    <div className="mt-12 grid gap-6 lg:grid-cols-3">
-      {skeletonCards.map((item) => (
-        <div key={item} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
-          <div className="aspect-[16/10] animate-pulse bg-slate-100" />
-          <div className="flex items-center gap-3 p-5">
-            <div className="h-11 w-11 animate-pulse rounded-2xl bg-slate-100" />
-            <div className="space-y-2">
-              <div className="h-4 w-32 animate-pulse rounded-full bg-slate-100" />
-              <div className="h-3 w-20 animate-pulse rounded-full bg-slate-100" />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function PortfolioCard({ item, priority = false }: { item: PortfolioItem; priority?: boolean }) {
   const meta = categoryMeta[item.category];
@@ -100,32 +79,19 @@ function PortfolioCard({ item, priority = false }: { item: PortfolioItem; priori
   );
 }
 
-export function PortfolioSection() {
-  const [items, setItems] = useState<PortfolioItem[]>([]);
+interface PortfolioSectionProps {
+  items: PortfolioItem[];
+  version: PortfolioVersion;
+}
+
+function PortfolioGrid({ items }: { items: PortfolioItem[] }) {
   const [activeFilter, setActiveFilter] = useState<FilterValue>("All Projects");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
   useEffect(() => {
-    let mounted = true;
-
-    getActivePortfolioItems()
-      .then((portfolioItems) => {
-        if (mounted) {
-          setItems(portfolioItems);
-        }
-      })
-      .finally(() => {
-        if (mounted) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    setCurrentIndex(0);
+  }, [items]);
 
   const filteredItems = useMemo(
     () =>
@@ -209,9 +175,7 @@ export function PortfolioSection() {
           </div>
         </AnimatedSection>
 
-        {isLoading ? <PortfolioSkeleton /> : null}
-
-        {!isLoading && filteredItems.length ? (
+        {filteredItems.length ? (
           <>
             <div className="mt-12 hidden grid-cols-3 gap-6 lg:grid">
               {filteredItems.map((item, index) => (
@@ -283,7 +247,7 @@ export function PortfolioSection() {
           </>
         ) : null}
 
-        {!isLoading && !filteredItems.length ? (
+        {!filteredItems.length ? (
           <div className="mt-12 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500">
             No portfolio items found for this category.
           </div>
@@ -326,4 +290,8 @@ export function PortfolioSection() {
       </div>
     </section>
   );
+}
+
+export function PortfolioSection({ items, version }: PortfolioSectionProps) {
+  return version === "v2" ? <PortfolioV2 items={items} /> : <PortfolioGrid items={items} />;
 }

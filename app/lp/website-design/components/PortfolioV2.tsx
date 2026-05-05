@@ -20,9 +20,9 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
-import { getActivePortfolioItems } from "@/app/dashboard/actions/portfolio";
 import { cn } from "@/lib/utils";
 import type { PortfolioCategory, PortfolioItem } from "@/types";
 
@@ -39,6 +39,11 @@ type PortfolioCopy = {
   image: string;
   stats: Array<{ value: string; label: string }>;
 };
+
+interface PortfolioV2Props {
+  items?: PortfolioItem[];
+  autoPlay?: boolean;
+}
 
 const filters: FilterValue[] = [
   "All Projects",
@@ -139,6 +144,8 @@ const featureIcons: Array<{ title: string; icon: LucideIcon }> = [
   { title: "24/7 Support", icon: Headphones },
 ];
 
+const defaultFeatures = featureIcons.map((feature) => feature.title);
+
 const categoryIcons: Record<PortfolioCategory, LucideIcon> = {
   Business: Building2,
   Healthcare: HeartPulse,
@@ -152,50 +159,49 @@ const getCopyKey = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g,
 
 const fallbackItems: PortfolioItem[] = portfolioCopies.map((item, index) => ({
   id: getCopyKey(item.brand),
+  title: item.brand,
   name: item.brand,
   category: item.category,
   image_url: item.image,
+  image_id: null,
+  client_name: item.brand,
   website_url: null,
+  live_url: null,
   description: item.headline,
+  stats: item.stats,
+  features: defaultFeatures,
+  order_index: index + 1,
   display_order: index + 1,
   is_active: true,
 }));
 
 const getDisplayItem = (item: PortfolioItem) => {
-  const copy = portfolioCopies.find((entry) => getCopyKey(entry.brand) === getCopyKey(item.name)) ??
+  const copy = portfolioCopies.find((entry) => getCopyKey(entry.brand) === getCopyKey(item.title)) ??
     portfolioCopies.find((entry) => entry.category === item.category) ??
     portfolioCopies[0];
 
   return {
     ...copy,
     id: item.id,
-    brand: item.name || copy.brand,
+    brand: item.title || copy.brand,
     category: item.category,
     image: item.image_url || copy.image,
     headline: item.description?.trim() || copy.headline,
-    websiteUrl: item.website_url,
+    stats: item.stats?.length ? item.stats : copy.stats,
+    features: item.features?.length ? item.features : defaultFeatures,
+    websiteUrl: item.live_url ?? item.website_url,
   };
 };
 
-export function PortfolioV2() {
-  const [items, setItems] = useState<PortfolioItem[]>(fallbackItems);
+export function PortfolioV2({ items: initialItems, autoPlay = true }: PortfolioV2Props) {
+  const [items, setItems] = useState<PortfolioItem[]>(initialItems?.length ? initialItems : fallbackItems);
   const [activeFilter, setActiveFilter] = useState<FilterValue>("All Projects");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
 
   useEffect(() => {
-    let mounted = true;
-
-    getActivePortfolioItems().then((portfolioItems) => {
-      if (mounted && portfolioItems.length) {
-        setItems(portfolioItems);
-      }
-    });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    setItems(initialItems?.length ? initialItems : fallbackItems);
+  }, [initialItems]);
 
   const filteredItems = useMemo(
     () => (activeFilter === "All Projects" ? items : items.filter((item) => item.category === activeFilter)),
@@ -250,6 +256,19 @@ export function PortfolioV2() {
     return displayItems[(currentIndex + offset + displayItems.length) % displayItems.length];
   };
 
+  useEffect(() => {
+    if (!autoPlay || displayItems.length < 2) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setDirection(1);
+      setCurrentIndex((current) => (current + 1) % displayItems.length);
+    }, 5500);
+
+    return () => window.clearInterval(timer);
+  }, [autoPlay, displayItems.length]);
+
   return (
     <section id="portfolio" className="scroll-mt-28 overflow-hidden bg-white py-12 lg:py-24">
       <div className="mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-8">
@@ -259,7 +278,7 @@ export function PortfolioV2() {
             Websites That Actually Bring <span className="text-[#2563EB]">Results</span>
           </h2>
           <p className="mt-4 text-base leading-relaxed text-[#475569] md:text-lg">
-            Explore conversion-focused websites built for real businesses, clear positioning, and measurable growth.
+            A glimpse of the websites we&apos;ve built that help businesses grow, get leads and increase revenue.
           </p>
         </AnimatedSection>
 
@@ -309,7 +328,7 @@ export function PortfolioV2() {
                       transition={{ duration: 0.35 }}
                     >
                       <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
-                        <img src={item.image} alt={`${item.brand} website screenshot`} className="h-full w-full object-cover" />
+                        <Image src={item.image} alt={`${item.brand} website screenshot`} fill sizes="30vw" className="object-cover" />
                         <div className="absolute inset-0 bg-slate-950/55" />
                         <div className="absolute bottom-0 p-6 text-white">
                           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
@@ -338,10 +357,13 @@ export function PortfolioV2() {
                     className="relative z-10 mx-auto max-w-[760px] cursor-grab overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-[0_30px_90px_rgba(15,23,42,0.16)] active:cursor-grabbing"
                   >
                     <div className="relative aspect-[16/11] overflow-hidden bg-slate-100 sm:aspect-[16/9]">
-                      <img
+                      <Image
                         src={activeItem.image}
                         alt={`${activeItem.brand} website screenshot`}
-                        className="h-full w-full object-cover"
+                        fill
+                        sizes="(max-width: 1024px) 92vw, 760px"
+                        priority
+                        className="object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/42 to-slate-950/10" />
                       <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white backdrop-blur">
@@ -371,10 +393,22 @@ export function PortfolioV2() {
                           <p className="mt-1 text-sm text-slate-500">Responsive website design with conversion-focused sections.</p>
                         </div>
                       </div>
-                      <ScrollToLeadCta className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2563EB] px-5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8]">
-                        Get Similar Website
-                        <ArrowRight className="h-4 w-4" />
-                      </ScrollToLeadCta>
+                      {activeItem.websiteUrl ? (
+                        <a
+                          href={activeItem.websiteUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2563EB] px-5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8]"
+                        >
+                          View Live Website
+                          <ArrowRight className="h-4 w-4" />
+                        </a>
+                      ) : (
+                        <ScrollToLeadCta className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2563EB] px-5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#1D4ED8]">
+                          View Live Website
+                          <ArrowRight className="h-4 w-4" />
+                        </ScrollToLeadCta>
+                      )}
                     </div>
                   </motion.article>
                 </AnimatePresence>
@@ -453,7 +487,7 @@ export function PortfolioV2() {
                 </div>
                 <div>
                   <h3 className="max-w-2xl text-2xl font-bold tracking-tight sm:text-3xl">
-                    Ready to get a website that brings real results?
+                    Want a website like these for your business?
                   </h3>
                   <div className="mt-5 flex items-center gap-4">
                     <div className="flex -space-x-3">
