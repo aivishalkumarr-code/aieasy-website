@@ -42,6 +42,10 @@ const pageMeta: Record<string, { title: string; description: string }> = {
     title: "Portfolio",
     description: "Manage landing page work samples, categories, images, and live links.",
   },
+  "/dashboard/blogs": {
+    title: "Blogs",
+    description: "Create, edit, and manage blog posts, categories, and SEO settings.",
+  },
   "/dashboard/partners": {
     title: "Partners",
     description: "Manage deployment platform logos shown on the homepage.",
