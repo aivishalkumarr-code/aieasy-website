@@ -1,5 +1,7 @@
 "use client";
 
+import "prosemirror-view/style/prosemirror.css";
+
 import { EditorContent, useEditor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
@@ -85,6 +87,7 @@ export function TiptapEditor({
   onChange,
   placeholder = "Start writing your blog post...",
 }: TiptapEditorProps) {
+  const [isClient, setIsClient] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -174,6 +177,10 @@ export function TiptapEditor({
   });
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
     if (!editor) {
       return;
     }
@@ -233,7 +240,7 @@ export function TiptapEditor({
       .run();
   };
 
-  if (!editor) {
+  if (!isClient || !editor) {
     return null;
   }
 
