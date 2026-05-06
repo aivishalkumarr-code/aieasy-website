@@ -8,7 +8,7 @@ export type DealStage =
 export type QuoteStatus = "Draft" | "Sent" | "Accepted" | "Expired";
 export type EmailStatus = "queued" | "sent" | "failed";
 export type LogoType = "main" | "favicon" | "og_image";
-export type ImageCategory = "Landing Page" | "Hero" | "Portfolio" | "Services" | "Blog" | "General";
+export type ImageCategory = "Landing Page" | "Hero" | "Portfolio" | "Services" | "Business Types" | "Blog" | "General";
 export type PortfolioCategory = "Business" | "Healthcare" | "E-commerce" | "Education" | "Real Estate" | "Hospitality";
 export type PortfolioVersion = "v1" | "v2";
 export type EmailTemplateId =
@@ -137,6 +137,16 @@ export interface ManagedImage {
   height: number | null;
   file_size: number | null;
   created_at?: string;
+}
+
+export interface BusinessTypeImage {
+  id: string;
+  url: string;
+  filename: string;
+  category: string;
+  width?: number;
+  height?: number;
+  business_type?: string;
 }
 
 export interface PortfolioItem {

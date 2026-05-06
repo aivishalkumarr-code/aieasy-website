@@ -21,17 +21,19 @@ import { assignPortfolioImage } from "@/app/dashboard/actions/portfolio";
 import {
   deleteManagedImage,
   updateImage,
+  updateBusinessTypeImage,
   updateImageCategory,
   uploadManagedImage,
 } from "@/app/dashboard/actions/images";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { ImageCategory, ManagedImage, PortfolioItem } from "@/types";
+import type { BusinessTypeImage, ImageCategory, ManagedImage, PortfolioItem } from "@/types";
 
 interface ImagesClientProps {
   initialImages: ManagedImage[];
   initialPortfolioItems: PortfolioItem[];
+  initialBusinessTypeImages: Record<string, BusinessTypeImage>;
 }
 
 interface Feedback {
@@ -39,8 +41,17 @@ interface Feedback {
   message: string;
 }
 
-const categories: ImageCategory[] = ["Landing Page", "Hero", "Portfolio", "Services", "Blog", "General"];
+const categories: ImageCategory[] = ["Landing Page", "Hero", "Portfolio", "Services", "Business Types", "Blog", "General"];
 const filters: Array<ImageCategory | "All"> = ["All", ...categories];
+const businessTypeOptions = [
+  { id: "business", label: "Business & Services" },
+  { id: "healthcare", label: "Healthcare & Clinics" },
+  { id: "ecommerce", label: "E-commerce Stores" },
+  { id: "education", label: "Education & Coaching" },
+  { id: "real-estate", label: "Real Estate" },
+  { id: "hospitality", label: "Hospitality & Food" },
+] as const;
+const businessTypeFilenameSeparator = "__";
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_MIME_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const ACCEPTED_EXTENSIONS = ["png", "jpg", "jpeg", "webp"];
@@ -77,11 +88,34 @@ const readImageSize = (file: File): Promise<{ width: number | null; height: numb
 
 const isCategory = (value: string): value is ImageCategory => categories.includes(value as ImageCategory);
 
-export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesClientProps) {
+const isBusinessType = (value: string) => businessTypeOptions.some((option) => option.id === value);
+
+const getBusinessTypeFromFilename = (filename: string) => {
+  const [candidate] = filename.split(businessTypeFilenameSeparator);
+  return isBusinessType(candidate) ? candidate : "";
+};
+
+const stripBusinessTypeFromFilename = (filename: string) => {
+  const businessType = getBusinessTypeFromFilename(filename);
+
+  if (!businessType) {
+    return filename;
+  }
+
+  return filename.slice(`${businessType}${businessTypeFilenameSeparator}`.length) || filename;
+};
+
+const withBusinessTypeFilename = (filename: string, businessType: string) => {
+  const cleanFilename = stripBusinessTypeFromFilename(filename);
+  return `${businessType}${businessTypeFilenameSeparator}${cleanFilename}`;
+};
+
+export function ImagesClient({ initialImages, initialPortfolioItems, initialBusinessTypeImages }: ImagesClientProps) {
   const [images, setImages] = useState(initialImages);
   const [portfolioItems, setPortfolioItems] = useState(initialPortfolioItems);
-  const [activeView, setActiveView] = useState<"all" | "portfolio">("all");
+  const [activeView, setActiveView] = useState<"all" | "portfolio" | "businessTypes">("all");
   const [selectedCategory, setSelectedCategory] = useState<ImageCategory>("General");
+  const [selectedBusinessType, setSelectedBusinessType] = useState<string>(businessTypeOptions[0].id);
   const [activeFilter, setActiveFilter] = useState<ImageCategory | "All">("All");
   const [selectedPortfolioItemId, setSelectedPortfolioItemId] = useState(initialPortfolioItems[0]?.id ?? "");
   const [dragActive, setDragActive] = useState(false);
@@ -111,6 +145,37 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
     () => images.filter((image) => (image.category ?? "General") === "Portfolio"),
     [images],
   );
+
+  const businessTypeImages = useMemo(
+    () => images.filter((image) => (image.category ?? "General") === "Business Types"),
+    [images],
+  );
+
+  const businessTypeImageMap = useMemo(() => {
+    const mappedImages: Record<string, BusinessTypeImage> = {};
+
+    for (const image of businessTypeImages) {
+      const businessType = getBusinessTypeFromFilename(image.filename);
+
+      if (!businessType || mappedImages[businessType]) {
+        continue;
+      }
+
+      mappedImages[businessType] = {
+        id: image.id,
+        url: image.url,
+        filename: stripBusinessTypeFromFilename(image.filename),
+        category: image.category ?? "Business Types",
+        width: image.width ?? undefined,
+        height: image.height ?? undefined,
+        business_type: businessType,
+      };
+    }
+
+    return mappedImages;
+  }, [businessTypeImages]);
+
+  const initialBusinessTypeImageCount = Object.keys(initialBusinessTypeImages).length;
 
   const selectedPortfolioItem = useMemo(
     () => portfolioItems.find((item) => item.id === selectedPortfolioItemId) ?? portfolioItems[0] ?? null,
@@ -152,6 +217,10 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
     const formData = new FormData();
     formData.append("file", file);
     formData.append("category", selectedCategory);
+
+    if (selectedCategory === "Business Types") {
+      formData.append("business_type", selectedBusinessType);
+    }
 
     if (dimensions.width) {
       formData.append("width", `${dimensions.width}`);
@@ -257,6 +326,36 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
       setPreviewImage((current) => (current?.id === image.id ? result.data! : current));
       setReplaceTarget((current) => (current?.id === image.id ? result.data! : current));
       setFeedback({ type: "success", message: result.message ?? "Image category updated." });
+    });
+  };
+
+  const handleBusinessTypeChange = (image: ManagedImage, businessType: string) => {
+    if (!isBusinessType(businessType)) {
+      return;
+    }
+
+    startTransition(async () => {
+      const previousImages = images;
+      setImages((current) =>
+        current.map((entry) =>
+          entry.id === image.id
+            ? { ...entry, category: "Business Types", filename: withBusinessTypeFilename(entry.filename, businessType) }
+            : entry,
+        ),
+      );
+
+      const result = await updateBusinessTypeImage(image.id, businessType);
+
+      if (!result.success || !result.data) {
+        setImages(previousImages);
+        setFeedback({ type: "error", message: result.message ?? "Unable to update business type image." });
+        return;
+      }
+
+      setImages((current) => current.map((entry) => (entry.id === image.id ? result.data! : entry)));
+      setPreviewImage((current) => (current?.id === image.id ? result.data! : current));
+      setReplaceTarget((current) => (current?.id === image.id ? result.data! : current));
+      setFeedback({ type: "success", message: result.message ?? "Business type image updated." });
     });
   };
 
@@ -465,6 +564,11 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
         {[
           { id: "all" as const, label: "All Images", count: images.length },
           { id: "portfolio" as const, label: "Portfolio Images", count: portfolioImages.length },
+          {
+            id: "businessTypes" as const,
+            label: "Business Type Images",
+            count: Math.max(businessTypeImages.length, initialBusinessTypeImageCount),
+          },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -490,21 +594,37 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
               <h3 className="text-lg font-semibold text-[#1A1A1A]">Upload images</h3>
               <p className="mt-1 text-sm text-[#6B7280]">PNG, JPG, or WebP. Maximum 5MB per image.</p>
             </div>
-            <select
-              value={selectedCategory}
-              onChange={(event) => {
-                if (isCategory(event.target.value)) {
-                  setSelectedCategory(event.target.value);
-                }
-              }}
-              className="h-11 rounded-xl border border-[#DDE7E3] bg-white px-3 text-sm text-[#1A1A1A] outline-none focus:border-[#2563EB]"
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
+            <div className="grid gap-2 sm:grid-cols-2 lg:min-w-[420px]">
+              <select
+                value={selectedCategory}
+                onChange={(event) => {
+                  if (isCategory(event.target.value)) {
+                    setSelectedCategory(event.target.value);
+                  }
+                }}
+                className="h-11 rounded-xl border border-[#DDE7E3] bg-white px-3 text-sm text-[#1A1A1A] outline-none focus:border-[#2563EB]"
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+              {selectedCategory === "Business Types" ? (
+                <select
+                  value={selectedBusinessType}
+                  onChange={(event) => setSelectedBusinessType(event.target.value)}
+                  className="h-11 rounded-xl border border-[#DDE7E3] bg-white px-3 text-sm text-[#1A1A1A] outline-none focus:border-[#2563EB]"
+                  aria-label="Business type card"
+                >
+                  {businessTypeOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              ) : null}
+            </div>
           </div>
 
           <div
@@ -523,7 +643,12 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
               {isUploading ? <LoaderCircle className="h-7 w-7 animate-spin" /> : <UploadCloud className="h-7 w-7" />}
             </div>
             <h3 className="mt-4 text-base font-semibold text-[#1A1A1A]">Drag and drop images here</h3>
-            <p className="mt-2 text-sm text-[#6B7280]">Files will be tagged as {selectedCategory}.</p>
+            <p className="mt-2 text-sm text-[#6B7280]">
+              Files will be tagged as {selectedCategory}
+              {selectedCategory === "Business Types"
+                ? ` and assigned to ${businessTypeOptions.find((option) => option.id === selectedBusinessType)?.label}.`
+                : "."}
+            </p>
             <Input
               ref={fileInputRef}
               type="file"
@@ -651,8 +776,8 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
                   </div>
                   <div className="space-y-4 p-4">
                     <div>
-                      <p className="truncate text-sm font-semibold text-[#1A1A1A]" title={image.filename}>
-                        {image.filename}
+                      <p className="truncate text-sm font-semibold text-[#1A1A1A]" title={stripBusinessTypeFromFilename(image.filename)}>
+                        {stripBusinessTypeFromFilename(image.filename)}
                       </p>
                       <p className="mt-1 text-xs text-[#6B7280]">
                         {image.width && image.height ? `${image.width}×${image.height}px` : "Dimensions unavailable"} · {formatBytes(image.file_size)}
@@ -675,6 +800,23 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
                         </option>
                       ))}
                     </select>
+
+                    {(image.category ?? "General") === "Business Types" ? (
+                      <select
+                        value={getBusinessTypeFromFilename(image.filename)}
+                        disabled={isPending}
+                        onChange={(event) => handleBusinessTypeChange(image, event.target.value)}
+                        className="h-10 w-full rounded-xl border border-[#DDE7E3] bg-[#FAFAF8] px-3 text-sm text-[#1A1A1A] outline-none focus:border-[#2563EB]"
+                        aria-label="Business type card"
+                      >
+                        <option value="">Choose business type card</option>
+                        {businessTypeOptions.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : null}
 
                     <div className="grid grid-cols-3 gap-2">
                       <Button
@@ -727,7 +869,7 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
           </div>
         )}
         </section>
-      ) : (
+      ) : activeView === "portfolio" ? (
         <section className="space-y-4 rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
@@ -869,6 +1011,117 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
             </div>
           </div>
         </section>
+      ) : (
+        <section className="space-y-4 rounded-[2rem] border border-[#DDE7E3] bg-white p-6 shadow-card">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-[#1A1A1A]">Business Type Images</h3>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-[#6B7280]">
+                Upload images for the Websites Designed for Your Business Type cards and choose which card each image belongs to.
+              </p>
+            </div>
+            <div className="rounded-full bg-[#EFF6FF] px-3 py-1 text-sm font-medium text-[#2563EB]">
+              {Object.keys(businessTypeImageMap).length} of {businessTypeOptions.length} assigned
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {businessTypeOptions.map((option) => {
+              const image = businessTypeImageMap[option.id];
+
+              return (
+                <article key={option.id} className="overflow-hidden rounded-[1.5rem] border border-[#E5E7EB] bg-white shadow-sm">
+                  <div className="aspect-[4/3] overflow-hidden bg-[#F4F6F2]">
+                    {image ? (
+                      <img src={image.url} alt={option.label} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-[#2563EB]">
+                        <ImageIcon className="h-8 w-8" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-3 p-4">
+                    <div>
+                      <p className="text-sm font-semibold text-[#1A1A1A]">{option.label}</p>
+                      <p className="mt-1 text-xs text-[#6B7280]">
+                        {image ? stripBusinessTypeFromFilename(image.filename) : "No custom image assigned"}
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setActiveView("all");
+                        setActiveFilter("Business Types");
+                        setSelectedCategory("Business Types");
+                        setSelectedBusinessType(option.id);
+                        fileInputRef.current?.click();
+                      }}
+                      className="w-full rounded-xl border-[#DDE7E3] bg-white text-[#2563EB] hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
+                    >
+                      <UploadCloud className="h-4 w-4" />
+                      Upload for this card
+                    </Button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          {businessTypeImages.length ? (
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-[#64748B]">Uploaded business type images</h4>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {businessTypeImages.map((image) => (
+                  <article key={image.id} className="overflow-hidden rounded-[1.25rem] border border-[#E5E7EB] bg-white shadow-sm">
+                    <button type="button" onClick={() => setPreviewImage(image)} className="group block aspect-[4/3] w-full overflow-hidden bg-[#F4F6F2] text-left">
+                      <img src={image.url} alt={stripBusinessTypeFromFilename(image.filename)} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+                    </button>
+                    <div className="space-y-3 p-3">
+                      <div>
+                        <p className="truncate text-sm font-semibold text-[#1A1A1A]" title={stripBusinessTypeFromFilename(image.filename)}>
+                          {stripBusinessTypeFromFilename(image.filename)}
+                        </p>
+                        <p className="mt-1 text-xs text-[#6B7280]">{image.width && image.height ? `${image.width}×${image.height}px` : "Dimensions unavailable"}</p>
+                      </div>
+                      <select
+                        value={getBusinessTypeFromFilename(image.filename)}
+                        disabled={isPending}
+                        onChange={(event) => handleBusinessTypeChange(image, event.target.value)}
+                        className="h-10 w-full rounded-xl border border-[#DDE7E3] bg-[#FAFAF8] px-3 text-sm text-[#1A1A1A] outline-none focus:border-[#2563EB]"
+                      >
+                        <option value="">Choose business type card</option>
+                        {businessTypeOptions.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button type="button" variant="outline" size="sm" onClick={() => void handleCopy(image.url)} className="rounded-xl border-[#DDE7E3] bg-white">
+                          <Copy className="h-4 w-4" />
+                          Copy URL
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          disabled={isPending || isReplacing}
+                          onClick={() => openReplaceModal(image)}
+                          className="rounded-xl border-[#DDE7E3] bg-white text-[#2563EB] hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
+                        >
+                          <Pencil className="h-4 w-4" />
+                          Replace
+                        </Button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </section>
       )}
 
       {previewImage ? (
@@ -877,7 +1130,7 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
             <div className="flex items-center justify-between gap-4 border-b border-[#E5E7EB] p-5">
               <div>
                 <h3 className="text-lg font-semibold text-[#1A1A1A]">Image preview</h3>
-                <p className="mt-1 text-sm text-[#6B7280]">{previewImage.filename}</p>
+                <p className="mt-1 text-sm text-[#6B7280]">{stripBusinessTypeFromFilename(previewImage.filename)}</p>
               </div>
               <button
                 type="button"
@@ -890,7 +1143,7 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
             </div>
             <div className="grid max-h-[calc(90vh-82px)] overflow-y-auto lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="flex min-h-[360px] items-center justify-center bg-[#0F172A] p-4">
-                <img src={previewImage.url} alt={previewImage.filename} className="max-h-[68vh] max-w-full rounded-2xl object-contain" />
+                <img src={previewImage.url} alt={stripBusinessTypeFromFilename(previewImage.filename)} className="max-h-[68vh] max-w-full rounded-2xl object-contain" />
               </div>
               <aside className="space-y-5 p-5">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-[#FAFAF8] p-4">
@@ -898,7 +1151,7 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
                   <dl className="mt-4 space-y-3 text-sm">
                     <div>
                       <dt className="text-[#6B7280]">Filename</dt>
-                      <dd className="mt-1 break-words font-medium text-[#1A1A1A]">{previewImage.filename}</dd>
+                      <dd className="mt-1 break-words font-medium text-[#1A1A1A]">{stripBusinessTypeFromFilename(previewImage.filename)}</dd>
                     </div>
                     <div>
                       <dt className="text-[#6B7280]">Dimensions</dt>
@@ -947,7 +1200,7 @@ export function ImagesClient({ initialImages, initialPortfolioItems }: ImagesCli
               <div>
                 <h3 className="text-xl font-semibold text-[#1A1A1A]">Replace Image</h3>
                 <p className="mt-2 text-sm leading-6 text-[#6B7280]">
-                  Upload a new file for <span className="font-medium text-[#1A1A1A]">{replaceTarget.filename}</span>. The same database record ID will be kept.
+                  Upload a new file for <span className="font-medium text-[#1A1A1A]">{stripBusinessTypeFromFilename(replaceTarget.filename)}</span>. The same database record ID will be kept.
                 </p>
               </div>
               <button

@@ -25,6 +25,7 @@ import {
   Zap,
 } from "lucide-react";
 
+import { getBusinessTypeImages } from "@/app/dashboard/actions/images";
 import { getActivePortfolioItems, getPortfolioVersion } from "@/app/dashboard/actions/portfolio";
 
 import { LeadForm } from "./components/LeadForm";
@@ -146,6 +147,7 @@ const solutionItems: Array<{ title: string; description: string; icon: LucideIco
 
 const businessTypeCards = [
   {
+    businessType: "business",
     title: "Business & Services",
     description: "Generate more leads and inquiries for your business.",
     cta: "Get More Leads",
@@ -153,6 +155,7 @@ const businessTypeCards = [
       "https://images.unsplash.com/photo-1560472354-b33ef0cb7d21?w=600&h=400&fit=crop",
   },
   {
+    businessType: "healthcare",
     title: "Healthcare & Clinics",
     description: "Build trust and increase patient bookings online.",
     cta: "Increase Bookings",
@@ -160,6 +163,7 @@ const businessTypeCards = [
       "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=400&fit=crop",
   },
   {
+    businessType: "ecommerce",
     title: "E-commerce Stores",
     description: "Sell more with fast, secure and mobile-first stores.",
     cta: "Start Selling Online",
@@ -167,6 +171,7 @@ const businessTypeCards = [
       "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop",
   },
   {
+    businessType: "education",
     title: "Education & Coaching",
     description: "Get more student inquiries and grow your enrollments.",
     cta: "Get More Students",
@@ -174,6 +179,7 @@ const businessTypeCards = [
       "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop",
   },
   {
+    businessType: "real-estate",
     title: "Real Estate",
     description: "Showcase listings beautifully and capture quality leads.",
     cta: "Get More Property Leads",
@@ -181,7 +187,8 @@ const businessTypeCards = [
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
   },
   {
-    title: "Hospitality & Food Businesses",
+    businessType: "hospitality",
+    title: "Hospitality & Food",
     description: "Get more bookings and online orders with ease.",
     cta: "Get More Bookings",
     image:
@@ -505,7 +512,13 @@ function ProblemSolutionSection() {
   );
 }
 
-function BusinessTypeSection() {
+async function BusinessTypeSection() {
+  const businessTypeImages = await getBusinessTypeImages();
+  const cards = businessTypeCards.map((card) => ({
+    ...card,
+    image: businessTypeImages[card.businessType]?.url ?? card.image,
+  }));
+
   return (
     <section id="business-types" className="bg-[#F8FAFC] py-16 lg:py-24">
       <div className={containerClass}>
@@ -520,9 +533,9 @@ function BusinessTypeSection() {
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {businessTypeCards.map((card) => (
+          {cards.map((card) => (
             <article
-              key={card.title}
+              key={card.businessType}
               className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="aspect-[3/2] overflow-hidden bg-slate-100">
