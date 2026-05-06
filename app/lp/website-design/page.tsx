@@ -29,7 +29,7 @@ import { getBusinessTypeImages } from "@/app/dashboard/actions/images";
 import { getActivePortfolioItems, getPortfolioVersion } from "@/app/dashboard/actions/portfolio";
 
 import { LeadForm } from "./components/LeadForm";
-import { BusinessTypePopup } from "./components/BusinessTypePopup";
+import { BusinessTypeCardsGrid } from "./components/BusinessTypePopup";
 import { LpFooter } from "./components/LpFooter";
 import { LpHeader } from "./components/LpHeader";
 import { MobileStickyCta } from "./components/MobileStickyCta";
@@ -534,7 +534,7 @@ async function BusinessTypeSection() {
         </div>
 
         <div className="mt-12">
-          <BusinessTypePopup cards={cards} />
+          <BusinessTypeCardsGrid cards={cards} />
         </div>
 
         <div className="mt-10 rounded-2xl border border-blue-100 bg-blue-50 p-5 sm:p-6">

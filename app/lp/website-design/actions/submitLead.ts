@@ -36,11 +36,8 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
   const name = sanitize(formData.get("name"));
   const businessName = sanitize(formData.get("businessName"));
   const email = sanitize(formData.get("email")).toLowerCase();
-  const phone = sanitize(formData.get("phone"));
   const websiteType = sanitize(formData.get("websiteType"));
-  const businessType = sanitize(formData.get("businessType"));
   const message = sanitize(formData.get("message"));
-  const source = sanitize(formData.get("source")) || leadSource;
 
   if (!isSupabaseConfigured()) {
     return {
@@ -56,86 +53,6 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     return {
       success: false,
       message: "Unable to connect to the database. Please try again later.",
-    };
-  }
-
-  if (source === businessTypePopupSource) {
-    if (!name || name.length < 2) {
-      return { success: false, message: "Please enter your name." };
-    }
-
-    if (!phone || phone.length < 7) {
-      return { success: false, message: "Please enter a valid mobile/phone number." };
-    }
-
-    if (!email || !emailPattern.test(email)) {
-      return { success: false, message: "Please enter a valid email address." };
-    }
-
-    if (!businessType) {
-      return { success: false, message: "Please select a business type." };
-    }
-
-    const { error } = await supabase.from("leads").insert({
-      name,
-      email,
-      phone,
-      business_name: businessName || name,
-      message: "",
-      source: businessTypePopupSource,
-      status: "New",
-      service_interest: businessType,
-    });
-
-    if (error) {
-      return {
-        success: false,
-        message: "Failed to save your request. Please try again.",
-      };
-    }
-
-    if (isResendConfigured()) {
-      const resend = getResendClient();
-
-      if (resend) {
-        const safeName = escapeHtml(name);
-        const safeEmail = escapeHtml(email);
-        const safePhone = escapeHtml(phone);
-        const safeBusinessType = escapeHtml(businessType);
-
-        await Promise.allSettled([
-          resend.emails.send({
-            from: DEFAULT_FROM_EMAIL,
-            to: [email],
-            subject: `Your free website plan request for ${businessType} is confirmed`,
-            html: buildBusinessTypeCustomerEmail({
-              name: safeName,
-              businessType: safeBusinessType,
-            }),
-          }),
-          resend.emails.send({
-            from: DEFAULT_FROM_EMAIL,
-            to: [adminEmail],
-            subject: `New Business Type Lead: ${name} (${businessType})`,
-            html: buildBusinessTypeAdminEmail({
-              name: safeName,
-              email: safeEmail,
-              phone: safePhone,
-              businessType: safeBusinessType,
-            }),
-          }),
-        ]);
-      }
-    }
-
-    revalidatePath("/lp/website-design");
-    revalidatePath("/dashboard");
-    revalidatePath("/dashboard/leads");
-
-    return {
-      success: true,
-      name,
-      message: "Your request has been submitted successfully!",
     };
   }
 
@@ -175,16 +92,16 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     company: businessName,
     status: "New",
     notes,
-    source,
+    source: leadSource,
     created_at: new Date().toISOString(),
   };
 
-  let { error } = await supabase.from("contacts").insert(insertData);
+  let { error } = await supabase.from("leads").insert(insertData);
 
   // If email column requires value but is empty, try without email
   if (error && error.message && (error.message.includes("email") || error.message.includes("not-null"))) {
     delete insertData.email;
-    const result = await supabase.from("contacts").insert(insertData);
+    const result = await supabase.from("leads").insert(insertData);
     error = result.error;
   }
 
@@ -248,6 +165,117 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     success: true,
     name,
     message: "Your request has been submitted successfully!",
+  };
+}
+
+export async function submitBusinessTypeLead(formData: FormData): Promise<SubmitLeadResult> {
+  const name = sanitize(formData.get("name"));
+  const phone = sanitize(formData.get("phone"));
+  const email = sanitize(formData.get("email")).toLowerCase();
+  const businessType = sanitize(formData.get("businessType"));
+
+  if (!name || name.length < 2) {
+    return { success: false, message: "Please enter your full name." };
+  }
+
+  if (!phone || phone.length < 7) {
+    return { success: false, message: "Please enter a valid mobile/phone number." };
+  }
+
+  if (!email || !emailPattern.test(email)) {
+    return { success: false, message: "Please enter a valid email address." };
+  }
+
+  if (!businessType) {
+    return { success: false, message: "Please select a business type." };
+  }
+
+  if (!isSupabaseConfigured()) {
+    return {
+      success: false,
+      message:
+        "Form submission is currently unavailable. Please try again later or contact us directly.",
+    };
+  }
+
+  const supabase = await createClient();
+
+  if (!supabase) {
+    return {
+      success: false,
+      message: "Unable to connect to the database. Please try again later.",
+    };
+  }
+
+  const notes = [`Phone: ${phone}`, `Business Type: ${businessType}`].join("\n");
+  const insertData: Record<string, unknown> = {
+    name,
+    email,
+    phone,
+    company: businessType,
+    status: "New",
+    source: businessTypePopupSource,
+    notes,
+    created_at: new Date().toISOString(),
+  };
+
+  let { error } = await supabase.from("leads").insert(insertData);
+
+  if (error && (error.message.includes("phone") || error.message.includes("column"))) {
+    delete insertData.phone;
+    const fallbackInsert = await supabase.from("leads").insert(insertData);
+    error = fallbackInsert.error;
+  }
+
+  if (error) {
+    return {
+      success: false,
+      message: "Failed to save your request. Please try again.",
+    };
+  }
+
+  if (isResendConfigured()) {
+    const resend = getResendClient();
+
+    if (resend) {
+      const safeName = escapeHtml(name);
+      const safeEmail = escapeHtml(email);
+      const safePhone = escapeHtml(phone);
+      const safeBusinessType = escapeHtml(businessType);
+
+      await Promise.allSettled([
+        resend.emails.send({
+          from: DEFAULT_FROM_EMAIL,
+          to: [email],
+          subject: `Your free website plan request for ${businessType} is confirmed`,
+          html: buildBusinessTypeCustomerEmail({
+            name: safeName,
+            businessType: safeBusinessType,
+          }),
+        }),
+        resend.emails.send({
+          from: DEFAULT_FROM_EMAIL,
+          to: [adminEmail],
+          subject: `New Business Type Lead: ${name} (${businessType})`,
+          html: buildBusinessTypeAdminEmail({
+            name: safeName,
+            email: safeEmail,
+            phone: safePhone,
+            businessType: safeBusinessType,
+          }),
+        }),
+      ]);
+    }
+  }
+
+  revalidatePath("/lp/website-design");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/leads");
+
+  return {
+    success: true,
+    name,
+    message: "Thank you! We'll contact you within 24 hours.",
   };
 }
 
