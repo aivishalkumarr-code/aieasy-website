@@ -24,6 +24,13 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const sanitize = (value: FormDataEntryValue | null) =>
   typeof value === "string" ? value.trim() : "";
 
+type SupabaseInsertError = {
+  code?: string;
+  message?: string;
+  details?: string;
+  hint?: string;
+};
+
 const escapeHtml = (value: string) =>
   value
     .replace(/&/g, "&amp;")
@@ -31,6 +38,74 @@ const escapeHtml = (value: string) =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+
+const buildPlaceholderEmail = () => `missing-email-${crypto.randomUUID()}@no-email.aieasy.local`;
+
+const isPhoneColumnMissingError = (error: SupabaseInsertError | null) => {
+  if (!error) return false;
+  const combined = `${error.message ?? ""} ${error.details ?? ""} ${error.hint ?? ""}`.toLowerCase();
+  return error.code === "42703" && combined.includes("phone");
+};
+
+const isEmailNotNullError = (error: SupabaseInsertError | null) => {
+  if (!error) return false;
+  const combined = `${error.message ?? ""} ${error.details ?? ""} ${error.hint ?? ""}`.toLowerCase();
+  return error.code === "23502" && combined.includes("email");
+};
+
+const formatSupabaseErrorMessage = (error: SupabaseInsertError | null) => {
+  if (!error) {
+    return "Database insert failed with an unknown error.";
+  }
+
+  const combined = `${error.message ?? ""} ${error.details ?? ""} ${error.hint ?? ""}`.toLowerCase();
+
+  if (error.code === "23505") {
+    return "This email already exists in contacts. Please use a different email or book a consultation directly.";
+  }
+
+  if (error.code === "23502" && combined.includes("email")) {
+    return "The contacts table requires email (NOT NULL), but no valid email could be stored.";
+  }
+
+  if (error.code === "42703") {
+    if (combined.includes("phone")) {
+      return "The contacts table is missing the phone column. We retried by storing phone in notes.";
+    }
+
+    return `Schema mismatch: a required contacts column is missing (${error.message ?? "unknown column"}).`;
+  }
+
+  if (error.code === "42P01") {
+    return "Schema mismatch: contacts table was not found in Supabase.";
+  }
+
+  if (combined.includes("row-level security") || error.code === "42501") {
+    return "Insert blocked by Supabase RLS policy. Ensure anon/authenticated INSERT policy on contacts allows WITH CHECK (true).";
+  }
+
+  if (combined.includes("invalid input value for enum")) {
+    return `Invalid enum value was sent to contacts (${error.message ?? "unknown enum error"}).`;
+  }
+
+  return `Supabase insert failed (${error.code ?? "no_code"}): ${error.message ?? "Unknown error"}`;
+};
+
+const logSupabaseInsertError = (
+  action: "submitLead" | "submitBusinessTypeLead",
+  payload: Record<string, unknown>,
+  error: SupabaseInsertError | null,
+) => {
+  console.error(`[${action}] Supabase contacts insert failed`, {
+    table: "contacts",
+    payload,
+    errorCode: error?.code ?? null,
+    errorMessage: error?.message ?? null,
+    errorDetails: error?.details ?? null,
+    errorHint: error?.hint ?? null,
+    error,
+  });
+};
 
 export async function submitLead(formData: FormData): Promise<SubmitLeadResult> {
   const name = sanitize(formData.get("name"));
@@ -86,7 +161,7 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
   ].join("\n\n");
 
   // Insert with fallback if email is empty or if there's an error
-  const insertData: any = {
+  const insertData: Record<string, unknown> = {
     name,
     email: email || null,
     company: businessName,
@@ -96,27 +171,19 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     created_at: new Date().toISOString(),
   };
 
-  let { error } = await supabase.from("leads").insert(insertData);
+  let { error } = await supabase.from("contacts").insert(insertData);
 
-  // If email column requires value but is empty, try without email
-  if (error && error.message && (error.message.includes("email") || error.message.includes("not-null"))) {
-    delete insertData.email;
-    const result = await supabase.from("leads").insert(insertData);
-    error = result.error;
+  if (error && isEmailNotNullError(error)) {
+    insertData.email = buildPlaceholderEmail();
+    const fallbackResult = await supabase.from("contacts").insert(insertData);
+    error = fallbackResult.error;
   }
 
   if (error) {
-    if (error.code === "23505") {
-      return {
-        success: false,
-        message:
-          "This email is already in our system. Please book your free consultation or use another email address.",
-      };
-    }
-
+    logSupabaseInsertError("submitLead", insertData, error);
     return {
       success: false,
-      message: "Failed to save your request. Please try again.",
+      message: formatSupabaseErrorMessage(error),
     };
   }
 
@@ -219,18 +286,19 @@ export async function submitBusinessTypeLead(formData: FormData): Promise<Submit
     created_at: new Date().toISOString(),
   };
 
-  let { error } = await supabase.from("leads").insert(insertData);
+  let { error } = await supabase.from("contacts").insert(insertData);
 
-  if (error && (error.message.includes("phone") || error.message.includes("column"))) {
+  if (error && isPhoneColumnMissingError(error)) {
     delete insertData.phone;
-    const fallbackInsert = await supabase.from("leads").insert(insertData);
+    const fallbackInsert = await supabase.from("contacts").insert(insertData);
     error = fallbackInsert.error;
   }
 
   if (error) {
+    logSupabaseInsertError("submitBusinessTypeLead", insertData, error);
     return {
       success: false,
-      message: "Failed to save your request. Please try again.",
+      message: formatSupabaseErrorMessage(error),
     };
   }
 

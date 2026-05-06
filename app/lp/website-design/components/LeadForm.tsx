@@ -117,8 +117,12 @@ export function LeadForm() {
       setIsSuccess(true);
       setValues(initialValues);
       setErrors({});
-    } catch {
-      setError("Failed to submit. Please try again.");
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Failed to submit due to an unexpected error.",
+      );
     } finally {
       setIsSubmitting(false);
     }
