@@ -18,7 +18,7 @@ import { SERVICE_PAGE_DATA, SERVICE_PAGE_ORDER } from "@/app/services/service-da
 
 const links = [
   { label: "Testimonials", href: "/#testimonials" },
-  { label: "Blog", href: "/#blog" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ] as const;
 

@@ -5,7 +5,7 @@ import { FEATURED_SERVICE_SLUGS, getServicePage } from "@/app/services/service-d
 
 const companyLinks = [
   { label: "Testimonials", href: "/#testimonials" },
-  { label: "Blog", href: "/#blog" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
   { label: "About", href: "/contact" },
 ] as const;
