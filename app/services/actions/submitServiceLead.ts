@@ -21,7 +21,7 @@ interface SubmitServiceLeadResult {
   name?: string;
 }
 
-const calendlyLink = "https://calendly.com/aieasy/30min";
+const calendlyLink = "https://calendly.com/hello-aieasy/30min";
 const adminEmail = "hello@aieasy.in";
 
 export async function submitServiceLead(

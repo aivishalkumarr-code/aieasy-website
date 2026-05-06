@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-const calendlyUrl = "https://calendly.com/aieasy/30min";
+const calendlyUrl = "https://calendly.com/hello-aieasy/30min";
 
 const stepFields: Record<1 | 2 | 3, (keyof ContactLeadFormValues)[]> = {
   1: ["name", "email", "company"],

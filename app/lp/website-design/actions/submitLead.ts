@@ -15,7 +15,7 @@ interface SubmitLeadResult {
   name?: string;
 }
 
-const calendlyLink = "https://calendly.com/aieasy/30min";
+const calendlyLink = "https://calendly.com/hello-aieasy/30min";
 const adminEmail = "hello@aieasy.in";
 const leadSource = "Landing Page - Website Design";
 const businessTypePopupSource = "landing_page__business_type";
@@ -96,14 +96,7 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     created_at: new Date().toISOString(),
   };
 
-  let { error } = await supabase.from("leads").insert(insertData);
-
-  // If email column requires value but is empty, try without email
-  if (error && error.message && (error.message.includes("email") || error.message.includes("not-null"))) {
-    delete insertData.email;
-    const result = await supabase.from("leads").insert(insertData);
-    error = result.error;
-  }
+  let { error } = await supabase.from("contacts").insert(insertData);
 
   if (error) {
     if (error.code === "23505") {
@@ -219,11 +212,11 @@ export async function submitBusinessTypeLead(formData: FormData): Promise<Submit
     created_at: new Date().toISOString(),
   };
 
-  let { error } = await supabase.from("leads").insert(insertData);
+  let { error } = await supabase.from("contacts").insert(insertData);
 
   if (error && (error.message.includes("phone") || error.message.includes("column"))) {
     delete insertData.phone;
-    const fallbackInsert = await supabase.from("leads").insert(insertData);
+    const fallbackInsert = await supabase.from("contacts").insert(insertData);
     error = fallbackInsert.error;
   }
 
