@@ -45,7 +45,6 @@ export function BusinessTypePopup({ isOpen, onClose, businessType }: BusinessTyp
   const [errors, setErrors] = useState<FieldErrors>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
@@ -53,7 +52,6 @@ export function BusinessTypePopup({ isOpen, onClose, businessType }: BusinessTyp
       setErrors({});
       setErrorMessage(null);
       setIsSubmitting(false);
-      setIsSuccess(false);
       return;
     }
 
@@ -65,18 +63,6 @@ export function BusinessTypePopup({ isOpen, onClose, businessType }: BusinessTyp
       body.style.overflow = originalOverflow;
     };
   }, [isOpen]);
-
-  useEffect(() => {
-    if (!isSuccess) {
-      return;
-    }
-
-    const timeout = window.setTimeout(() => {
-      onClose();
-    }, 3000);
-
-    return () => window.clearTimeout(timeout);
-  }, [isSuccess, onClose]);
 
   const updateField = (field: keyof FormValues, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -129,9 +115,14 @@ export function BusinessTypePopup({ isOpen, onClose, businessType }: BusinessTyp
         return;
       }
 
-      setIsSuccess(true);
-    } catch {
-      setErrorMessage("Unable to submit right now. Please try again.");
+      onClose();
+      window.location.href = `/lp/website-design/thank-you?name=${encodeURIComponent(values.name.trim())}`;
+    } catch (submitError) {
+      setErrorMessage(
+        submitError instanceof Error
+          ? submitError.message
+          : "Unable to submit due to an unexpected error.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -153,113 +144,102 @@ export function BusinessTypePopup({ isOpen, onClose, businessType }: BusinessTyp
           <X className="h-4 w-4" />
         </button>
 
-        {!isSuccess ? (
-          <>
-            <h3 className="pr-8 text-2xl font-bold tracking-tight text-[#0F172A]">
-              Get a Free Website Plan for {businessType}
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-[#475569]">
-              Tell us about yourself and we&apos;ll suggest the right website package.
-            </p>
+        <h3 className="pr-8 text-2xl font-bold tracking-tight text-[#0F172A]">
+          Get a Free Website Plan for {businessType}
+        </h3>
+        <p className="mt-2 text-sm leading-6 text-[#475569]">
+          Tell us about yourself and we&apos;ll suggest the right website package.
+        </p>
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              <div>
-                <label htmlFor="popup-name" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
-                  Full Name <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <input
-                    id="popup-name"
-                    type="text"
-                    autoComplete="name"
-                    value={values.name}
-                    onChange={(event) => updateField("name", event.target.value)}
-                    className={`${inputClass} pl-10`}
-                    placeholder="Your full name"
-                  />
-                </div>
-                {errors.name ? <p className="mt-1 text-xs font-medium text-red-600">{errors.name}</p> : null}
-              </div>
-
-              <div>
-                <label htmlFor="popup-phone" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
-                  Mobile/Phone Number <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <input
-                    id="popup-phone"
-                    type="tel"
-                    autoComplete="tel"
-                    value={values.phone}
-                    onChange={(event) => updateField("phone", event.target.value)}
-                    className={`${inputClass} pl-10`}
-                    placeholder="+91 98765 43210"
-                  />
-                </div>
-                {errors.phone ? <p className="mt-1 text-xs font-medium text-red-600">{errors.phone}</p> : null}
-              </div>
-
-              <div>
-                <label htmlFor="popup-email" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="popup-email"
-                  type="email"
-                  autoComplete="email"
-                  value={values.email}
-                  onChange={(event) => updateField("email", event.target.value)}
-                  className={inputClass}
-                  placeholder="you@business.com"
-                />
-                {errors.email ? <p className="mt-1 text-xs font-medium text-red-600">{errors.email}</p> : null}
-              </div>
-
-              <div>
-                <label htmlFor="popup-business-type" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
-                  Business Type
-                </label>
-                <input
-                  id="popup-business-type"
-                  type="text"
-                  value={businessType}
-                  readOnly
-                  className={`${inputClass} cursor-not-allowed bg-slate-50 text-slate-600`}
-                />
-              </div>
-
-              {errorMessage ? (
-                <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                  {errorMessage}
-                </p>
-              ) : null}
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-4 text-sm font-semibold text-white transition hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Get Free Website Plan"
-                )}
-              </button>
-            </form>
-          </>
-        ) : (
-          <div className="py-4">
-            <h3 className="text-xl font-bold text-[#0F172A]">Thank you!</h3>
-            <p className="mt-3 text-sm leading-6 text-[#475569]">
-              Thank you! We&apos;ll contact you within 24 hours.
-            </p>
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div>
+            <label htmlFor="popup-name" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
+              Full Name <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                id="popup-name"
+                type="text"
+                autoComplete="name"
+                value={values.name}
+                onChange={(event) => updateField("name", event.target.value)}
+                className={`${inputClass} pl-10`}
+                placeholder="Your full name"
+              />
+            </div>
+            {errors.name ? <p className="mt-1 text-xs font-medium text-red-600">{errors.name}</p> : null}
           </div>
-        )}
+
+          <div>
+            <label htmlFor="popup-phone" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
+              Mobile/Phone Number <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                id="popup-phone"
+                type="tel"
+                autoComplete="tel"
+                value={values.phone}
+                onChange={(event) => updateField("phone", event.target.value)}
+                className={`${inputClass} pl-10`}
+                placeholder="+91 98765 43210"
+              />
+            </div>
+            {errors.phone ? <p className="mt-1 text-xs font-medium text-red-600">{errors.phone}</p> : null}
+          </div>
+
+          <div>
+            <label htmlFor="popup-email" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
+              Email <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="popup-email"
+              type="email"
+              autoComplete="email"
+              value={values.email}
+              onChange={(event) => updateField("email", event.target.value)}
+              className={inputClass}
+              placeholder="you@business.com"
+            />
+            {errors.email ? <p className="mt-1 text-xs font-medium text-red-600">{errors.email}</p> : null}
+          </div>
+
+          <div>
+            <label htmlFor="popup-business-type" className="mb-1.5 block text-sm font-semibold text-[#0F172A]">
+              Business Type
+            </label>
+            <input
+              id="popup-business-type"
+              type="text"
+              value={businessType}
+              readOnly
+              className={`${inputClass} cursor-not-allowed bg-slate-50 text-slate-600`}
+            />
+          </div>
+
+          {errorMessage ? (
+            <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {errorMessage}
+            </p>
+          ) : null}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-4 text-sm font-semibold text-white transition hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              "Get Free Website Plan"
+            )}
+          </button>
+        </form>
       </div>
     </div>
   );
