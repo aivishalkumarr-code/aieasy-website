@@ -3,19 +3,24 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import type { ActionResult, ImageCategory, ManagedImage } from "@/types";
+import type { ActionResult, BusinessTypeImage, ImageCategory, ManagedImage } from "@/types";
 
 const IMAGE_CATEGORIES: ImageCategory[] = [
   "Landing Page",
   "Hero",
   "Portfolio",
   "Services",
+  "Business Types",
   "Blog",
   "General",
 ];
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_MIME_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const ACCEPTED_EXTENSIONS = ["png", "jpg", "jpeg", "webp"];
+const BUSINESS_TYPE_CATEGORY: ImageCategory = "Business Types";
+const BUSINESS_TYPE_FILENAME_SEPARATOR = "__";
+const BUSINESS_TYPES = ["business", "healthcare", "ecommerce", "education", "real-estate", "hospitality"] as const;
+const IMAGE_SELECT_COLUMNS = "id,url,filename,category,width,height,file_size,created_at";
 
 const getFileExtension = (file: File) => {
   const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
@@ -61,6 +66,31 @@ const normalizeNumber = (value: FormDataEntryValue | null) => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 };
 
+const normalizeBusinessType = (value: FormDataEntryValue | string | null) => {
+  const businessType = typeof value === "string" ? value : "";
+  return BUSINESS_TYPES.includes(businessType as (typeof BUSINESS_TYPES)[number]) ? businessType : null;
+};
+
+const getBusinessTypeFromFilename = (filename: string) => {
+  const [candidate] = filename.split(BUSINESS_TYPE_FILENAME_SEPARATOR);
+  return normalizeBusinessType(candidate);
+};
+
+const stripBusinessTypeFromFilename = (filename: string) => {
+  const businessType = getBusinessTypeFromFilename(filename);
+
+  if (!businessType) {
+    return filename;
+  }
+
+  return filename.slice(`${businessType}${BUSINESS_TYPE_FILENAME_SEPARATOR}`.length) || filename;
+};
+
+const withBusinessTypeFilename = (filename: string, businessType: string | null) => {
+  const cleanFilename = stripBusinessTypeFromFilename(filename);
+  return businessType ? `${businessType}${BUSINESS_TYPE_FILENAME_SEPARATOR}${cleanFilename}` : cleanFilename;
+};
+
 const validateFile = (file: File) => {
   const extension = getFileExtension(file);
   const validMime = ACCEPTED_MIME_TYPES.includes(file.type);
@@ -103,6 +133,7 @@ const getStoragePathFromUrl = (url: string) => {
 
 const revalidateImages = () => {
   revalidatePath("/dashboard/images");
+  revalidatePath("/lp/website-design");
 };
 
 export async function getImages(): Promise<ManagedImage[]> {
@@ -118,7 +149,7 @@ export async function getImages(): Promise<ManagedImage[]> {
 
   const { data, error } = await supabase
     .from("images")
-    .select("id,url,filename,category,width,height,file_size,created_at")
+    .select(IMAGE_SELECT_COLUMNS)
     .order("created_at", { ascending: false });
 
   if (error || !data) {
@@ -128,9 +159,52 @@ export async function getImages(): Promise<ManagedImage[]> {
   return (data as ManagedImage[]).map(normalizeImage);
 }
 
+export async function getBusinessTypeImages(): Promise<Record<string, BusinessTypeImage>> {
+  if (!isSupabaseConfigured()) {
+    return {};
+  }
+
+  const supabase = await createClient();
+
+  if (!supabase) {
+    return {};
+  }
+
+  const { data, error } = await supabase
+    .from("images")
+    .select(IMAGE_SELECT_COLUMNS)
+    .eq("category", BUSINESS_TYPE_CATEGORY)
+    .order("created_at", { ascending: false });
+
+  if (error || !data) {
+    return {};
+  }
+
+  return (data as ManagedImage[]).reduce<Record<string, BusinessTypeImage>>((mappedImages, image) => {
+    const businessType = getBusinessTypeFromFilename(image.filename);
+
+    if (!businessType || mappedImages[businessType]) {
+      return mappedImages;
+    }
+
+    mappedImages[businessType] = {
+      id: image.id,
+      url: image.url,
+      filename: stripBusinessTypeFromFilename(image.filename),
+      category: image.category ?? BUSINESS_TYPE_CATEGORY,
+      width: image.width ?? undefined,
+      height: image.height ?? undefined,
+      business_type: businessType,
+    };
+
+    return mappedImages;
+  }, {});
+}
+
 export async function uploadManagedImage(formData: FormData): Promise<ActionResult<ManagedImage>> {
   const file = formData.get("file");
   const category = normalizeCategory(formData.get("category"));
+  const businessType = category === BUSINESS_TYPE_CATEGORY ? normalizeBusinessType(formData.get("business_type")) : null;
   const width = normalizeNumber(formData.get("width"));
   const height = normalizeNumber(formData.get("height"));
 
@@ -182,13 +256,13 @@ export async function uploadManagedImage(formData: FormData): Promise<ActionResu
     .from("images")
     .insert({
       url: publicUrlData.publicUrl,
-      filename: file.name,
+      filename: withBusinessTypeFilename(file.name, businessType),
       category,
       width,
       height,
       file_size: file.size,
     })
-    .select("id,url,filename,category,width,height,file_size,created_at")
+    .select(IMAGE_SELECT_COLUMNS)
     .single();
 
   if (error || !data) {
@@ -228,7 +302,7 @@ export async function updateImageCategory(
     .from("images")
     .update({ category: normalizedCategory })
     .eq("id", id)
-    .select("id,url,filename,category,width,height,file_size,created_at")
+    .select(IMAGE_SELECT_COLUMNS)
     .single();
 
   if (error || !data) {
@@ -241,6 +315,60 @@ export async function updateImageCategory(
     success: true,
     data: normalizeImage(data as ManagedImage),
     message: "Image category updated.",
+  };
+}
+
+export async function updateBusinessTypeImage(
+  id: string,
+  businessType: string,
+): Promise<ActionResult<ManagedImage>> {
+  const normalizedBusinessType = normalizeBusinessType(businessType);
+
+  if (!normalizedBusinessType) {
+    return { success: false, message: "Choose a valid business type card." };
+  }
+
+  if (!isSupabaseConfigured()) {
+    return { success: false, message: "Supabase is not configured. Connect Supabase to update images." };
+  }
+
+  const supabase = await createClient();
+
+  if (!supabase) {
+    return { success: false, message: "Supabase client unavailable." };
+  }
+
+  const { data: existingImage, error: existingError } = await supabase
+    .from("images")
+    .select(IMAGE_SELECT_COLUMNS)
+    .eq("id", id)
+    .single();
+
+  if (existingError || !existingImage) {
+    return { success: false, message: "Image record not found." };
+  }
+
+  const existing = normalizeImage(existingImage as ManagedImage);
+  const { data, error } = await supabase
+    .from("images")
+    .update({
+      category: BUSINESS_TYPE_CATEGORY,
+      filename: withBusinessTypeFilename(existing.filename, normalizedBusinessType),
+    })
+    .eq("id", id)
+    .select(IMAGE_SELECT_COLUMNS)
+    .single();
+
+  if (error || !data) {
+    return { success: false, message: "Unable to update business type image." };
+  }
+
+  revalidateImages();
+
+  return {
+    success: true,
+    data: normalizeImage(data as ManagedImage),
+    message: "Business type image updated.",
   };
 }
 
@@ -276,7 +404,7 @@ export async function updateImage(formData: FormData): Promise<ActionResult<Mana
 
   const { data: existingImage, error: existingError } = await supabase
     .from("images")
-    .select("id,url,filename,category,width,height,file_size,created_at")
+    .select(IMAGE_SELECT_COLUMNS)
     .eq("id", id)
     .single();
 
@@ -315,13 +443,13 @@ export async function updateImage(formData: FormData): Promise<ActionResult<Mana
     .from("images")
     .update({
       url: publicUrlData.publicUrl,
-      filename: file.name,
+      filename: withBusinessTypeFilename(file.name, getBusinessTypeFromFilename(existing.filename)),
       width,
       height,
       file_size: file.size,
     })
     .eq("id", id)
-    .select("id,url,filename,category,width,height,file_size,created_at")
+    .select(IMAGE_SELECT_COLUMNS)
     .single();
 
   if (error || !data) {
