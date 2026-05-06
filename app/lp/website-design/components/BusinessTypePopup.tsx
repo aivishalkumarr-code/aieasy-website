@@ -130,8 +130,12 @@ export function BusinessTypePopup({ isOpen, onClose, businessType }: BusinessTyp
       }
 
       setIsSuccess(true);
-    } catch {
-      setErrorMessage("Unable to submit right now. Please try again.");
+    } catch (submitError) {
+      setErrorMessage(
+        submitError instanceof Error
+          ? submitError.message
+          : "Unable to submit due to an unexpected error.",
+      );
     } finally {
       setIsSubmitting(false);
     }
