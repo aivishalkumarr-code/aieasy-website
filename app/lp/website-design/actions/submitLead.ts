@@ -18,6 +18,7 @@ interface SubmitLeadResult {
 const calendlyLink = "https://calendly.com/aieasy/30min";
 const adminEmail = "hello@aieasy.in";
 const leadSource = "Landing Page - Website Design";
+const businessTypePopupSource = "landing_page__business_type";
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const sanitize = (value: FormDataEntryValue | null) =>
@@ -35,8 +36,108 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
   const name = sanitize(formData.get("name"));
   const businessName = sanitize(formData.get("businessName"));
   const email = sanitize(formData.get("email")).toLowerCase();
+  const phone = sanitize(formData.get("phone"));
   const websiteType = sanitize(formData.get("websiteType"));
+  const businessType = sanitize(formData.get("businessType"));
   const message = sanitize(formData.get("message"));
+  const source = sanitize(formData.get("source")) || leadSource;
+
+  if (!isSupabaseConfigured()) {
+    return {
+      success: false,
+      message:
+        "Form submission is currently unavailable. Please try again later or contact us directly.",
+    };
+  }
+
+  const supabase = await createClient();
+
+  if (!supabase) {
+    return {
+      success: false,
+      message: "Unable to connect to the database. Please try again later.",
+    };
+  }
+
+  if (source === businessTypePopupSource) {
+    if (!name || name.length < 2) {
+      return { success: false, message: "Please enter your name." };
+    }
+
+    if (!phone || phone.length < 7) {
+      return { success: false, message: "Please enter a valid mobile/phone number." };
+    }
+
+    if (!email || !emailPattern.test(email)) {
+      return { success: false, message: "Please enter a valid email address." };
+    }
+
+    if (!businessType) {
+      return { success: false, message: "Please select a business type." };
+    }
+
+    const { error } = await supabase.from("leads").insert({
+      name,
+      email,
+      phone,
+      business_name: businessName || name,
+      message: "",
+      source: businessTypePopupSource,
+      status: "New",
+      service_interest: businessType,
+    });
+
+    if (error) {
+      return {
+        success: false,
+        message: "Failed to save your request. Please try again.",
+      };
+    }
+
+    if (isResendConfigured()) {
+      const resend = getResendClient();
+
+      if (resend) {
+        const safeName = escapeHtml(name);
+        const safeEmail = escapeHtml(email);
+        const safePhone = escapeHtml(phone);
+        const safeBusinessType = escapeHtml(businessType);
+
+        await Promise.allSettled([
+          resend.emails.send({
+            from: DEFAULT_FROM_EMAIL,
+            to: [email],
+            subject: `Your free website plan request for ${businessType} is confirmed`,
+            html: buildBusinessTypeCustomerEmail({
+              name: safeName,
+              businessType: safeBusinessType,
+            }),
+          }),
+          resend.emails.send({
+            from: DEFAULT_FROM_EMAIL,
+            to: [adminEmail],
+            subject: `New Business Type Lead: ${name} (${businessType})`,
+            html: buildBusinessTypeAdminEmail({
+              name: safeName,
+              email: safeEmail,
+              phone: safePhone,
+              businessType: safeBusinessType,
+            }),
+          }),
+        ]);
+      }
+    }
+
+    revalidatePath("/lp/website-design");
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/leads");
+
+    return {
+      success: true,
+      name,
+      message: "Your request has been submitted successfully!",
+    };
+  }
 
   if (!name || name.length < 2) {
     return { success: false, message: "Please enter your name." };
@@ -57,23 +158,6 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     };
   }
 
-  if (!isSupabaseConfigured()) {
-    return {
-      success: false,
-      message:
-        "Form submission is currently unavailable. Please try again later or contact us directly.",
-    };
-  }
-
-  const supabase = await createClient();
-
-  if (!supabase) {
-    return {
-      success: false,
-      message: "Unable to connect to the database. Please try again later.",
-    };
-  }
-
   const websiteTypeLabel = websiteType ? websiteType.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase()) : "Not specified";
   
   const notes = [
@@ -91,7 +175,7 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     company: businessName,
     status: "New",
     notes,
-    source: leadSource,
+    source,
     created_at: new Date().toISOString(),
   };
 
@@ -165,6 +249,102 @@ export async function submitLead(formData: FormData): Promise<SubmitLeadResult> 
     name,
     message: "Your request has been submitted successfully!",
   };
+}
+
+function buildBusinessTypeCustomerEmail({
+  name,
+  businessType,
+}: {
+  name: string;
+  businessType: string;
+}) {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Your free website plan request is confirmed</title>
+      </head>
+      <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#fafaf8;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fafaf8;">
+          <tr>
+            <td align="center" style="padding:40px 20px;">
+              <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background-color:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 6px 20px rgba(15,23,42,0.08);">
+                <tr>
+                  <td style="background:linear-gradient(135deg,#1D4ED8 0%,#2563EB 55%,#3B82F6 100%);padding:36px 40px;text-align:center;">
+                    <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">AIeasy</h1>
+                    <p style="margin:10px 0 0;color:rgba(255,255,255,0.86);font-size:14px;">Your request is confirmed</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:40px;">
+                    <h2 style="margin:0 0 16px;color:#1A1A1A;font-size:26px;font-weight:700;">Thanks, ${name}.</h2>
+                    <p style="margin:0 0 16px;color:#4B5563;font-size:16px;line-height:1.7;">
+                      We&apos;ve received your request for a custom website plan for <strong>${businessType}</strong>.
+                    </p>
+                    <p style="margin:0 0 24px;color:#4B5563;font-size:16px;line-height:1.7;">
+                      We&apos;ll contact you within 24 hours with a recommended package and next steps.
+                    </p>
+                    <a href="${calendlyLink}" style="display:inline-block;background-color:#2563EB;color:#ffffff;text-decoration:none;padding:13px 24px;border-radius:9999px;font-weight:600;font-size:14px;">Book a quick call</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+  `;
+}
+
+function buildBusinessTypeAdminEmail({
+  name,
+  email,
+  phone,
+  businessType,
+}: {
+  name: string;
+  email: string;
+  phone: string;
+  businessType: string;
+}) {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>New Business Type Lead</title>
+      </head>
+      <body style="margin:0;padding:20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#fafaf8;">
+        <div style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:18px;padding:36px;box-shadow:0 6px 20px rgba(15,23,42,0.08);">
+          <h1 style="margin:0 0 24px;color:#2563EB;font-size:28px;font-weight:700;">New Business Type Lead</h1>
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="padding:10px 0;color:#6B7280;width:150px;">Name</td>
+              <td style="padding:10px 0;color:#1A1A1A;font-weight:600;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0;color:#6B7280;">Email</td>
+              <td style="padding:10px 0;color:#1A1A1A;">${email}</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0;color:#6B7280;">Phone</td>
+              <td style="padding:10px 0;color:#1A1A1A;">${phone}</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0;color:#6B7280;">Business Type</td>
+              <td style="padding:10px 0;color:#1A1A1A;font-weight:600;">${businessType}</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0;color:#6B7280;">Source</td>
+              <td style="padding:10px 0;color:#1A1A1A;">${businessTypePopupSource}</td>
+            </tr>
+          </table>
+        </div>
+      </body>
+    </html>
+  `;
 }
 
 function buildCustomerEmail({

@@ -29,6 +29,7 @@ import { getBusinessTypeImages } from "@/app/dashboard/actions/images";
 import { getActivePortfolioItems, getPortfolioVersion } from "@/app/dashboard/actions/portfolio";
 
 import { LeadForm } from "./components/LeadForm";
+import { BusinessTypePopup } from "./components/BusinessTypePopup";
 import { LpFooter } from "./components/LpFooter";
 import { LpHeader } from "./components/LpHeader";
 import { MobileStickyCta } from "./components/MobileStickyCta";
@@ -532,28 +533,8 @@ async function BusinessTypeSection() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {cards.map((card) => (
-            <article
-              key={card.businessType}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-            >
-              <div className="aspect-[3/2] overflow-hidden bg-slate-100">
-                <img
-                  src={card.image}
-                  alt={card.title}
-                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                />
-              </div>
-              <div className="flex flex-1 flex-col p-5">
-                <h3 className="text-xl font-bold text-[#0F172A]">{card.title}</h3>
-                <p className="mt-3 flex-1 text-sm leading-6 text-[#475569]">{card.description}</p>
-                <ScrollToLeadCta className="mt-6 inline-flex items-center gap-2 self-start text-sm font-semibold text-[#2563EB] transition-all hover:gap-3 hover:text-[#1D4ED8]">
-                  {card.cta} <ArrowRight className="h-4 w-4" />
-                </ScrollToLeadCta>
-              </div>
-            </article>
-          ))}
+        <div className="mt-12">
+          <BusinessTypePopup cards={cards} />
         </div>
 
         <div className="mt-10 rounded-2xl border border-blue-100 bg-blue-50 p-5 sm:p-6">
