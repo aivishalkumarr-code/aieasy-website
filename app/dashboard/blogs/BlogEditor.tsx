@@ -4,6 +4,7 @@ import { LoaderCircle, Trash2, UploadCloud, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, useTransition, type FormEvent, type KeyboardEvent } from "react";
 
 import {
+  createBlogCategory,
   createBlogPost,
   createBlogTag,
   deleteBlogPost,
@@ -87,7 +88,13 @@ export function BlogEditor({ post, categories, tags, onSave, onCancel }: BlogEdi
   const [ogImage, setOgImage] = useState(post?.og_image ?? "");
   const [keywords, setKeywords] = useState(post?.keywords ?? "");
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>(post?.tags?.map((tag) => tag.id) ?? []);
+  const [availableCategories, setAvailableCategories] = useState(categories);
   const [availableTags, setAvailableTags] = useState(tags);
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategorySlug, setNewCategorySlug] = useState("");
+  const [newCategoryDescription, setNewCategoryDescription] = useState("");
+  const [isCategorySlugEdited, setIsCategorySlugEdited] = useState(false);
   const [tagQuery, setTagQuery] = useState("");
   const [showSeo, setShowSeo] = useState(Boolean(post?.seo_title || post?.meta_description || post?.keywords));
   const [dragActive, setDragActive] = useState(false);
@@ -116,13 +123,19 @@ export function BlogEditor({ post, categories, tags, onSave, onCancel }: BlogEdi
     setOgImage(post?.og_image ?? "");
     setKeywords(post?.keywords ?? "");
     setSelectedTagIds(post?.tags?.map((tag) => tag.id) ?? []);
+    setAvailableCategories(categories);
     setAvailableTags(tags);
+    setShowCategoryForm(false);
+    setNewCategoryName("");
+    setNewCategorySlug("");
+    setNewCategoryDescription("");
+    setIsCategorySlugEdited(false);
     setTagQuery("");
     setShowSeo(Boolean(post?.seo_title || post?.meta_description || post?.keywords));
     setErrors({});
     setFeedback(null);
     setAutoSavedAt(null);
-  }, [post, tags]);
+  }, [post, categories, tags]);
 
   const contentText = useMemo(() => htmlToText(content), [content]);
   const readingTime = useMemo(() => {
@@ -310,6 +323,39 @@ export function BlogEditor({ post, categories, tags, onSave, onCancel }: BlogEdi
       setSelectedTagIds((current) => [...current, result.data!.id]);
       setTagQuery("");
       setFeedback({ type: "success", message: result.message ?? "Tag created." });
+    });
+  };
+
+  const handleCreateCategory = () => {
+    const trimmedName = newCategoryName.trim();
+    const trimmedSlug = newCategorySlug.trim();
+
+    if (!trimmedName) {
+      setFeedback({ type: "error", message: "Category name is required." });
+      return;
+    }
+
+    startTransition(async () => {
+      const payload = new FormData();
+      payload.append("name", trimmedName);
+      payload.append("slug", trimmedSlug);
+      payload.append("description", newCategoryDescription.trim());
+
+      const result = await createBlogCategory(payload);
+
+      if (!result.success || !result.data) {
+        setFeedback({ type: "error", message: result.message ?? "Unable to create category." });
+        return;
+      }
+
+      setAvailableCategories((current) => [...current, result.data as BlogCategory]);
+      setCategoryId(result.data.id);
+      setShowCategoryForm(false);
+      setNewCategoryName("");
+      setNewCategorySlug("");
+      setNewCategoryDescription("");
+      setIsCategorySlugEdited(false);
+      setFeedback({ type: "success", message: result.message ?? "Category created." });
     });
   };
 
@@ -506,18 +552,93 @@ export function BlogEditor({ post, categories, tags, onSave, onCancel }: BlogEdi
         <div className="space-y-5">
           <label className="block space-y-2">
             <span className="text-sm font-semibold text-[#1A1A1A]">Category</span>
-            <select
-              value={categoryId}
-              onChange={(event) => setCategoryId(event.target.value)}
-              className="h-11 w-full rounded-xl border border-[#DDE7E3] bg-[#FAFAF8] px-3 text-sm text-[#1A1A1A] outline-none focus:border-[#2563EB]"
-            >
-              <option value="">Uncategorized</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+            <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-center">
+              <select
+                value={categoryId}
+                onChange={(event) => setCategoryId(event.target.value)}
+                className="h-11 w-full rounded-xl border border-[#DDE7E3] bg-[#FAFAF8] px-3 text-sm text-[#1A1A1A] outline-none focus:border-[#2563EB]"
+              >
+                <option value="">Uncategorized</option>
+                {availableCategories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowCategoryForm((current) => !current)}
+                className="h-11 rounded-xl border-[#DDE7E3] bg-white"
+              >
+                New Category
+              </Button>
+            </div>
+
+            {showCategoryForm ? (
+              <div className="space-y-3 rounded-[1.5rem] border border-[#DDE7E3] bg-[#FAFAF8] p-4">
+                <label className="block space-y-1.5">
+                  <span className="text-sm font-medium text-[#1A1A1A]">Name</span>
+                  <Input
+                    value={newCategoryName}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setNewCategoryName(value);
+                      if (!isCategorySlugEdited) {
+                        setNewCategorySlug(generateSlug(value));
+                      }
+                    }}
+                    className="h-10 rounded-xl border-[#DDE7E3] bg-white"
+                    placeholder="Category name"
+                  />
+                </label>
+                <label className="block space-y-1.5">
+                  <span className="text-sm font-medium text-[#1A1A1A]">Slug</span>
+                  <Input
+                    value={newCategorySlug}
+                    onChange={(event) => {
+                      setIsCategorySlugEdited(true);
+                      setNewCategorySlug(generateSlug(event.target.value));
+                    }}
+                    className="h-10 rounded-xl border-[#DDE7E3] bg-white"
+                    placeholder="category-slug"
+                  />
+                </label>
+                <label className="block space-y-1.5">
+                  <span className="text-sm font-medium text-[#1A1A1A]">Description</span>
+                  <Textarea
+                    value={newCategoryDescription}
+                    onChange={(event) => setNewCategoryDescription(event.target.value)}
+                    className="min-h-20 rounded-xl border-[#DDE7E3] bg-white"
+                    placeholder="Optional description"
+                  />
+                </label>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    onClick={handleCreateCategory}
+                    disabled={isPending}
+                    className="h-10 rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
+                  >
+                    Create
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowCategoryForm(false);
+                      setNewCategoryName("");
+                      setNewCategorySlug("");
+                      setNewCategoryDescription("");
+                      setIsCategorySlugEdited(false);
+                    }}
+                    className="h-10 rounded-xl border-[#DDE7E3] bg-white"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : null}
           </label>
 
           <div className="space-y-2">
