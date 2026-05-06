@@ -7,7 +7,7 @@ interface SuccessMessageProps {
 
 export function SuccessMessage({
   name,
-  calendlyUrl = "https://calendly.com/aieasy/30min",
+  calendlyUrl = "https://calendly.com/hello-aieasy/30min",
 }: SuccessMessageProps) {
   return (
     <div className="overflow-hidden rounded-[2rem] border border-[#2563EB]/15 bg-white shadow-[0_30px_70px_-40px_rgba(15,23,42,0.35)]">

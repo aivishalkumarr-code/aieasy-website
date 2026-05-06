@@ -15,7 +15,7 @@ interface SubmitLeadResult {
   name?: string;
 }
 
-const calendlyLink = "https://calendly.com/aieasy/30min";
+const calendlyLink = "https://calendly.com/hello-aieasy/30min";
 const adminEmail = "hello@aieasy.in";
 const leadSource = "Landing Page - Website Design";
 const businessTypePopupSource = "landing_page__business_type";

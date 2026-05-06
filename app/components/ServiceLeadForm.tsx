@@ -27,7 +27,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-const calendlyUrl = "https://calendly.com/aieasy/30min";
+const calendlyUrl = "https://calendly.com/hello-aieasy/30min";
 
 interface ServiceLeadFormProps {
   serviceName: ServicePageName;
