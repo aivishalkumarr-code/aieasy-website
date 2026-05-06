@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 
 import { submitLead } from "../actions/submitLead";
-import { SuccessMessage } from "./SuccessMessage";
 
 type FormValues = {
   name: string;
@@ -79,8 +78,6 @@ export function LeadForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submittedName, setSubmittedName] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const updateField = (field: keyof FormValues, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -113,10 +110,8 @@ export function LeadForm() {
         return;
       }
 
-      setSubmittedName(result.name || values.name.trim());
-      setIsSuccess(true);
-      setValues(initialValues);
-      setErrors({});
+      const submittedName = result.name || values.name.trim();
+      window.location.href = `/lp/website-design/thank-you?name=${encodeURIComponent(submittedName)}`;
     } catch (submitError) {
       setError(
         submitError instanceof Error
@@ -127,14 +122,6 @@ export function LeadForm() {
       setIsSubmitting(false);
     }
   };
-
-  if (isSuccess) {
-    return (
-      <div id="contact" className="scroll-mt-28">
-        <SuccessMessage name={submittedName} />
-      </div>
-    );
-  }
 
   return (
     <div id="contact" className="scroll-mt-28">
