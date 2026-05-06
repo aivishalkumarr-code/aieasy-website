@@ -11,6 +11,47 @@ export type LogoType = "main" | "favicon" | "og_image";
 export type ImageCategory = "Landing Page" | "Hero" | "Portfolio" | "Services" | "Business Types" | "Blog" | "General";
 export type PortfolioCategory = "Business" | "Healthcare" | "E-commerce" | "Education" | "Real Estate" | "Hospitality";
 export type PortfolioVersion = "v1" | "v2";
+export type BlogPostStatus = "draft" | "published" | "scheduled";
+
+export interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  created_at?: string;
+}
+
+export interface BlogTag {
+  id: string;
+  name: string;
+  slug: string;
+  created_at?: string;
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  featured_image: string | null;
+  status: BlogPostStatus;
+  scheduled_at: string | null;
+  seo_title: string | null;
+  meta_description: string | null;
+  canonical_url: string | null;
+  og_image: string | null;
+  keywords: string | null;
+  reading_time: number | null;
+  category_id: string | null;
+  category?: BlogCategory | null;
+  tags?: BlogTag[];
+  author_id: string | null;
+  created_at: string;
+  updated_at: string;
+  published_at: string | null;
+}
+
 export type EmailTemplateId =
   | "intro"
   | "proposal_followup"
@@ -222,6 +263,8 @@ export const DEAL_STAGES: DealStage[] = [
   "Won",
 ];
 
+export const BLOG_POST_STATUSES: BlogPostStatus[] = ["draft", "published", "scheduled"];
+
 export const QUOTE_STATUSES: QuoteStatus[] = [
   "Draft",
   "Sent",
@@ -324,6 +367,7 @@ export const SEO_PAGE_OPTIONS = [
   "/about",
   "/services",
   "/blog",
+  "/blog/:slug",
   "/contact",
   "/login",
   "/dashboard",
