@@ -10,6 +10,7 @@ import { LeadForm } from "@/app/components/LeadForm";
 import { Navigation } from "@/app/components/Navigation";
 import { ServiceCard } from "@/app/components/ServiceCard";
 import { TestimonialCard } from "@/app/components/TestimonialCard";
+import { getBlogPosts } from "@/app/dashboard/actions/blogs";
 import { serviceIconMap } from "@/app/services/icon-map";
 import { SERVICE_PAGE_LIST } from "@/app/services/service-data";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,8 @@ export const metadata: Metadata = {
   description:
     "AIeasy designs, automates, and ships AI experiences for service businesses across automation, software, web, and generative AI.",
 };
+
+export const revalidate = 3600;
 
 const services = SERVICE_PAGE_LIST.map((service) => ({
   icon: serviceIconMap[service.iconName],
@@ -86,36 +89,6 @@ const testimonials = [
   },
 ] as const;
 
-const blogPosts = [
-  {
-    title: "How AI Automation Changes Service Delivery for Lean Teams",
-    excerpt:
-      "A practical framework for identifying repeatable workflows, prioritizing automation ROI, and keeping humans in the loop.",
-    publishedAt: "2026-03-12",
-    author: "AIeasy Studio",
-    category: "Automation",
-    slug: "ai-automation-service-delivery",
-  },
-  {
-    title: "Designing AI Product Demos That Convert Enterprise Buyers",
-    excerpt:
-      "What to show, how to structure the experience, and where teams lose trust during interactive product demonstrations.",
-    publishedAt: "2026-02-27",
-    author: "AIeasy Studio",
-    category: "Product",
-    slug: "ai-product-demos-enterprise-buyers",
-  },
-  {
-    title: "A Lightweight Content Engine for High-Intent AI Search Traffic",
-    excerpt:
-      "Build repeatable briefs, editorial systems, and repurposing loops without turning your brand into generic AI output.",
-    publishedAt: "2026-01-18",
-    author: "AIeasy Studio",
-    category: "Content",
-    slug: "content-engine-ai-search-traffic",
-  },
-] as const;
-
 function createPlaceholder(title: string, accent: string) {
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" fill="none">
@@ -136,7 +109,14 @@ function createPlaceholder(title: string, accent: string) {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const postsResponse = await getBlogPosts({
+    status: "published",
+    page: 1,
+    pageSize: 3,
+    sort: "latest",
+  });
+
   return (
     <>
       <Navigation />
@@ -283,20 +263,31 @@ export default function HomePage() {
               and category-driven discovery.
             </p>
           </AnimatedSection>
-          <div className="grid gap-6 lg:grid-cols-3">
-            {blogPosts.map((post, index) => (
-              <AnimatedSection
-                key={post.slug}
-                delay={index * 0.05}
-                direction="up"
-              >
-                <BlogCard
-                  {...post}
-                  coverImage={createPlaceholder(post.title, "#3B82F6")}
-                />
-              </AnimatedSection>
-            ))}
-          </div>
+          {postsResponse.posts.length ? (
+            <div className="grid gap-6 lg:grid-cols-3">
+              {postsResponse.posts.map((post, index) => (
+                <AnimatedSection
+                  key={post.slug}
+                  delay={index * 0.05}
+                  direction="up"
+                >
+                  <BlogCard
+                    title={post.title}
+                    excerpt={post.excerpt ?? "Read the full article for implementation details and practical examples."}
+                    publishedAt={post.published_at ?? post.created_at}
+                    author="AIeasy Studio"
+                    category={post.category?.name ?? "Uncategorized"}
+                    slug={post.slug}
+                    coverImage={post.featured_image ?? createPlaceholder(post.title, "#3B82F6")}
+                  />
+                </AnimatedSection>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-[1.5rem] border border-dashed border-[#DDE7E3] bg-white p-10 text-center">
+              <p className="text-sm text-[#6B7280]">Blog posts coming soon.</p>
+            </div>
+          )}
         </section>
 
         <section id="contact" className="container scroll-mt-28">

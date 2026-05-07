@@ -37,6 +37,7 @@ export function BlogCard({
             src={coverImage}
             alt={title}
             fill
+            loading="lazy"
             unoptimized
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
