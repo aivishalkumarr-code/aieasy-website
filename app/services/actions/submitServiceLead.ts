@@ -84,10 +84,15 @@ ${data.message}`;
     .single();
 
   if (error) {
-    console.error("Service lead insert error:", error);
+    console.error("[submitServiceLead] Supabase contacts insert failed:", {
+      errorCode: error.code ?? null,
+      errorMessage: error.message ?? null,
+      errorDetails: error.details ?? null,
+      errorHint: error.hint ?? null,
+    });
     return {
       success: false,
-      message: "Failed to save your submission. Please try again.",
+      message: `Failed to save submission (${error.message}). Please try again or contact us directly.`,
     };
   }
 
