@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   title: "AIeasy | Premium AI solutions company in Delhi",
   description:
     "AIeasy designs, automates, and ships AI experiences for service businesses across automation, software, web, and generative AI.",
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export const revalidate = 3600;

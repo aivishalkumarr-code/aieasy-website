@@ -7,9 +7,12 @@ import { LeadForm } from "@/app/components/LeadForm";
 import { Navigation } from "@/app/components/Navigation";
 
 export const metadata: Metadata = {
-  title: "Contact AIeasy | Let’s build something together",
+  title: "Contact AIeasy | Let's build something together",
   description:
     "Contact AIeasy to plan your next AI automation, web application, generative AI, or website project.",
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 const contactItems = [

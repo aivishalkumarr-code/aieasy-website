@@ -8,6 +8,9 @@ import { BlogListClient } from "@/app/blog/BlogListClient";
 export const metadata: Metadata = {
   title: "Blog | AIeasy",
   description: "Insights on AI automation, web design, and digital growth strategies.",
+  alternates: {
+    canonical: "/blog",
+  },
 };
 
 export const revalidate = 3600;

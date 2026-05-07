@@ -41,6 +41,9 @@ export const metadata: Metadata = {
     "Website Design Company in Delhi | Professional Web Design Services - AIeasy",
   description:
     "Leading website design company in Delhi. Get a custom, mobile-friendly, SEO-ready business website starting at ₹9,999. Free domain, hosting & support included.",
+  alternates: {
+    canonical: "/lp/website-design",
+  },
   keywords: [
     "website design company Delhi",
     "web design Delhi",
