@@ -13,6 +13,21 @@ export type PortfolioCategory = "Business" | "Healthcare" | "E-commerce" | "Educ
 export type PortfolioVersion = "v1" | "v2";
 export type BlogPostStatus = "draft" | "published" | "scheduled";
 
+export type SnippetPlacement = "head" | "body_start" | "body_end";
+
+export interface MarketingSnippet {
+  id: string;
+  name: string;
+  description: string | null;
+  code: string;
+  placement: SnippetPlacement;
+  is_active: boolean;
+  order_index: number;
+  created_at: string;
+  updated_at: string;
+}
+
+
 export interface BlogCategory {
   id: string;
   name: string;
@@ -264,6 +279,118 @@ export const DEAL_STAGES: DealStage[] = [
 ];
 
 export const BLOG_POST_STATUSES: BlogPostStatus[] = ["draft", "published", "scheduled"];
+
+export const SNIPPET_PLACEMENTS: SnippetPlacement[] = ["head", "body_start", "body_end"];
+
+export const SNIPPET_PRESETS: Array<{ name: string; description: string; code: string; placement: SnippetPlacement }> = [
+  {
+    name: "Google Analytics 4",
+    description: "Replace G-XXXXXXXXXX with your Measurement ID",
+    placement: "head",
+    code: `<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>`,
+  },
+  {
+    name: "Google Tag Manager",
+    description: "Replace GTM-XXXXXX with your Container ID",
+    placement: "head",
+    code: `<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-XXXXXX');</script>`,
+  },
+  {
+    name: "Google Search Console",
+    description: "Replace CONTENT with your verification meta tag content",
+    placement: "head",
+    code: `<meta name="google-site-verification" content="CONTENT" />`,
+  },
+  {
+    name: "Meta Pixel (Facebook)",
+    description: "Replace XXXXXXXXXX with your Pixel ID",
+    placement: "head",
+    code: `<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'XXXXXXXXXX');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=XXXXXXXXXX&ev=PageView&noscript=1"
+/></noscript>`,
+  },
+  {
+    name: "LinkedIn Insight Tag",
+    description: "Replace XXXXXX with your Partner ID",
+    placement: "head",
+    code: `<script type="text/javascript">
+_linkedin_partner_id = "XXXXXX";
+window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+</script>
+<script type="text/javascript">
+(function(l) {
+if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+window.lintrk.q=[]}
+var s = document.getElementsByTagName("script")[0];
+var b = document.createElement("script");
+b.type = "text/javascript";b.async = true;
+b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+<noscript>
+<img height="1" width="1" style="display:none;" alt=""
+src="https://px.ads.linkedin.com/collect/?pid=XXXXXX&fmt=gif" />
+</noscript>`,
+  },
+  {
+    name: "Microsoft Clarity",
+    description: "Replace XXXXXX with your Project ID",
+    placement: "head",
+    code: `<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "XXXXXX");
+</script>`,
+  },
+  {
+    name: "Hotjar",
+    description: "Replace XXXXXX with your Site ID",
+    placement: "head",
+    code: `<script>
+  (function(h,o,t,j,a,r){
+    h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+    h._hjSettings={hjid:XXXXXX,hjsv:6};
+    a=o.getElementsByTagName('head')[0];
+    r=o.createElement('script');r.async=1;
+    r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+    a.appendChild(r);
+  })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>`,
+  },
+  {
+    name: "GTM Body (noscript)",
+    description: "Replace GTM-XXXXXX with your Container ID",
+    placement: "body_start",
+    code: `<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXX"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`,
+  },
+];
+
 
 export const QUOTE_STATUSES: QuoteStatus[] = [
   "Draft",

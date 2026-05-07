@@ -34,6 +34,10 @@ const pageMeta: Record<string, { title: string; description: string }> = {
     title: "Email system",
     description: "Compose emails from reusable templates and review history.",
   },
+  "/dashboard/marketing": {
+    title: "Marketing",
+    description: "Manage analytics, tracking pixels, and third-party marketing snippets.",
+  },
   "/dashboard/seo": {
     title: "SEO tools",
     description: "Edit metadata and OG settings across primary pages.",
