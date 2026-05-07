@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  BarChart2,
   BarChart3,
   BookOpen,
   Briefcase,
@@ -27,6 +28,7 @@ const navigation = [
   { href: "/dashboard/crm", label: "CRM", icon: BarChart3 },
   { href: "/dashboard/quotes", label: "Quotes", icon: FileText },
   { href: "/dashboard/emails", label: "Emails", icon: Mail },
+  { href: "/dashboard/marketing", label: "Marketing", icon: BarChart2 },
   { href: "/dashboard/partners", label: "Partners", icon: Globe },
   { href: "/dashboard/images", label: "Images", icon: ImageIcon },
   { href: "/dashboard/blogs", label: "Blogs", icon: BookOpen },
