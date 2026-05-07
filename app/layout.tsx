@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import { PageTransition } from "@/app/components/PageTransition";
+import { getLogoByType } from "@/app/dashboard/actions/logo";
 
 import "@/app/globals.css";
 
@@ -10,10 +11,15 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-export const metadata: Metadata = {
-  title: "AIeasy",
-  description: "Premium AI solutions company in Delhi.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const favicon = await getLogoByType("favicon");
+
+  return {
+    title: "AIeasy",
+    description: "Premium AI solutions company in Delhi.",
+    icons: favicon?.url ? { icon: favicon.url } : undefined,
+  };
+}
 
 export default function RootLayout({
   children,
