@@ -135,7 +135,7 @@ export function LeadForm() {
                 FREE WEBSITE CONSULTATION
               </div>
               <h2 className="mt-4 text-2xl font-bold tracking-tight sm:text-[28px] sm:leading-tight">
-                Get Your Website Proposal in 60 Seconds
+                Get a Custom Website Plan for Your Business
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-blue-50">
                 Tell us about your business and we&apos;ll suggest the right website plan, pricing and timeline.
