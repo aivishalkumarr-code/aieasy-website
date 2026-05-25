@@ -7,6 +7,7 @@ import {
   BarChart3,
   BookOpen,
   Briefcase,
+  CheckSquare,
   FileText,
   Globe,
   Image,
@@ -24,6 +25,7 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/todo", label: "Tasks", icon: CheckSquare },
   { href: "/dashboard/leads", label: "Leads", icon: Users },
   { href: "/dashboard/crm", label: "CRM", icon: BarChart3 },
   { href: "/dashboard/quotes", label: "Quotes", icon: FileText },
