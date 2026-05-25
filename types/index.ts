@@ -520,3 +520,64 @@ export const getServiceSubtotal = (services: ServiceKey[]) =>
     const service = SERVICE_CATALOG.find((entry) => entry.key === key);
     return total + (service?.price ?? 0);
   }, 0);
+// ============================================================
+// Tasks (Flux todo manager) — append to types/index.ts
+// ============================================================
+
+export type TaskPriority = "low" | "medium" | "high";
+export type TaskStatus = "todo" | "in_progress" | "review" | "done";
+
+export interface Subtask {
+  id: string;
+  title: string;
+  done: boolean;
+}
+
+export interface Task {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  status: TaskStatus;
+  priority: TaskPriority;
+  due_date: string | null;
+  tags: string[];
+  subtasks: Subtask[];
+  position: number;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TaskInput {
+  title: string;
+  description?: string | null;
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  due_date?: string | null;
+  tags?: string[];
+  subtasks?: Subtask[];
+  position?: number;
+}
+
+export const TASK_PRIORITIES: TaskPriority[] = ["low", "medium", "high"];
+
+export const TASK_STATUSES: TaskStatus[] = [
+  "todo",
+  "in_progress",
+  "review",
+  "done",
+];
+
+export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
+  todo: "To Do",
+  in_progress: "In Progress",
+  review: "Review",
+  done: "Done",
+};
+
+export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = {
+  low: "Low",
+  medium: "Medium",
+  high: "High",
+};
